@@ -79,7 +79,7 @@ export default function SignUpScreen() {
                     <Button
                         title="Sign Up"
                         onPress={handleSignUp}
-                        color="#00A059"
+                        color="#f8b049"
                     />
                 </View>
             </ImageBackground>

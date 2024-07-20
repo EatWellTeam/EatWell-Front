@@ -39,7 +39,7 @@ export default function LoginScreen() {
                     <Button
                         title="continue"
                         onPress={() => console.log("signing up")}
-                        color="#00A059"
+                        color="#f8b049"
                     />
                 </View>
             </ImageBackground>

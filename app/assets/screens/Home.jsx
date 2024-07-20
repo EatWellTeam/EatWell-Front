@@ -23,7 +23,7 @@ export default function HomeScreen({ navigation }) {
                 <Text style={styles.title}></Text>
                 <TouchableOpacity onPress={() => console.log('Logo pressed')}>
                     <Image
-                        source={{ uri: "https://i.ibb.co/wL36F9S/eat-well-logo.png" }}
+                        source={{ uri: "https://i.ibb.co/3Yv3Hq8/Screenshot-2024-07-20-185504.pngS" }}
                         style={styles.image}
                     />
                 </TouchableOpacity>
@@ -32,7 +32,7 @@ export default function HomeScreen({ navigation }) {
                     <Button
                         title="Log in"
                         onPress={() => navigation.navigate('Login')}
-                        color="#00A059"
+                        color="#f8b049"
                     />
                 </View>
                 <View style={{ marginTop: 20 }}></View>
@@ -40,7 +40,7 @@ export default function HomeScreen({ navigation }) {
                     <Button
                         title="Sign up"
                         onPress={() => navigation.navigate('SignUp')} // Update navigation here
-                        color="#00A059"
+                        color="#f"
                     />
                 </View>
                 <View style={{ marginTop: 50 }}></View>
