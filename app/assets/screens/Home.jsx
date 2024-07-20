@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { View, Text, SafeAreaView, TouchableOpacity, Image, Platform, StyleSheet, Button, Alert, Dimensions } from 'react-native';
+import { View, Text, SafeAreaView, TouchableOpacity, Image, Platform, StyleSheet, Button, Dimensions, ImageBackground } from 'react-native';
 
-export default function HomeScreen() {
+export default function HomeScreen({ navigation }) {
     const [dimensions, setDimensions] = useState(Dimensions.get("window"));
 
     useEffect(() => {
@@ -15,10 +15,13 @@ export default function HomeScreen() {
     }, []);
 
     return (
-        <>
-            <SafeAreaView style={[styles.container, { width: dimensions.width, height: dimensions.height }]}>
-                <Text></Text>
-                <TouchableOpacity onPress={() => console.log()}>
+        <SafeAreaView style={[styles.container, { width: dimensions.width, height: dimensions.height }]}>
+            <ImageBackground 
+                source={{ uri: "https://i.ibb.co/5hGdWDj/Default-Create-a-visually-appealing-background-in-a-soft-muted-3-1.jpg" }} 
+                style={styles.background}
+            >
+                <Text style={styles.title}></Text>
+                <TouchableOpacity onPress={() => console.log('Logo pressed')}>
                     <Image
                         source={{ uri: "https://i.ibb.co/wL36F9S/eat-well-logo.png" }}
                         style={styles.image}
@@ -28,7 +31,7 @@ export default function HomeScreen() {
                 <View style={styles.buttonContainer}>
                     <Button
                         title="Log in"
-                        onPress={() => Alert.alert("You have clicked the button", "There is no more to do")}
+                        onPress={() => navigation.navigate('Login')}
                         color="#00A059"
                     />
                 </View>
@@ -36,13 +39,13 @@ export default function HomeScreen() {
                 <View style={styles.buttonContainer}>
                     <Button
                         title="Sign up"
-                        onPress={() => Alert.alert("You have clicked the button", "There is no more to do")}
+                        onPress={() => navigation.navigate('SignUp')} // Update navigation here
                         color="#00A059"
                     />
                 </View>
                 <View style={{ marginTop: 50 }}></View>
-            </SafeAreaView>
-        </>
+            </ImageBackground>
+        </SafeAreaView>
     );
 }
 
@@ -51,16 +54,25 @@ const styles = StyleSheet.create({
         flex: 1,
         paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
         backgroundColor: '#fff',
+    },
+    background: {
+        flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
+    },
+    title: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        color: '#fff',
+        marginBottom: 20,
     },
     image: {
         width: 300,
         height: 300,
-        borderRadius: 150, // make the image circular
+        borderRadius: 150,
     },
     buttonContainer: {
-        width: 200,
+        width: 300,
         height: 50,
     },
 });
