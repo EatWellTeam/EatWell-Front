@@ -1,78 +1,90 @@
-import { useState, useEffect } from 'react';
-import { StatusBar } from 'expo-status-bar';
-import { View, Text, SafeAreaView, TouchableOpacity, Image, Platform, StyleSheet, Button, Dimensions, ImageBackground } from 'react-native';
 
-export default function HomeScreen({ navigation }) {
-    const [dimensions, setDimensions] = useState(Dimensions.get("window"));
+import * as ImagePicker from 'expo-image-picker';
+import { useEffect, useState } from 'react';
+import { Alert, View, Button } from 'react-native';
+import imageUpload from '../../../services/imageUpload';
+import axios from 'axios';
 
-    useEffect(() => {
-        const subscription = Dimensions.addEventListener("change", ({ window }) => {
-            setDimensions(window);
-        });
-        return () => {
-            subscription?.remove();
-        };
-    }, []);
+export default function Home({navigation}) {
 
-    return (
-        <SafeAreaView style={[styles.container, { width: dimensions.width, height: dimensions.height }]}>
-            <ImageBackground 
-                source={{ uri: "https://i.ibb.co/5hGdWDj/Default-Create-a-visually-appealing-background-in-a-soft-muted-3-1.jpg" }} 
-                style={styles.background}
-            >
-                <Text style={styles.title}></Text>
-                <TouchableOpacity onPress={() => console.log('Logo pressed')}>
-                    <Image
-                        source={{ uri: "https://i.ibb.co/3Yv3Hq8/Screenshot-2024-07-20-185504.pngS" }}
-                        style={styles.image}
-                    />
-                </TouchableOpacity>
-                <View style={{ marginTop: 50 }}></View>
-                <View style={styles.buttonContainer}>
-                    <Button
-                        title="Log in"
-                        onPress={() => navigation.navigate('Login')}
-                        color="#f8b049"
-                    />
-                </View>
-                <View style={{ marginTop: 20 }}></View>
-                <View style={styles.buttonContainer}>
-                    <Button
-                        title="Sign up"
-                        onPress={() => navigation.navigate('SignUp')} // Update navigation here
-                        color="#f"
-                    />
-                </View>
-                <View style={{ marginTop: 50 }}></View>
-            </ImageBackground>
-        </SafeAreaView>
-    );
+
+    const [image, setImage] = useState(null)
+        async function openCamera() {
+            const permissions = await ImagePicker.getCameraPermissionsAsync()
+            if(!permissions.granted) {
+                requestMediaPermissions()
+                return
+            }
+            let result  = await ImagePicker.launchCameraAsync({
+                mediaTypes: ImagePicker.MediaTypeOptions.Images,
+                allowsEditing: true,
+                aspect: [4,3],
+                quality: 1
+            })
+
+            if(!result.canceled) {
+                // get uri
+                const uri = result.assets[0].uri
+                setImage(uri)
+            }
+        }
+
+
+        async function openGallery() {
+            const permissions = await ImagePicker.getMediaLibraryPermissionsAsync()
+            if(!permissions.granted) {
+                requestMediaPermissions()
+                return
+            }
+
+            let result  = await ImagePicker.launchImageLibraryAsync({
+                mediaTypes: ImagePicker.MediaTypeOptions.Images,
+                allowsEditing: true,
+                aspect: [4,3],
+                quality: 1
+            })
+
+            if(!result.canceled) {
+                // get uri
+                const uri = result.assets[0].uri
+                setImage(uri)
+            }
+        }
+
+
+        async function requestMediaPermissions() {
+
+            const { status } = await ImagePicker.requestCameraPermissionsAsync();
+            if(status !== 'granted') {
+                Alert.alert('Sorry, we need camera roll permissions to make this work!');
+                return
+            }
+            const mediaLibraryStatus = await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+            if(mediaLibraryStatus.status !== 'granted') {
+                Alert.alert('Sorry, we need camera roll permissions to make this work!');
+                return
+            }
+
+        }
+
+        useEffect(() => {
+            requestMediaPermissions()
+        },[])
+        
+        const analyze = async () => {
+            const url = await imageUpload(image)
+            console.log(url)
+            const { data } = axios.post('https://api.eatwell.com/analyze', { url })
+            navigation.navigate('AnalasysResult', { results: data })
+        }
+
+
+        return (<View>
+            <Button title="Open Camera" onPress={openCamera}/>
+            <Button title="Open Gallery" onPress={openGallery}/>
+            {
+             image && <Button title="Analyze" onPress={analyze}/>
+            }
+        </View>)
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
-        backgroundColor: '#fff',
-    },
-    background: {
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    title: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        color: '#fff',
-        marginBottom: 20,
-    },
-    image: {
-        width: 300,
-        height: 300,
-        borderRadius: 150,
-    },
-    buttonContainer: {
-        width: 300,
-        height: 50,
-    },
-});

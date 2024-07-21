@@ -4,9 +4,10 @@ import * as React from 'react';
 import { View, Text } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import HomeScreen from './app/assets/screens/Home';
+import HomeScreen from './app/assets/screens/Welcome';
 import LoginScreen from './app/assets/screens/Login';
 import SignUpScreen from './app/assets/screens/SignUp';
+import AnalasysResult from './app/assets/screens/AnalasysResult';
 
 
 
@@ -19,6 +20,7 @@ function App() {
         <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="SignUp" component={SignUpScreen} />
+        <Stack.Screen name="AnalasysResult" component={AnalasysResult} />
       </Stack.Navigator>
     </NavigationContainer>
   );
