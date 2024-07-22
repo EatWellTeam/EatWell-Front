@@ -1,6 +1,6 @@
 import * as ImagePicker from 'expo-image-picker';
 import { useEffect, useState } from 'react';
-import { Alert, View, Button, StyleSheet, TouchableOpacity, Text } from 'react-native';
+import { Alert, View, Button, StyleSheet, TouchableOpacity, Text, ImageBackground } from 'react-native';
 import imageUpload from '../../../services/imageUpload';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -90,23 +90,38 @@ export default function Home({ navigation }) {
   }
 
   return (
-    <View style={styles.container}>
-      <View style={styles.signOutContainer}>
-        <TouchableOpacity style={styles.signOutButton} onPress={signOut}>
-          <Text style={styles.signOutText}>Sign Out</Text>
-        </TouchableOpacity>
+    <ImageBackground source={{ uri: 'https://i.ibb.co/pvY7xcx/Default-Create-a-background-image-similar-to-the-image-you-mad-3.jpg' }} style={styles.background}>
+      <View style={styles.container}>
+        <View style={styles.signOutContainer}>
+          <TouchableOpacity style={styles.signOutButton} onPress={signOut}>
+            <Text style={styles.signOutText}>Sign Out</Text>
+          </TouchableOpacity>
+        </View>
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity style={styles.button} onPress={openCamera}>
+            <Text style={styles.buttonText}>Open Camera</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.button} onPress={openGallery}>
+            <Text style={styles.buttonText}>Open Gallery</Text>
+          </TouchableOpacity>
+          {image && (
+            <TouchableOpacity style={styles.button} onPress={analyze}>
+              <Text style={styles.buttonText}>Analyze</Text>
+            </TouchableOpacity>
+          )}
+        </View>
       </View>
-      <Button title="Open Camera" onPress={openCamera} />
-      <Button title="Open Gallery" onPress={openGallery} />
-      {image && <Button title="Analyze" onPress={analyze} />}
-    </View>
+    </ImageBackground>
   );
 }
 
 const styles = StyleSheet.create({
+  background: {
+    flex: 1,
+    resizeMode: 'cover',
+  },
   container: {
     flex: 1,
-    justifyContent: 'center',
     paddingHorizontal: 10,
   },
   signOutContainer: {
@@ -115,12 +130,29 @@ const styles = StyleSheet.create({
     right: 20,
   },
   signOutButton: {
-    backgroundColor: '#fff',
+    backgroundColor: '#f8b049',
     padding: 10,
     borderRadius: 5,
   },
   signOutText: {
-    color: '#000',
+    color: '#fff',
+    fontWeight: 'bold',
+  },
+  buttonContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  button: {
+    backgroundColor: '#f8b049',
+    paddingVertical: 15,
+    paddingHorizontal: 25,
+    borderRadius: 5,
+    marginVertical: 10,
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 16,
     fontWeight: 'bold',
   },
 });
