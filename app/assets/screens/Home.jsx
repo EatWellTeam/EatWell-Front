@@ -1,6 +1,6 @@
 import * as ImagePicker from 'expo-image-picker';
 import { useEffect, useState } from 'react';
-import { Alert, View, Button } from 'react-native';
+import { Alert, View, Button, StyleSheet, TouchableOpacity, Text } from 'react-native';
 import imageUpload from '../../../services/imageUpload';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -22,7 +22,6 @@ export default function Home({ navigation }) {
     });
 
     if (!result.canceled) {
-      // get uri
       const uri = result.assets[0].uri;
       setImage(uri);
     }
@@ -43,7 +42,6 @@ export default function Home({ navigation }) {
     });
 
     if (!result.canceled) {
-      // get uri
       const uri = result.assets[0].uri;
       setImage(uri);
     }
@@ -87,11 +85,42 @@ export default function Home({ navigation }) {
     }
   }
 
+  const signOut = () => {
+    navigation.navigate('Welcome');
+  }
+
   return (
-    <View>
+    <View style={styles.container}>
+      <View style={styles.signOutContainer}>
+        <TouchableOpacity style={styles.signOutButton} onPress={signOut}>
+          <Text style={styles.signOutText}>Sign Out</Text>
+        </TouchableOpacity>
+      </View>
       <Button title="Open Camera" onPress={openCamera} />
       <Button title="Open Gallery" onPress={openGallery} />
       {image && <Button title="Analyze" onPress={analyze} />}
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    paddingHorizontal: 10,
+  },
+  signOutContainer: {
+    position: 'absolute',
+    top: 40,
+    right: 20,
+  },
+  signOutButton: {
+    backgroundColor: '#fff',
+    padding: 10,
+    borderRadius: 5,
+  },
+  signOutText: {
+    color: '#000',
+    fontWeight: 'bold',
+  },
+});

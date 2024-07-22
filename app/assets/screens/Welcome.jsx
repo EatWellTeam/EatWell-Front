@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { View, Text, SafeAreaView, TouchableOpacity, Image, Platform, StyleSheet, Button, Dimensions, ImageBackground } from 'react-native';
+import { View, Text, SafeAreaView, TouchableOpacity, Image, Platform, StyleSheet, Dimensions, ImageBackground } from 'react-native';
 
 export default function HomeScreen({ navigation }) {
     const [dimensions, setDimensions] = useState(Dimensions.get("window"));
@@ -29,19 +29,15 @@ export default function HomeScreen({ navigation }) {
                 </TouchableOpacity>
                 <View style={{ marginTop: 50 }}></View>
                 <View style={styles.buttonContainer}>
-                    <Button
-                        title="Log in"
-                        onPress={() => navigation.navigate('Login')}
-                        color="#f8b049"
-                    />
+                    <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Login')}>
+                        <Text style={styles.buttonText}>Log in</Text>
+                    </TouchableOpacity>
                 </View>
                 <View style={{ marginTop: 20 }}></View>
                 <View style={styles.buttonContainer}>
-                    <Button
-                        title="Sign up"
-                        onPress={() => navigation.navigate('SignUp')} // Update navigation here
-                        color="#f8b049"
-                    />
+                    <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('SignUp')}>
+                        <Text style={styles.buttonText}>Sign up</Text>
+                    </TouchableOpacity>
                 </View>
                 <View style={{ marginTop: 50 }}></View>
             </ImageBackground>
@@ -72,7 +68,20 @@ const styles = StyleSheet.create({
         borderRadius: 150,
     },
     buttonContainer: {
-        width: 300,
-        height: 50,
+        width: 100,
+        height: 40,
+        marginBottom: 10,
+    },
+    button: {
+        backgroundColor: '#f8b049',
+        paddingVertical: 5,
+        paddingHorizontal: 5,
+        borderRadius: 20,
+        alignItems: 'center',
+    },
+    buttonText: {
+        fontSize: 15,
+        color: '#FFFFFF',
+        fontWeight: 'bold',
     },
 });
