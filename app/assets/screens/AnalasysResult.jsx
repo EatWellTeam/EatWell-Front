@@ -1,24 +1,37 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { View, Text, StyleSheet, Image, ScrollView } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function AnalasysResult({ navigation, route }) {
-  const { results: initialResults } = route.params || {};
-  const [results, setResults] = useState(initialResults);
+  const { results } = route.params
 
-  useEffect(() => {
+  const Fat = useMemo(() => { 
+     if(!results) return null 
+     else return  results.results.nutritionData?.totalNutrients["FAT"]
+   },[results])
+   const Carbs = useMemo(() => { 
+    if(!results) return null 
+    else return  results.results.nutritionData?.totalNutrients["CHOCDF"]
+  },[results])
+  const Protein = useMemo(() => { 
+    if(!results) return null 
+    else return  results.results.nutritionData?.totalNutrients["PROCNT"]
+  },[results])
+
+  /*useEffect(() => {
     const fetchResultsLocally = async () => {
       if (!results) {
         const storedResults = await AsyncStorage.getItem("results");
         if (storedResults) {
-          setResults(JSON.parse(storedResults));
+          const parsed = JSON.parse(storedResults)
+          setResults(parsed);
         }
       }
     };
     fetchResultsLocally();
-  }, []);
+  }, []);*/
 
-  if (!results) {
+  if (!results || !Protein || !Carbs || !Fat) {
     return null;
   }
 
@@ -36,11 +49,11 @@ export default function AnalasysResult({ navigation, route }) {
         <Text style={styles.textTitle}>{"Calories"}</Text>
         <Text style={styles.textSection}>{results.results.nutritionData.calories}</Text>
         <Text style={styles.textTitle}>{"Protein"}</Text>
-        <Text style={styles.textSection}>{results.results.nutritionData.Proteins}</Text>
+        <Text style={styles.textSection}>{Protein.quantity.toFixed(3)}</Text>
         <Text style={styles.textTitle}>{"Carbs"}</Text>
-        <Text style={styles.textSection}>{results.results.nutritionData.Carbs}</Text>
+        <Text style={styles.textSection}>{Carbs.quantity.toFixed(3)}</Text>
         <Text style={styles.textTitle}>{"Fat"}</Text>
-        <Text style={styles.textSection}>{results.results.nutritionData.Fats}</Text>
+        <Text style={styles.textSection}>{Fat.quantity.toFixed(3)}</Text>
       </ScrollView>
     </View>
   );

@@ -4,6 +4,7 @@ import { Alert, View, Button, StyleSheet, TouchableOpacity, Text, ImageBackgroun
 import imageUpload from '../../../services/imageUpload';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import CircularProgress from '../../../components/CircularProgress';
 
 export default function Home({ navigation }) {
   const [image, setImage] = useState(null);
@@ -67,17 +68,9 @@ export default function Home({ navigation }) {
 
   const analyze = async () => {
     try {
-      const existing = await AsyncStorage.getItem('results');
-      if (existing) {
-        navigation.navigate('AnalasysResult', { results: JSON.parse(existing) });
-        return;
-      }
       const url = await imageUpload(image);
-      console.log(url);
 
       const { data } = await axios.post('http://192.168.1.17:3000/middleware/process', [{ content: [{ type: "image_url", image_url: { url } }], role: "user" }]);
-      console.log(data);
-      AsyncStorage.setItem('results', JSON.stringify({ results: data, image: url }));
 
       navigation.navigate('AnalasysResult', { results: { results: data, image: url } });
     } catch (e) {
@@ -97,7 +90,13 @@ export default function Home({ navigation }) {
             <Text style={styles.signOutText}>Sign Out</Text>
           </TouchableOpacity>
         </View>
+        
+
+    
         <View style={styles.buttonContainer}>
+          <View style={{padding: 20}}>
+            <CircularProgress progress={0.5}/>
+        </View>
           <TouchableOpacity style={styles.button} onPress={openCamera}>
             <Text style={styles.buttonText}>Open Camera</Text>
           </TouchableOpacity>
