@@ -26,7 +26,7 @@ export default function LoginScreen() {
                         onChangeText={(text) => setPassword(text)}
                         placeholder="Password"
                         secureTextEntry={!showPassword}
-                        style={styles.input}
+                        style={styles.passwordInput}
                     />
                     <TouchableOpacity
                         style={styles.eyeIcon}
@@ -35,13 +35,9 @@ export default function LoginScreen() {
                         <Ionicons name={showPassword ? "eye-off" : "eye"} size={24} color="gray" />
                     </TouchableOpacity>
                 </View>
-                <View style={styles.buttonContainer}>
-                    <Button
-                        title="continue"
-                        onPress={() => console.log("signing up")}
-                        color="#f8b049"
-                    />
-                </View>
+                <TouchableOpacity style={styles.button} onPress={() => console.log("signing up")}>
+                    <Text style={styles.buttonText}>CONTINUE</Text>
+                </TouchableOpacity>
             </ImageBackground>
         </SafeAreaView>
     );
@@ -80,12 +76,26 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         marginBottom: 20,
     },
-    eyeIcon: {
-        position: 'absolute',
-        right: 10,
+    passwordInput: {
+        flex: 1,
+        height: 50,
+        padding: 10,
+        borderRadius: 10,
     },
-    buttonContainer: {
+    eyeIcon: {
+        padding: 10,
+    },
+    button: {
         width: 300,
         height: 50,
+        backgroundColor: '#f8b049',
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: 10,
+    },
+    buttonText: {
+        color: '#fff',
+        fontSize: 16,
+        fontWeight: 'bold',
     },
 });

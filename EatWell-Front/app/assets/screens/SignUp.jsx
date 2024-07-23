@@ -1,6 +1,8 @@
-import { useState } from 'react';
-import { View, Text, Button, SafeAreaView, Platform, StatusBar, StyleSheet, ImageBackground, TextInput, TouchableOpacity, Alert } from 'react-native';
+// SignUpScreen.js
+import React, { useState } from 'react';
+import { View, Text, SafeAreaView, Platform, StatusBar, StyleSheet, ImageBackground, TextInput, TouchableOpacity, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons'; // Import Ionicons for the "eye" icon
+import { useNavigation } from '@react-navigation/native'; // Import useNavigation
 
 export default function SignUpScreen() {
     const [firstName, setFirstName] = useState("");
@@ -8,15 +10,30 @@ export default function SignUpScreen() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
+    const [dateOfBirth, setDateOfBirth] = useState("");
     const [showPassword, setShowPassword] = useState(false); // State to toggle password visibility
     const [showConfirmPassword, setShowConfirmPassword] = useState(false); // State to toggle confirm password visibility
 
+    const navigation = useNavigation(); // Get the navigation prop
+
     const handleSignUp = () => {
+        if (!email.includes('@')) {
+            Alert.alert("Invalid email", "Please enter a valid email address.");
+            return;
+        }
         if (password !== confirmPassword) {
             Alert.alert("Passwords do not match", "Please ensure that both passwords are the same.");
             return;
         }
-        console.log("Signing up:", { firstName, lastName, email, password });
+        console.log("Signing up:", { firstName, lastName, email, password, dateOfBirth });
+        navigation.navigate('UserDetails'); // Navigate to UserDetailsScreen
+    };
+
+    const formatDateOfBirth = (text) => {
+        if (text.length === 2 || text.length === 5) {
+            text += '/';
+        }
+        setDateOfBirth(text);
     };
 
     return (
@@ -45,13 +62,21 @@ export default function SignUpScreen() {
                     keyboardType="email-address"
                     style={styles.input}
                 />
+                <TextInput
+                    value={dateOfBirth}
+                    onChangeText={(text) => formatDateOfBirth(text)}
+                    placeholder="Date of Birth (MM/DD/YYYY)"
+                    style={styles.input}
+                    maxLength={10} // Restrict the input length to 10 characters
+                    keyboardType="numeric" // Ensure the keyboard is numeric
+                />
                 <View style={styles.passwordContainer}>
                     <TextInput
                         value={password}
                         onChangeText={(text) => setPassword(text)}
                         placeholder="Password"
                         secureTextEntry={!showPassword}
-                        style={styles.input}
+                        style={styles.passwordInput}
                     />
                     <TouchableOpacity
                         style={styles.eyeIcon}
@@ -66,7 +91,7 @@ export default function SignUpScreen() {
                         onChangeText={(text) => setConfirmPassword(text)}
                         placeholder="Confirm Password"
                         secureTextEntry={!showConfirmPassword}
-                        style={styles.input}
+                        style={styles.passwordInput}
                     />
                     <TouchableOpacity
                         style={styles.eyeIcon}
@@ -75,13 +100,9 @@ export default function SignUpScreen() {
                         <Ionicons name={showConfirmPassword ? "eye-off" : "eye"} size={24} color="gray" />
                     </TouchableOpacity>
                 </View>
-                <View style={styles.buttonContainer}>
-                    <Button
-                        title="Sign Up"
-                        onPress={handleSignUp}
-                        color="#f8b049"
-                    />
-                </View>
+                <TouchableOpacity style={styles.button} onPress={handleSignUp}>
+                    <Text style={styles.buttonText}>SIGN UP</Text>
+                </TouchableOpacity>
             </ImageBackground>
         </SafeAreaView>
     );
@@ -120,12 +141,26 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         marginBottom: 20,
     },
-    eyeIcon: {
-        position: 'absolute',
-        right: 10,
+    passwordInput: {
+        flex: 1,
+        height: 50,
+        padding: 10,
+        borderRadius: 10,
     },
-    buttonContainer: {
+    eyeIcon: {
+        padding: 10,
+    },
+    button: {
         width: 300,
         height: 50,
+        backgroundColor: '#f8b049',
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: 10,
+    },
+    buttonText: {
+        color: '#fff',
+        fontSize: 16,
+        fontWeight: 'bold',
     },
 });
