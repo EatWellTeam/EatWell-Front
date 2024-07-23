@@ -1,11 +1,16 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { View, Text, Button, SafeAreaView, Platform, StatusBar, StyleSheet, ImageBackground, TextInput, TouchableOpacity } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons'; // Import Ionicons for the "eye" icon
 
-export default function LoginScreen() {
+export default function LoginScreen({ navigation }) { // Add navigation prop
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [showPassword, setShowPassword] = useState(false); // State to toggle password visibility
+
+    const handleContinue = () => {
+        // Add any validation or API calls here
+        navigation.navigate('EditProfile');
+    };
 
     return (
         <SafeAreaView style={styles.container}>
@@ -35,7 +40,7 @@ export default function LoginScreen() {
                         <Ionicons name={showPassword ? "eye-off" : "eye"} size={24} color="gray" />
                     </TouchableOpacity>
                 </View>
-                <TouchableOpacity style={styles.button} onPress={() => console.log("signing up")}>
+                <TouchableOpacity style={styles.button} onPress={handleContinue}>
                     <Text style={styles.buttonText}>CONTINUE</Text>
                 </TouchableOpacity>
             </ImageBackground>
