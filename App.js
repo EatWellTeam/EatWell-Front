@@ -8,6 +8,8 @@ import SignUpScreen from './app/assets/screens/SignUp';
 import AnalasysResult from './app/assets/screens/AnalasysResult';
 import UserDetailsScreen from './app/assets/screens/UserDetails';
 import EditProfile from './app/assets/screens/EditProfile'; // Import the EditProfile component
+import Recipes from './app/assets/screens/Recipes'; // Import the Recipes component
+
 
 const Stack = createNativeStackNavigator();
 
@@ -22,6 +24,7 @@ function App() {
         <Stack.Screen name="AnalasysResult" component={AnalasysResult} />
         <Stack.Screen name="UserDetails" component={UserDetailsScreen} />
         <Stack.Screen name="EditProfile" component={EditProfile} />
+        <Stack.Screen name="Recipes" component={Recipes} /> 
       </Stack.Navigator>
     </NavigationContainer>
   );

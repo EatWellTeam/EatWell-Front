@@ -1,7 +1,15 @@
 import React from 'react';
 import { View, Text, SafeAreaView, TextInput, StyleSheet, TouchableOpacity, ImageBackground, ScrollView } from 'react-native';
+import { useNavigation } from '@react-navigation/native'; // Import useNavigation hook
 
 const EditProfile = () => {
+  const navigation = useNavigation(); // Initialize useNavigation
+
+  const handleSave = () => {
+    // Add any save logic here if needed
+    navigation.navigate('Recipes'); // Navigate to the Recipes page
+  };
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <ImageBackground source={{ uri: 'https://i.ibb.co/pvY7xcx/Default-Create-a-background-image-similar-to-the-image-you-mad-3.jpg' }} style={styles.background}>
@@ -16,7 +24,7 @@ const EditProfile = () => {
           <TextInput style={styles.input} placeholder="Gender: " />
           <TextInput style={styles.input} placeholder="Activity Level: " />
           <TextInput style={styles.input} placeholder="Goals: " />
-          <TouchableOpacity style={styles.button}>
+          <TouchableOpacity style={styles.button} onPress={handleSave}>
             <Text style={styles.buttonText}>Save</Text>
           </TouchableOpacity>
         </ScrollView>
