@@ -1,16 +1,12 @@
-// SignUpScreen.js
 import React, { useState } from 'react';
-import { View, Text, SafeAreaView, Platform, StatusBar, StyleSheet, ImageBackground, TextInput, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, SafeAreaView, Platform, StatusBar, StyleSheet, Image, TextInput, TouchableOpacity, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons'; // Import Ionicons for the "eye" icon
 import { useNavigation } from '@react-navigation/native'; // Import useNavigation
 
 export default function SignUpScreen() {
-    const [firstName, setFirstName] = useState("");
-    const [lastName, setLastName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
-    const [dateOfBirth, setDateOfBirth] = useState("");
     const [showPassword, setShowPassword] = useState(false); // State to toggle password visibility
     const [showConfirmPassword, setShowConfirmPassword] = useState(false); // State to toggle confirm password visibility
 
@@ -25,56 +21,32 @@ export default function SignUpScreen() {
             Alert.alert("Passwords do not match", "Please ensure that both passwords are the same.");
             return;
         }
-        console.log("Signing up:", { firstName, lastName, email, password, dateOfBirth });
-        navigation.navigate('UserDetails'); // Navigate to UserDetailsScreen
-    };
-
-    const formatDateOfBirth = (text) => {
-        if (text.length === 2 || text.length === 5) {
-            text += '/';
-        }
-        setDateOfBirth(text);
+        console.log("Signing up:", { email, password });
+        navigation.navigate('Register2'); // Navigate to Register2Screen
     };
 
     return (
         <SafeAreaView style={styles.container}>
-            <ImageBackground 
-                source={{ uri: "https://i.ibb.co/5hGdWDj/Default-Create-a-visually-appealing-background-in-a-soft-muted-3-1.jpg" }} 
-                style={styles.background}
-            >
-                <Text style={styles.title}>Sign Up</Text>
-                <TextInput
-                    value={firstName}
-                    onChangeText={(text) => setFirstName(text)}
-                    placeholder="First Name"
-                    style={styles.input}
+            <View style={styles.header}>
+                <Image 
+                    source={{ uri: 'https://i.postimg.cc/rmJCZ5G4/cropped-image.png' }} 
+                    style={styles.logo} 
                 />
-                <TextInput
-                    value={lastName}
-                    onChangeText={(text) => setLastName(text)}
-                    placeholder="Last Name"
-                    style={styles.input}
-                />
+                <Text style={styles.title}>Register</Text>
+                <Text style={styles.stepIndicator}>1/5</Text>
+            </View>
+            <View style={styles.formContainer}>
                 <TextInput
                     value={email}
                     onChangeText={(text) => setEmail(text)}
-                    placeholder="Email"
-                    keyboardType="email-address"
+                    placeholder="Enter your email"
                     style={styles.input}
-                />
-                <TextInput
-                    value={dateOfBirth}
-                    onChangeText={(text) => formatDateOfBirth(text)}
-                    placeholder="Date of Birth (MM/DD/YYYY)"
-                    style={styles.input}
-                    maxLength={10} // Restrict the input length to 10 characters
-                    keyboardType="numeric" // Ensure the keyboard is numeric
                 />
                 <View style={styles.passwordContainer}>
                     <TextInput
                         value={password}
                         onChangeText={(text) => setPassword(text)}
-                        placeholder="Password"
+                        placeholder="Enter your password"
                         secureTextEntry={!showPassword}
                         style={styles.passwordInput}
                     />
@@ -89,7 +61,7 @@ export default function SignUpScreen() {
                     <TextInput
                         value={confirmPassword}
                         onChangeText={(text) => setConfirmPassword(text)}
-                        placeholder="Confirm Password"
+                        placeholder="Re-Enter your password"
                         secureTextEntry={!showConfirmPassword}
                         style={styles.passwordInput}
                     />
@@ -101,9 +73,9 @@ export default function SignUpScreen() {
                     </TouchableOpacity>
                 </View>
                 <TouchableOpacity style={styles.button} onPress={handleSignUp}>
-                    <Text style={styles.buttonText}>SIGN UP</Text>
+                    <Text style={styles.buttonText}>Continue</Text>
                 </TouchableOpacity>
-            </ImageBackground>
+            </View>
         </SafeAreaView>
     );
 }
@@ -112,23 +84,38 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
-        backgroundColor: '#fff',
+        backgroundColor: '#161E21',
     },
-    background: {
-        flex: 1,
+    header: {
         alignItems: 'center',
-        justifyContent: 'center',
+        marginBottom: 20,
+    },
+    logo: {
+        width: 100,
+        height: 100,
+        marginTop: 20,
+        marginBottom: 10,
     },
     title: {
         fontSize: 24,
         fontWeight: 'bold',
         color: '#fff',
+        marginBottom: 5,
+    },
+    stepIndicator: {
+        fontSize: 14,
+        color: '#fff',
         marginBottom: 20,
+    },
+    formContainer: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
     },
     input: {
         width: 300,
         height: 50,
-        backgroundColor: 'rgba(255, 255, 255, 0.8)', // To make the input fields slightly opaque
+        backgroundColor: '#fff',
         marginBottom: 20,
         padding: 10,
         borderRadius: 10,
@@ -137,7 +124,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         width: 300,
-        backgroundColor: 'rgba(255, 255, 255, 0.8)',
+        backgroundColor: '#fff',
         borderRadius: 10,
         marginBottom: 20,
     },
@@ -153,7 +140,7 @@ const styles = StyleSheet.create({
     button: {
         width: 300,
         height: 50,
-        backgroundColor: '#f8b049',
+        backgroundColor: '#6200ee',
         justifyContent: 'center',
         alignItems: 'center',
         borderRadius: 10,
@@ -164,3 +151,5 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
 });
+
+
