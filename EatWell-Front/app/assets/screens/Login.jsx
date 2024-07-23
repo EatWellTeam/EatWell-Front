@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, SafeAreaView, Image, Platform, StatusBar, StyleSheet, ImageBackground, TextInput, TouchableOpacity } from 'react-native';
+import { View, Text, SafeAreaView, Image, Platform, StatusBar, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons'; // Import Ionicons for the "eye" icon
 
 export default function LoginScreen({ navigation }) {
@@ -14,28 +14,26 @@ export default function LoginScreen({ navigation }) {
 
     return (
         <SafeAreaView style={styles.container}>
-            <ImageBackground 
-                source={{ uri: "https://i.ibb.co/5hGdWDj/Default-Create-a-visually-appealing-background-in-a-soft-muted-3-1.jpg" }} 
-                style={styles.background}
-            >
-                <View style={styles.header}>
-                    <Image 
-                        source={{ uri: 'https://i.ibb.co/3Yv3Hq8/Screenshot-2024-07-20-185504.png' }} 
-                        style={styles.logo} 
-                    />
-                    <Text style={styles.title}>Login Screen</Text>
-                </View>
+            <View style={styles.header}>
+                <Image 
+                    source={{ uri: 'https://i.postimg.cc/rmJCZ5G4/cropped-image.png' }} 
+                    style={styles.logo} 
+                />
+            </View>
+            <View style={styles.formContainer}>
+                <Text style={styles.welcomeText}>Welcome Back!</Text>
+                <Text style={styles.loginPrompt}>Log in to continue your journey</Text>
                 <TextInput
                     value={email}
                     onChangeText={(text) => setEmail(text)}
-                    placeholder="Email"
+                    placeholder="Enter your email"
                     style={styles.input}
                 />
                 <View style={styles.passwordContainer}>
                     <TextInput
                         value={password}
                         onChangeText={(text) => setPassword(text)}
-                        placeholder="Password"
+                        placeholder="Enter your password"
                         secureTextEntry={!showPassword}
                         style={styles.passwordInput}
                     />
@@ -46,10 +44,12 @@ export default function LoginScreen({ navigation }) {
                         <Ionicons name={showPassword ? "eye-off" : "eye"} size={24} color="gray" />
                     </TouchableOpacity>
                 </View>
+                <Text style={styles.forgotPassword}>forgot password?</Text>
                 <TouchableOpacity style={styles.button} onPress={handleContinue}>
-                    <Text style={styles.buttonText}>CONTINUE</Text>
+                    <Text style={styles.buttonText}>Login</Text>
                 </TouchableOpacity>
-            </ImageBackground>
+                <Text style={styles.signupPrompt}>Don't have an account? <Text style={styles.signupText}>Sign Up</Text></Text>
+            </View>
         </SafeAreaView>
     );
 }
@@ -58,33 +58,38 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
-        backgroundColor: '#fff',
-    },
-    background: {
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
+        backgroundColor: '#161E21',
     },
     header: {
         alignItems: 'center',
         marginBottom: 20,
     },
     logo: {
-        width: 100,
-        height: 100,
-        borderRadius: 50,
-        marginBottom: 20,
+        width: 150,
+        height: 150,
+        marginTop: 20,
     },
-    title: {
+    formContainer: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    welcomeText: {
         fontSize: 24,
         fontWeight: 'bold',
         color: '#fff',
-        marginBottom: 20,
+        marginBottom: 5,
+        marginTop: 20, // Add space between logo and welcome text
+    },
+    loginPrompt: {
+        fontSize: 16,
+        color: '#fff',
+        marginBottom: 30,
     },
     input: {
         width: 300,
         height: 50,
-        backgroundColor: 'rgba(255, 255, 255, 0.8)', // To make the input fields slightly opaque
+        backgroundColor: '#fff',
         marginBottom: 20,
         padding: 10,
         borderRadius: 10,
@@ -93,7 +98,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         width: 300,
-        backgroundColor: 'rgba(255, 255, 255, 0.8)',
+        backgroundColor: '#fff',
         borderRadius: 10,
         marginBottom: 20,
     },
@@ -106,10 +111,16 @@ const styles = StyleSheet.create({
     eyeIcon: {
         padding: 10,
     },
+    forgotPassword: {
+        color: '#fff',
+        marginBottom: 20,
+        alignSelf: 'flex-end',
+        marginRight: 40,
+    },
     button: {
         width: 300,
         height: 50,
-        backgroundColor: '#f8b049',
+        backgroundColor: '#6200ee',
         justifyContent: 'center',
         alignItems: 'center',
         borderRadius: 10,
@@ -119,4 +130,12 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: 'bold',
     },
+    signupPrompt: {
+        color: '#fff',
+        marginTop: 20,
+    },
+    signupText: {
+        color: '#6200ee',
+    },
 });
+
