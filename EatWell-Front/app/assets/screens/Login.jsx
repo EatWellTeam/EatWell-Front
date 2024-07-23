@@ -1,11 +1,16 @@
-import { useState } from 'react';
-import { View, Text, Button, SafeAreaView, Platform, StatusBar, StyleSheet, ImageBackground, TextInput, TouchableOpacity } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, SafeAreaView, Image, Platform, StatusBar, StyleSheet, ImageBackground, TextInput, TouchableOpacity } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons'; // Import Ionicons for the "eye" icon
 
-export default function LoginScreen() {
+export default function LoginScreen({ navigation }) {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [showPassword, setShowPassword] = useState(false); // State to toggle password visibility
+
+    const handleContinue = () => {
+        // Add any validation or API calls here
+        navigation.navigate('EditProfile');
+    };
 
     return (
         <SafeAreaView style={styles.container}>
@@ -13,7 +18,13 @@ export default function LoginScreen() {
                 source={{ uri: "https://i.ibb.co/5hGdWDj/Default-Create-a-visually-appealing-background-in-a-soft-muted-3-1.jpg" }} 
                 style={styles.background}
             >
-                <Text style={styles.title}>Login Screen</Text>
+                <View style={styles.header}>
+                    <Image 
+                        source={{ uri: 'https://i.ibb.co/3Yv3Hq8/Screenshot-2024-07-20-185504.png' }} 
+                        style={styles.logo} 
+                    />
+                    <Text style={styles.title}>Login Screen</Text>
+                </View>
                 <TextInput
                     value={email}
                     onChangeText={(text) => setEmail(text)}
@@ -35,7 +46,7 @@ export default function LoginScreen() {
                         <Ionicons name={showPassword ? "eye-off" : "eye"} size={24} color="gray" />
                     </TouchableOpacity>
                 </View>
-                <TouchableOpacity style={styles.button} onPress={() => console.log("signing up")}>
+                <TouchableOpacity style={styles.button} onPress={handleContinue}>
                     <Text style={styles.buttonText}>CONTINUE</Text>
                 </TouchableOpacity>
             </ImageBackground>
@@ -53,6 +64,16 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
+    },
+    header: {
+        alignItems: 'center',
+        marginBottom: 20,
+    },
+    logo: {
+        width: 100,
+        height: 100,
+        borderRadius: 50,
+        marginBottom: 20,
     },
     title: {
         fontSize: 24,
