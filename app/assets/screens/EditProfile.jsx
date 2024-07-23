@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, SafeAreaView, TextInput, StyleSheet, TouchableOpacity, ImageBackground, ScrollView } from 'react-native';
+import { View, Text, SafeAreaView, TextInput, StyleSheet, TouchableOpacity, ImageBackground, ScrollView, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native'; // Import useNavigation hook
 
 const EditProfile = () => {
@@ -12,9 +12,18 @@ const EditProfile = () => {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <ImageBackground source={{ uri: 'https://i.ibb.co/pvY7xcx/Default-Create-a-background-image-similar-to-the-image-you-mad-3.jpg' }} style={styles.background}>
+      <ImageBackground 
+        source={{ uri: 'https://i.ibb.co/pvY7xcx/Default-Create-a-background-image-similar-to-the-image-you-mad-3.jpg' }} 
+        style={styles.background}
+      >
         <ScrollView contentContainerStyle={styles.container}>
-          <Text style={styles.title}>Edit Your Profile</Text>
+          <View style={styles.header}>
+            <Image 
+              source={{ uri: 'https://i.ibb.co/3Yv3Hq8/Screenshot-2024-07-20-185504.png' }} 
+              style={styles.logo} 
+            />
+            <Text style={styles.title}>Edit Your Profile</Text>
+          </View>
           <TextInput style={styles.input} placeholder="First Name: " />
           <TextInput style={styles.input} placeholder="Last Name: " />
           <TextInput style={styles.input} placeholder="Email: " keyboardType="email-address" />
@@ -45,12 +54,22 @@ const styles = StyleSheet.create({
     padding: 20,
     alignItems: 'center',  // Center content horizontally
   },
+  header: {
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  logo: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    marginBottom: 20,
+  },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
     color: '#fff',
     textAlign: 'center',
-    marginVertical: 20,
+    marginBottom: 20,
   },
   input: {
     backgroundColor: '#fff',

@@ -7,7 +7,8 @@ const Recipes = () => {
     <ImageBackground source={{ uri: 'https://i.ibb.co/pvY7xcx/Default-Create-a-background-image-similar-to-the-image-you-mad-3.jpg' }} style={styles.background}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <View style={styles.header}>
-          <Text style={styles.headerText}>Recepies</Text>
+          <Image source={{ uri: 'https://i.ibb.co/3Yv3Hq8/Screenshot-2024-07-20-185504.png' }} style={styles.logo} />
+          <Text style={styles.headerText}>Recipes</Text>
         </View>
 
         <View style={styles.category}>
@@ -61,10 +62,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginVertical: 20,
   },
+  logo: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+  },
   headerText: {
     fontSize: 24,
     fontWeight: 'bold',
     color: '#fff',
+    marginTop: 10,
   },
   category: {
     marginVertical: 10,
