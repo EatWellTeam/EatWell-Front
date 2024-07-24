@@ -13,6 +13,7 @@ import Register2 from './app/assets/screens/Register2';
 import Register3 from './app/assets/screens/Register3';
 import Register4 from './app/assets/screens/Register4';
 import Register5 from './app/assets/screens/Register5';
+import TrackCalories from './app/assets/screens/TrackCalories';
 
 
 const Stack = createNativeStackNavigator();
@@ -33,6 +34,8 @@ function App() {
         <Stack.Screen name="UserDetails" component={UserDetailsScreen} />
         <Stack.Screen name="EditProfile" component={EditProfile} />
         <Stack.Screen name="Recipes" component={Recipes} /> 
+        <Stack.Screen name="TrackCalories" component={TrackCalories} />
+        
       </Stack.Navigator>
     </NavigationContainer>
   );

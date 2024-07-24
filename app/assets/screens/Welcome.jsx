@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { View, Text, SafeAreaView, TouchableOpacity, Image, Platform, StyleSheet, Button, Dimensions, ImageBackground } from 'react-native';
+import { View, Text, SafeAreaView, TouchableOpacity, Image, Platform, StyleSheet, Dimensions } from 'react-native';
 
 export default function HomeScreen({ navigation }) {
     const [dimensions, setDimensions] = useState(Dimensions.get("window"));
@@ -16,10 +16,7 @@ export default function HomeScreen({ navigation }) {
 
     return (
         <SafeAreaView style={[styles.container, { width: dimensions.width, height: dimensions.height }]}>
-            <ImageBackground 
-                source={{ uri: "https://i.ibb.co/pvY7xcx/Default-Create-a-background-image-similar-to-the-image-you-mad-3.jpg" }} 
-                style={styles.background}
-            >
+            <View style={styles.content}>
                 <Text style={styles.title}></Text>
                 <TouchableOpacity onPress={() => console.log('Logo pressed')}>
                     <Image
@@ -28,23 +25,15 @@ export default function HomeScreen({ navigation }) {
                     />
                 </TouchableOpacity>
                 <View style={{ marginTop: 50 }}></View>
-                <View style={styles.buttonContainer}>
-                    <Button
-                        title="Log in"
-                        onPress={() => navigation.navigate('Login')}
-                        color="#f8b049"
-                    />
-                </View>
+                <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Login')}>
+                    <Text style={styles.buttonText}>Login</Text>
+                </TouchableOpacity>
                 <View style={{ marginTop: 20 }}></View>
-                <View style={styles.buttonContainer}>
-                    <Button
-                        title="Sign up"
-                        onPress={() => navigation.navigate('SignUp')} // Update navigation here
-                        color="#f8b049"
-                    />
-                </View>
+                <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('SignUp')}>
+                    <Text style={styles.buttonText}>Sign Up</Text>
+                </TouchableOpacity>
                 <View style={{ marginTop: 50 }}></View>
-            </ImageBackground>
+            </View>
         </SafeAreaView>
     );
 }
@@ -53,9 +42,9 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
-        backgroundColor: '#fff',
+        backgroundColor: '#161E21',
     },
-    background: {
+    content: {
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
@@ -71,8 +60,16 @@ const styles = StyleSheet.create({
         height: 300,
         borderRadius: 150,
     },
-    buttonContainer: {
-        width: 300,
+    button: {
+        width: 200,
         height: 50,
+        backgroundColor: '#1E9947',
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: 25, // Make the button round
+    },
+    buttonText: {
+        color: '#fff',
+        fontSize: 25,
     },
 });

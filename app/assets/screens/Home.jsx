@@ -1,6 +1,6 @@
 import * as ImagePicker from 'expo-image-picker';
 import { useEffect, useState } from 'react';
-import { Alert, View, Button, StyleSheet, TouchableOpacity, Text, ImageBackground } from 'react-native';
+import { Alert, View, StyleSheet, TouchableOpacity, Text } from 'react-native';
 import imageUpload from '../../../services/imageUpload';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -82,8 +82,12 @@ export default function Home({ navigation }) {
     navigation.navigate('Welcome');
   }
 
+  const handleDescribeMealManually = () => {
+    navigation.navigate('TrackCalories');
+  }
+
   return (
-    <ImageBackground source={{ uri: 'https://i.ibb.co/pvY7xcx/Default-Create-a-background-image-similar-to-the-image-you-mad-3.jpg' }} style={styles.background}>
+    <View style={styles.background}>
       <View style={styles.container}>
         <View style={styles.signOutContainer}>
           <TouchableOpacity style={styles.signOutButton} onPress={signOut}>
@@ -91,17 +95,18 @@ export default function Home({ navigation }) {
           </TouchableOpacity>
         </View>
         
-
-    
         <View style={styles.buttonContainer}>
           <View style={{padding: 20}}>
             <CircularProgress progress={0.5}/>
-        </View>
+          </View>
           <TouchableOpacity style={styles.button} onPress={openCamera}>
             <Text style={styles.buttonText}>Open Camera</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.button} onPress={openGallery}>
             <Text style={styles.buttonText}>Open Gallery</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.button} onPress={handleDescribeMealManually}>
+            <Text style={styles.buttonText}>Describe Meal Manually</Text>
           </TouchableOpacity>
           {image && (
             <TouchableOpacity style={styles.button} onPress={analyze}>
@@ -110,14 +115,14 @@ export default function Home({ navigation }) {
           )}
         </View>
       </View>
-    </ImageBackground>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   background: {
     flex: 1,
-    resizeMode: 'cover',
+    backgroundColor: '#161E21',
   },
   container: {
     flex: 1,
@@ -129,7 +134,7 @@ const styles = StyleSheet.create({
     right: 20,
   },
   signOutButton: {
-    backgroundColor: '#f8b049',
+    backgroundColor: '#1E9947',
     padding: 10,
     borderRadius: 5,
   },
@@ -143,7 +148,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   button: {
-    backgroundColor: '#f8b049',
+    backgroundColor: '#1E9947',
     paddingVertical: 15,
     paddingHorizontal: 25,
     borderRadius: 5,
@@ -155,3 +160,5 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
 });
+
+
