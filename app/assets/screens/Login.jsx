@@ -16,6 +16,10 @@ export default function LoginScreen({ navigation }) {
         navigation.navigate('SignUp');
     };
 
+    const handleForgotPassword = () => {
+        navigation.navigate('ForgotPassword'); // Navigate to the ForgotPassword page
+    };
+
     return (
         <SafeAreaView style={styles.container}>
             <ScrollView contentContainerStyle={styles.scrollContainer}>
@@ -49,7 +53,7 @@ export default function LoginScreen({ navigation }) {
                             <Ionicons name={showPassword ? "eye-off" : "eye"} size={24} color="gray" />
                         </TouchableOpacity>
                     </View>
-                    <Text style={styles.forgotPassword}>Forgot password?</Text>
+                    <Text style={styles.forgotPassword} onPress={handleForgotPassword}>Forgot password?</Text>
                     <TouchableOpacity style={styles.button} onPress={handleContinue}>
                         <Text style={styles.buttonText}>Login</Text>
                     </TouchableOpacity>

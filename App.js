@@ -9,11 +9,15 @@ import AnalasysResult from './app/assets/screens/AnalasysResult';
 import UserDetailsScreen from './app/assets/screens/UserDetails';
 import EditProfile from './app/assets/screens/EditProfile'; // Import the EditProfile component
 import Recipes from './app/assets/screens/Recipes'; // Import the Recipes component
+import RecipeDetail from './app/assets/screens/RecipeDetail'; // Import the RecipeDetail component
 import Register2 from './app/assets/screens/Register2';
 import Register3 from './app/assets/screens/Register3';
 import Register4 from './app/assets/screens/Register4';
 import Register5 from './app/assets/screens/Register5';
 import TrackCalories from './app/assets/screens/TrackCalories';
+import ForgotPassword from './app/assets/screens/ForgotPassword';
+import EmailSent from './app/assets/screens/EmailSent'; 
+
 
 
 const Stack = createNativeStackNavigator();
@@ -34,7 +38,10 @@ function App() {
         <Stack.Screen name="UserDetails" component={UserDetailsScreen} />
         <Stack.Screen name="EditProfile" component={EditProfile} />
         <Stack.Screen name="Recipes" component={Recipes} /> 
+        <Stack.Screen name="RecipeDetail" component={RecipeDetail} />
         <Stack.Screen name="TrackCalories" component={TrackCalories} />
+        <Stack.Screen name="ForgotPassword" component={ForgotPassword} />
+        <Stack.Screen name="EmailSent" component={EmailSent} /> 
         
       </Stack.Navigator>
     </NavigationContainer>
