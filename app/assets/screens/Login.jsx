@@ -149,6 +149,6 @@ const styles = StyleSheet.create({
         marginTop: 20,
     },
     signupText: {
-        color: '#6200ee',
+        color: '#1E9947',
     },
 });
