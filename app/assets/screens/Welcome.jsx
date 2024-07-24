@@ -20,7 +20,7 @@ export default function HomeScreen({ navigation }) {
                 <Text style={styles.title}></Text>
                 <TouchableOpacity onPress={() => console.log('Logo pressed')}>
                     <Image
-                        source={{ uri: "https://i.postimg.cc/cLXvz2BL/cropped-image-8.png" }}
+                        source={{ uri: "https://i.postimg.cc/HxgKzxMj/cropped-image-11.png" }}
                         style={styles.image}
                     />
                 </TouchableOpacity>

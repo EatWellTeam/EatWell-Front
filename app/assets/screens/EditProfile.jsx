@@ -78,7 +78,7 @@ const EditProfile = () => {
       <ScrollView contentContainerStyle={styles.container}>
         <View style={styles.header}>
           <TouchableOpacity style={styles.editPicButton} onPress={pickImage}>
-            <Image source={{ uri: 'https://i.postimg.cc/VsKZqCKb/cropped-image-2.png' }} style={styles.editPicIcon} />
+            <Image source={{ uri: 'https://i.postimg.cc/HxgKzxMj/cropped-image-11.png' }} style={styles.editPicIcon} />
           </TouchableOpacity>
         </View>
         <Text style={styles.title}>Profile</Text>

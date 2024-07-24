@@ -19,7 +19,7 @@ export default function Register3Screen() {
         <SafeAreaView style={styles.container}>
             <View style={styles.header}>
                 <Image 
-                    source={{ uri: 'https://i.postimg.cc/cLXvz2BL/cropped-image-8.png' }} 
+                    source={{ uri: 'https://i.postimg.cc/HxgKzxMj/cropped-image-11.png' }} 
                     style={styles.logo} 
                 />
                 <Text style={styles.title}>Register</Text>
