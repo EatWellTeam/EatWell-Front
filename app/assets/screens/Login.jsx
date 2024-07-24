@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, SafeAreaView, Image, Platform, StatusBar, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
+import { View, Text, SafeAreaView, Image, Platform, StatusBar, StyleSheet, TextInput, TouchableOpacity, ScrollView } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons'; // Import Ionicons for the "eye" icon
 
 export default function LoginScreen({ navigation }) {
@@ -12,44 +12,55 @@ export default function LoginScreen({ navigation }) {
         navigation.navigate('EditProfile');
     };
 
+    const handleSignUp = () => {
+        navigation.navigate('SignUp');
+    };
+
     return (
         <SafeAreaView style={styles.container}>
-            <View style={styles.header}>
-                <Image 
-                    source={{ uri: 'https://i.postimg.cc/cLXvz2BL/cropped-image-8.png' }} 
-                    style={styles.logo} 
-                />
-            </View>
-            <View style={styles.formContainer}>
-                <Text style={styles.welcomeText}>Welcome Back!</Text>
-                <Text style={styles.loginPrompt}>Log in to continue your journey</Text>
-                <TextInput
-                    value={email}
-                    onChangeText={(text) => setEmail(text)}
-                    placeholder="Enter your email"
-                    style={styles.input}
-                />
-                <View style={styles.passwordContainer}>
-                    <TextInput
-                        value={password}
-                        onChangeText={(text) => setPassword(text)}
-                        placeholder="Enter your password"
-                        secureTextEntry={!showPassword}
-                        style={styles.passwordInput}
+            <ScrollView contentContainerStyle={styles.scrollContainer}>
+                <View style={styles.header}>
+                    <Image 
+                        source={{ uri: 'https://i.postimg.cc/cLXvz2BL/cropped-image-8.png' }} 
+                        style={styles.logo} 
                     />
-                    <TouchableOpacity
-                        style={styles.eyeIcon}
-                        onPress={() => setShowPassword(!showPassword)}
-                    >
-                        <Ionicons name={showPassword ? "eye-off" : "eye"} size={24} color="gray" />
-                    </TouchableOpacity>
                 </View>
-                <Text style={styles.forgotPassword}>forgot password?</Text>
-                <TouchableOpacity style={styles.button} onPress={handleContinue}>
-                    <Text style={styles.buttonText}>Login</Text>
-                </TouchableOpacity>
-                <Text style={styles.signupPrompt}>Don't have an account? <Text style={styles.signupText}>Sign Up</Text></Text>
-            </View>
+                <View style={styles.formContainer}>
+                    <Text style={styles.welcomeText}>Welcome Back!</Text>
+                    <Text style={styles.loginPrompt}>Log in to continue your journey</Text>
+                    <TextInput
+                        value={email}
+                        onChangeText={(text) => setEmail(text)}
+                        placeholder="Enter your email"
+                        style={styles.input}
+                    />
+                    <View style={styles.passwordContainer}>
+                        <TextInput
+                            value={password}
+                            onChangeText={(text) => setPassword(text)}
+                            placeholder="Enter your password"
+                            secureTextEntry={!showPassword}
+                            style={styles.passwordInput}
+                        />
+                        <TouchableOpacity
+                            style={styles.eyeIcon}
+                            onPress={() => setShowPassword(!showPassword)}
+                        >
+                            <Ionicons name={showPassword ? "eye-off" : "eye"} size={24} color="gray" />
+                        </TouchableOpacity>
+                    </View>
+                    <Text style={styles.forgotPassword}>Forgot password?</Text>
+                    <TouchableOpacity style={styles.button} onPress={handleContinue}>
+                        <Text style={styles.buttonText}>Login</Text>
+                    </TouchableOpacity>
+                    <Text style={styles.signupPrompt}>
+                        Don't have an account?{" "}
+                        <Text style={styles.signupText} onPress={handleSignUp}>
+                            Sign Up
+                        </Text>
+                    </Text>
+                </View>
+            </ScrollView>
         </SafeAreaView>
     );
 }
@@ -59,6 +70,11 @@ const styles = StyleSheet.create({
         flex: 1,
         paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
         backgroundColor: '#161E21',
+    },
+    scrollContainer: {
+        flexGrow: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     header: {
         alignItems: 'center',
@@ -70,9 +86,7 @@ const styles = StyleSheet.create({
         marginTop: 20,
     },
     formContainer: {
-        flex: 1,
         alignItems: 'center',
-        justifyContent: 'center',
     },
     welcomeText: {
         fontSize: 24,
@@ -138,4 +152,3 @@ const styles = StyleSheet.create({
         color: '#6200ee',
     },
 });
-
