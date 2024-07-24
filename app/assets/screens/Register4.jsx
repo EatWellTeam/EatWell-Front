@@ -17,7 +17,7 @@ export default function Register4Screen() {
             <ScrollView contentContainerStyle={styles.scrollContainer}>
                 <View style={styles.header}>
                     <Image 
-                        source={{ uri: 'https://i.postimg.cc/rmJCZ5G4/cropped-image.png' }} 
+                        source={{ uri: 'https://i.postimg.cc/cLXvz2BL/cropped-image-8.png' }} 
                         style={styles.logo} 
                     />
                     <Text style={styles.title}>Register</Text>
@@ -104,7 +104,7 @@ const styles = StyleSheet.create({
         marginBottom: 20,
     },
     optionButtonSelected: {
-        backgroundColor: '#6200ee',
+        backgroundColor: '#1E9947',
     },
     optionText: {
         color: '#000',
@@ -114,7 +114,7 @@ const styles = StyleSheet.create({
     button: {
         width: 300,
         height: 50,
-        backgroundColor: '#6200ee',
+        backgroundColor: '#1E9947',
         justifyContent: 'center',
         alignItems: 'center',
         borderRadius: 10,

@@ -5,7 +5,7 @@ const Recipes = () => {
   return (
     <ScrollView contentContainerStyle={styles.scrollContainer}>
       <View style={styles.header}>
-        <Image source={{ uri: 'https://i.postimg.cc/rmJCZ5G4/cropped-image.png' }} style={styles.logo} />
+        <Image source={{ uri: 'https://i.postimg.cc/cLXvz2BL/cropped-image-8.png' }} style={styles.logo} />
         <Text style={styles.headerText}>Recepies</Text>
       </View>
 
