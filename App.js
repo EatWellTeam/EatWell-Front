@@ -14,6 +14,7 @@ import Register2 from './app/assets/screens/Register2';
 import Register3 from './app/assets/screens/Register3';
 import Register4 from './app/assets/screens/Register4';
 import Register5 from './app/assets/screens/Register5';
+import Register6 from './app/assets/screens/Register6';
 import TrackCalories from './app/assets/screens/TrackCalories';
 import ForgotPassword from './app/assets/screens/ForgotPassword';
 import EmailSent from './app/assets/screens/EmailSent'; 
@@ -25,7 +26,7 @@ const Stack = createNativeStackNavigator();
 function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName='Home'>
+      <Stack.Navigator initialRouteName='Register6'>
         <Stack.Screen name="Welcome" component={HomeScreen} />
         <Stack.Screen name="Home" component={Home} />
         <Stack.Screen name="Login" component={LoginScreen} />
@@ -34,6 +35,7 @@ function App() {
         <Stack.Screen name="Register3" component={Register3} />
         <Stack.Screen name="Register4" component={Register4} />
         <Stack.Screen name="Register5" component={Register5} />
+        <Stack.Screen name="Register6" component={Register6} />
         <Stack.Screen name="AnalasysResult" component={AnalasysResult} />
         <Stack.Screen name="UserDetails" component={UserDetailsScreen} />
         <Stack.Screen name="EditProfile" component={EditProfile} />

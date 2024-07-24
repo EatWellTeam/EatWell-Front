@@ -9,7 +9,7 @@ export default function Register5Screen() {
     const handleContinue = () => {
         // Add any validation or API calls here
         console.log("Registering:", { activityLevel });
-        navigation.navigate('Home'); // Navigate to Home screen
+        navigation.navigate('Register6'); // Navigate to Home screen
     };
 
     return (
