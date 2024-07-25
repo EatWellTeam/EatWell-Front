@@ -25,6 +25,7 @@ export default function Home({ navigation }) {
     if (!result.canceled) {
       const uri = result.assets[0].uri;
       setImage(uri);
+      console.log('Image selected from camera:', uri);
     }
   }
 
@@ -45,6 +46,7 @@ export default function Home({ navigation }) {
     if (!result.canceled) {
       const uri = result.assets[0].uri;
       setImage(uri);
+      console.log('Image selected from gallery:', uri);
     }
   }
 
@@ -67,17 +69,51 @@ export default function Home({ navigation }) {
   }, []);
 
   const analyze = async () => {
-    try {
-      const url = await imageUpload(image);
-      console.log(url);
-      const { data } = await axios.post('http://192.168.1.17:3000/middleware/process', [{ content: [{ type: "image_url", image_url: { url } }], role: "user" }]);
-      console.log(data);
-      
-      navigation.navigate('AnalysisResult', { results: { results: data, image: url } });
-    } catch (e) {
-      console.log(e.message);
+    if (!image) {
+        Alert.alert('No image selected', 'Please select an image first.');
+        return;
     }
-  }
+
+    try {
+        console.log('Uploading image:', image);
+        const url = await imageUpload(image);
+        console.log('Image uploaded, URL:', url);
+
+        const payload = {
+            content: [
+                {
+                    type: "image_url",
+                    image_url: {
+                        url
+                    }
+                }
+            ],
+            role: "user"
+        };
+
+        const { data } = await axios.post('http://192.168.1.17:3000/middleware/process', [payload], {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        console.log('Analysis data received:', data);
+        navigation.navigate('AnalysisResult', { results: { results: data, image: url } });
+    } catch (e) {
+        console.error('Error during analysis:', e.message);
+        if (e.response) {
+            console.error('Server responded with:', e.response.data);
+            Alert.alert('Server Error', JSON.stringify(e.response.data));
+        } else if (e.request) {
+            console.error('Request made but no response received:', e.request);
+            Alert.alert('Network Error', 'Request was made but no response received.');
+        } else {
+            console.error('Error setting up request:', e.message);
+            Alert.alert('Error', e.message);
+        }
+    }
+}
+
 
   const signOut = () => {
     navigation.navigate('Welcome');
@@ -90,8 +126,6 @@ export default function Home({ navigation }) {
   return (
     <View style={styles.background}>
       <View style={styles.container}>
-      
-
         <View style={styles.signOutContainer}>
           <TouchableOpacity style={styles.signOutButton} onPress={signOut}>
             <Text style={styles.signOutText}>Sign Out</Text>
