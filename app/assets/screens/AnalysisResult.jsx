@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { View, Text, StyleSheet, Image, ScrollView } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-export default function AnalasysResult({ navigation, route }) {
+export default function AnalysisResult({ navigation, route }) {
   const { results } = route.params
 
   const Fat = useMemo(() => { 
@@ -18,7 +18,7 @@ export default function AnalasysResult({ navigation, route }) {
     else return  results.results.nutritionData?.totalNutrients["PROCNT"]
   },[results])
 
-  /*useEffect(() => {
+  useEffect(() => {
     const fetchResultsLocally = async () => {
       if (!results) {
         const storedResults = await AsyncStorage.getItem("results");
@@ -29,7 +29,7 @@ export default function AnalasysResult({ navigation, route }) {
       }
     };
     fetchResultsLocally();
-  }, []);*/
+  }, []);
 
   if (!results || !Protein || !Carbs || !Fat) {
     return null;

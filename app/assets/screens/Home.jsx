@@ -69,10 +69,11 @@ export default function Home({ navigation }) {
   const analyze = async () => {
     try {
       const url = await imageUpload(image);
-
+      console.log(url);
       const { data } = await axios.post('http://192.168.1.17:3000/middleware/process', [{ content: [{ type: "image_url", image_url: { url } }], role: "user" }]);
-
-      navigation.navigate('AnalasysResult', { results: { results: data, image: url } });
+      console.log(data);
+      
+      navigation.navigate('AnalysisResult', { results: { results: data, image: url } });
     } catch (e) {
       console.log(e.message);
     }

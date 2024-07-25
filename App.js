@@ -5,7 +5,7 @@ import HomeScreen from './app/assets/screens/Welcome';
 import Home from './app/assets/screens/Home';
 import LoginScreen from './app/assets/screens/Login';
 import SignUpScreen from './app/assets/screens/SignUp';
-import AnalasysResult from './app/assets/screens/AnalasysResult';
+import AnalysisResult from './app/assets/screens/AnalysisResult';
 import UserDetailsScreen from './app/assets/screens/UserDetails';
 import EditProfile from './app/assets/screens/EditProfile'; // Import the EditProfile component
 import Recipes from './app/assets/screens/Recipes'; // Import the Recipes component
@@ -36,7 +36,7 @@ function App() {
         <Stack.Screen name="Register4" component={Register4} />
         <Stack.Screen name="Register5" component={Register5} />
         <Stack.Screen name="Register6" component={Register6} />
-        <Stack.Screen name="AnalasysResult" component={AnalasysResult} />
+        <Stack.Screen name="AnalysisResult" component={AnalysisResult} />
         <Stack.Screen name="UserDetails" component={UserDetailsScreen} />
         <Stack.Screen name="EditProfile" component={EditProfile} />
         <Stack.Screen name="Recipes" component={Recipes} /> 
