@@ -9,7 +9,7 @@ export default function RecipeDetail({ route, navigation }) {
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <View style={styles.header}>
           <Image 
-            source={{ uri: 'hhttps://i.postimg.cc/HxgKzxMj/cropped-image-11.png' }} 
+            source={{ uri: 'https://i.postimg.cc/HxgKzxMj/cropped-image-11.png' }} 
             style={styles.logo} 
           />
         </View>
