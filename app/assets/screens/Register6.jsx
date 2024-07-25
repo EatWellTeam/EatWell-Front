@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, SafeAreaView, StyleSheet, Platform, StatusBar, Animated, TouchableOpacity, Image } from 'react-native';
 import Svg, { Circle } from 'react-native-svg';
 import { useNavigation } from '@react-navigation/native'; // Import the useNavigation hook
+import Ionicons from 'react-native-vector-icons/Ionicons'; // Import Ionicons for the "eye" icon
 
 export default function Register6Screen() {
     const [calories, setCalories] = useState(0);
@@ -36,6 +37,9 @@ export default function Register6Screen() {
 
     return (
         <SafeAreaView style={styles.container}>
+            <TouchableOpacity style={styles.backButton} onPress={() => navigation.navigate('Register5')}>
+                <Ionicons name="arrow-back" size={24} color="#fff" />
+            </TouchableOpacity>
             <View style={styles.header}>
                 <Image 
                     source={{ uri: 'https://i.postimg.cc/HxgKzxMj/cropped-image-11.png' }} 
@@ -86,9 +90,21 @@ const styles = StyleSheet.create({
         paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
         paddingHorizontal: 20, // Added for better spacing
     },
+    backButton: {
+        position: 'absolute',
+        top: Platform.OS === 'android' ? StatusBar.currentHeight : 40,
+        left: 20,
+        padding: 10,
+        borderRadius: 5,
+    },
+    backButtonText: {
+        color: '#fff',
+        fontWeight: 'bold',
+        fontSize: 20,
+    },
     header: {
         position: 'absolute',
-        top: 20,
+        top: 60,
         alignItems: 'center',
         width: '100%',
     },

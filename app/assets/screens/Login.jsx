@@ -22,6 +22,11 @@ export default function LoginScreen({ navigation }) {
 
     return (
         <SafeAreaView style={styles.container}>
+            {/* Custom Back Button */}
+            <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+                <Ionicons name="arrow-back" size={24} color="#fff" />
+            </TouchableOpacity>
+
             <ScrollView contentContainerStyle={styles.scrollContainer}>
                 <View style={styles.header}>
                     <Image 
@@ -79,6 +84,19 @@ const styles = StyleSheet.create({
         flexGrow: 1,
         justifyContent: 'center',
         alignItems: 'center',
+    },
+    backButton: {
+        position: 'absolute',
+        top: 40,
+        left: 20,
+        zIndex: 1, // Ensure the back button is on top
+        padding: 10,
+        borderRadius: 5,
+    },
+    backButtonText: {
+        color: '#fff',
+        fontWeight: 'bold',
+        fontSize: 20,
     },
     header: {
         alignItems: 'center',

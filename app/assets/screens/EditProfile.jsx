@@ -76,6 +76,11 @@ const EditProfile = () => {
   return (
     <SafeAreaView style={styles.safeArea}>
       <ScrollView contentContainerStyle={styles.container}>
+        {/* Custom Back Button */}
+        <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+            <Ionicons name="arrow-back" size={24} color="#fff" />
+        </TouchableOpacity>
+
         <View style={styles.header}>
           <TouchableOpacity style={styles.editPicButton} onPress={pickImage}>
             <Image source={{ uri: 'https://i.postimg.cc/VsKZqCKb/cropped-image-2.png' }} style={styles.editPicIcon} />
@@ -167,6 +172,18 @@ const styles = StyleSheet.create({
   container: {
     padding: 20,
     alignItems: 'center',  // Center content horizontally
+  },
+  backButton: {
+    position: 'absolute',
+    top: 40,
+    left: 20,
+    padding: 10,
+    borderRadius: 5,
+  },
+  backButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 20,
   },
   header: {
     alignItems: 'center',

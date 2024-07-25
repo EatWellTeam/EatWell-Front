@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, SafeAreaView, StyleSheet, TextInput, TouchableOpacity, Platform, StatusBar, Image } from 'react-native';
+import Ionicons from 'react-native-vector-icons/Ionicons'; // Import Ionicons
 
 const TrackCalories = ({ navigation }) => {
   const [mealDescription, setMealDescription] = useState('');
@@ -12,6 +13,9 @@ const TrackCalories = ({ navigation }) => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
+        <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+          <Ionicons name="arrow-back" size={24} color="#fff" />
+        </TouchableOpacity>
         <Image 
           source={{ uri: 'https://i.postimg.cc/HxgKzxMj/cropped-image-11.png' }} 
           style={styles.logo} 
@@ -51,9 +55,22 @@ const styles = StyleSheet.create({
     paddingTop: 20,
     backgroundColor: '#161E21',
   },
+  backButton: {
+    position: 'absolute',
+    top: Platform.OS === 'android' ? StatusBar.currentHeight : 40,
+    left: 20,
+    padding: 10,
+    borderRadius: 5,
+  },
+  backButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 20,
+  },
   logo: {
     width: 150,
     height: 150,
+    marginTop: 40,
   },
   content: {
     width: '80%',

@@ -27,6 +27,11 @@ export default function SignUpScreen() {
 
     return (
         <SafeAreaView style={styles.container}>
+            {/* Custom Back Button */}
+            <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+              <Ionicons name="arrow-back" size={24} color="#fff" />
+            </TouchableOpacity>
+
             <View style={styles.header}>
                 <Image 
                     source={{ uri: 'https://i.postimg.cc/HxgKzxMj/cropped-image-11.png' }} 
@@ -85,6 +90,19 @@ const styles = StyleSheet.create({
         flex: 1,
         paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
         backgroundColor: '#161E21',
+    },
+    backButton: {
+        position: 'absolute',
+        top: 40,
+        left: 20,
+        zIndex: 1, // Ensure the back button is on top
+        padding: 10,
+        borderRadius: 5,
+    },
+    backButtonText: {
+        color: '#fff',
+        fontWeight: 'bold',
+        fontSize: 20,
     },
     header: {
         alignItems: 'center',
@@ -151,5 +169,3 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
 });
-
-

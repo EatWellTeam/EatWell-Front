@@ -90,6 +90,8 @@ export default function Home({ navigation }) {
   return (
     <View style={styles.background}>
       <View style={styles.container}>
+      
+
         <View style={styles.signOutContainer}>
           <TouchableOpacity style={styles.signOutButton} onPress={signOut}>
             <Text style={styles.signOutText}>Sign Out</Text>
@@ -161,5 +163,3 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
 });
-
-

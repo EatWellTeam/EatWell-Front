@@ -1,11 +1,18 @@
 import React from 'react';
 import { View, Text, SafeAreaView, Image, StyleSheet, TouchableOpacity, Platform, StatusBar, ScrollView } from 'react-native';
+import Ionicons from 'react-native-vector-icons/Ionicons'; 
+
 
 export default function RecipeDetail({ route, navigation }) {
   const { recipe } = route.params;
 
   return (
     <SafeAreaView style={styles.container}>
+      {/* Custom Back Button */}
+      <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+          <Ionicons name="arrow-back" size={24} color="#fff" />
+      </TouchableOpacity>
+
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <View style={styles.header}>
           <Image 
@@ -13,7 +20,7 @@ export default function RecipeDetail({ route, navigation }) {
             style={styles.logo} 
           />
         </View>
-        <Text style={styles.title}>Recepies</Text>
+        <Text style={styles.title}>Recipes</Text>
         <Image source={{ uri: recipe.image }} style={styles.recipeImage} />
         <View style={styles.recipeContent}>
           <Text style={styles.recipeTitle}>{recipe.name}</Text>
@@ -42,6 +49,19 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  backButton: {
+    position: 'absolute',
+    top: 40,
+    left: 20,
+    zIndex: 1, // Ensure the back button is on top
+    padding: 10,
+    borderRadius: 5,
+  },
+  backButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 20,
   },
   header: {
     alignItems: 'center',

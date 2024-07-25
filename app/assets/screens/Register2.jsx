@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, SafeAreaView, Platform, StatusBar, StyleSheet, Image, TextInput, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native'; // Import useNavigation
+import Ionicons from 'react-native-vector-icons/Ionicons'; 
 
 export default function Register2Screen() {
     const [firstName, setFirstName] = useState("");
@@ -19,6 +20,11 @@ export default function Register2Screen() {
 
     return (
         <SafeAreaView style={styles.container}>
+            {/* Custom Back Button */}
+            <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+                <Ionicons name="arrow-back" size={24} color="#fff" />
+            </TouchableOpacity>
+
             <View style={styles.header}>
                 <Image 
                     source={{ uri: 'https://i.postimg.cc/HxgKzxMj/cropped-image-11.png' }} 
@@ -79,6 +85,19 @@ const styles = StyleSheet.create({
         flex: 1,
         paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
         backgroundColor: '#161E21',
+    },
+    backButton: {
+        position: 'absolute',
+        top: 40,
+        left: 20,
+        zIndex: 1, // Ensure the back button is on top
+        padding: 10,
+        borderRadius: 5,
+    },
+    backButtonText: {
+        color: '#fff',
+        fontWeight: 'bold',
+        fontSize: 20,
     },
     header: {
         alignItems: 'center',

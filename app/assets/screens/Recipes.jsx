@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity, SafeAreaView } from 'react-native';
+import Ionicons from 'react-native-vector-icons/Ionicons'; 
 
 const sampleRecipes = {
   breakfast: [
@@ -79,68 +80,91 @@ const sampleRecipes = {
 
 const Recipes = ({ navigation }) => {
   return (
-    <ScrollView contentContainerStyle={styles.scrollContainer}>
-      <View style={styles.header}>
-        <Image source={{ uri: 'https://i.postimg.cc/HxgKzxMj/cropped-image-11.png' }} style={styles.logo} />
-        <Text style={styles.headerText}>Recepies</Text>
-      </View>
+    <SafeAreaView style={styles.container}>
+      {/* Custom Back Button */}
+      <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+          <Ionicons name="arrow-back" size={24} color="#fff" />
+      </TouchableOpacity>
 
-      <View style={styles.category}>
-        <Text style={styles.categoryText}>Breakfast</Text>
-        <ScrollView horizontal contentContainerStyle={styles.recipeContainer}>
-          {sampleRecipes.breakfast.map((recipe, index) => (
-            <TouchableOpacity 
-              key={index} 
-              style={styles.recipe} 
-              onPress={() => navigation.navigate('RecipeDetail', { recipe })}
-            >
-              <Image style={styles.recipeImage} source={{ uri: recipe.image }} />
-              <Text style={styles.recipeText}>{recipe.name}</Text>
-            </TouchableOpacity>
-          ))}
-        </ScrollView>
-      </View>
+      <ScrollView contentContainerStyle={styles.scrollContainer}>
+        <View style={styles.header}>
+          <Image source={{ uri: 'https://i.postimg.cc/HxgKzxMj/cropped-image-11.png' }} style={styles.logo} />
+          <Text style={styles.headerText}>Recipes</Text>
+        </View>
 
-      <View style={styles.category}>
-        <Text style={styles.categoryText}>Lunch</Text>
-        <ScrollView horizontal contentContainerStyle={styles.recipeContainer}>
-          {sampleRecipes.lunch.map((recipe, index) => (
-            <TouchableOpacity 
-              key={index} 
-              style={styles.recipe} 
-              onPress={() => navigation.navigate('RecipeDetail', { recipe })}
-            >
-              <Image style={styles.recipeImage} source={{ uri: recipe.image }} />
-              <Text style={styles.recipeText}>{recipe.name}</Text>
-            </TouchableOpacity>
-          ))}
-        </ScrollView>
-      </View>
+        <View style={styles.category}>
+          <Text style={styles.categoryText}>Breakfast</Text>
+          <ScrollView horizontal contentContainerStyle={styles.recipeContainer}>
+            {sampleRecipes.breakfast.map((recipe, index) => (
+              <TouchableOpacity 
+                key={index} 
+                style={styles.recipe} 
+                onPress={() => navigation.navigate('RecipeDetail', { recipe })}
+              >
+                <Image style={styles.recipeImage} source={{ uri: recipe.image }} />
+                <Text style={styles.recipeText}>{recipe.name}</Text>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+        </View>
 
-      <View style={styles.category}>
-        <Text style={styles.categoryText}>Dinner</Text>
-        <ScrollView horizontal contentContainerStyle={styles.recipeContainer}>
-          {sampleRecipes.dinner.map((recipe, index) => (
-            <TouchableOpacity 
-              key={index} 
-              style={styles.recipe} 
-              onPress={() => navigation.navigate('RecipeDetail', { recipe })}
-            >
-              <Image style={styles.recipeImage} source={{ uri: recipe.image }} />
-              <Text style={styles.recipeText}>{recipe.name}</Text>
-            </TouchableOpacity>
-          ))}
-        </ScrollView>
-      </View>
-    </ScrollView>
+        <View style={styles.category}>
+          <Text style={styles.categoryText}>Lunch</Text>
+          <ScrollView horizontal contentContainerStyle={styles.recipeContainer}>
+            {sampleRecipes.lunch.map((recipe, index) => (
+              <TouchableOpacity 
+                key={index} 
+                style={styles.recipe} 
+                onPress={() => navigation.navigate('RecipeDetail', { recipe })}
+              >
+                <Image style={styles.recipeImage} source={{ uri: recipe.image }} />
+                <Text style={styles.recipeText}>{recipe.name}</Text>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+        </View>
+
+        <View style={styles.category}>
+          <Text style={styles.categoryText}>Dinner</Text>
+          <ScrollView horizontal contentContainerStyle={styles.recipeContainer}>
+            {sampleRecipes.dinner.map((recipe, index) => (
+              <TouchableOpacity 
+                key={index} 
+                style={styles.recipe} 
+                onPress={() => navigation.navigate('RecipeDetail', { recipe })}
+              >
+                <Image style={styles.recipeImage} source={{ uri: recipe.image }} />
+                <Text style={styles.recipeText}>{recipe.name}</Text>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#161E21', // Set background color to black
+  },
   scrollContainer: {
     flexGrow: 1,
     paddingBottom: 20,
-    backgroundColor: '#161E21', // Set background color to black
+  },
+  backButton: {
+    position: 'absolute',
+    top: 40,
+    left: 20,
+    zIndex: 1, // Ensure the back button is on top
+    padding: 10,
+    borderRadius: 5,
+  },
+  backButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 20,
   },
   header: {
     alignItems: 'center',

@@ -1,29 +1,31 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { View, Text, StyleSheet, Image, ScrollView } from "react-native";
+import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function AnalysisResult({ navigation, route }) {
-  const { results } = route.params
+  const { results } = route.params;
 
   const Fat = useMemo(() => { 
-     if(!results) return null 
-     else return  results.results.nutritionData?.totalNutrients["FAT"]
-   },[results])
-   const Carbs = useMemo(() => { 
-    if(!results) return null 
-    else return  results.results.nutritionData?.totalNutrients["CHOCDF"]
-  },[results])
+    if (!results) return null;
+    else return results.results.nutritionData?.totalNutrients["FAT"];
+  }, [results]);
+
+  const Carbs = useMemo(() => { 
+    if (!results) return null;
+    else return results.results.nutritionData?.totalNutrients["CHOCDF"];
+  }, [results]);
+
   const Protein = useMemo(() => { 
-    if(!results) return null 
-    else return  results.results.nutritionData?.totalNutrients["PROCNT"]
-  },[results])
+    if (!results) return null;
+    else return results.results.nutritionData?.totalNutrients["PROCNT"];
+  }, [results]);
 
   useEffect(() => {
     const fetchResultsLocally = async () => {
       if (!results) {
         const storedResults = await AsyncStorage.getItem("results");
         if (storedResults) {
-          const parsed = JSON.parse(storedResults)
+          const parsed = JSON.parse(storedResults);
           setResults(parsed);
         }
       }
@@ -37,8 +39,13 @@ export default function AnalysisResult({ navigation, route }) {
 
   return (
     <View style={styles.container}>
+      {/* Custom Back Button */}
+      <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+          <Ionicons name="arrow-back" size={24} color="#fff" />
+      </TouchableOpacity>
+
       <ScrollView>
-        <Image source={{ uri: results.image }} style={{ width: 200, height: 200, margin: 10, borderRadius: 10 }} />
+        <Image source={{ uri: results.image }} style={styles.image} />
         <Text style={styles.textTitle}>{"Ingredients"}</Text>
         <View style={styles.textSection}>
           {results.results.ingredients.map((ingredient, index) => {
@@ -65,6 +72,25 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'flex-start',
     alignItems: 'center'
+  },
+  backButton: {
+    position: 'absolute',
+    top: 40,
+    left: 20,
+    backgroundColor: '#1E9947',
+    padding: 10,
+    borderRadius: 5,
+  },
+  backButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 20,
+  },
+  image: {
+    width: 200,
+    height: 200,
+    margin: 10,
+    borderRadius: 10,
   },
   textTitle: {
     fontSize: 24,

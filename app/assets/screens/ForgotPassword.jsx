@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, SafeAreaView, Image, Platform, StatusBar, StyleSheet, TextInput, TouchableOpacity, ScrollView } from 'react-native';
+import Ionicons from 'react-native-vector-icons/Ionicons'; // Import Ionicons
 
 export default function ForgotPassword({ navigation }) {
     const [email, setEmail] = useState("");
@@ -11,6 +12,11 @@ export default function ForgotPassword({ navigation }) {
 
     return (
         <SafeAreaView style={styles.container}>
+            {/* Custom Back Button */}
+            <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+                <Ionicons name="arrow-back" size={24} color="#fff" />
+            </TouchableOpacity>
+
             <ScrollView contentContainerStyle={styles.scrollContainer}>
                 <View style={styles.header}>
                     <Image 
@@ -46,10 +52,22 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
     },
+    backButton: {
+        position: 'absolute',
+        top: 40,
+        left: 20,
+        zIndex: 1, // Ensure the back button is on top
+        padding: 10,
+        borderRadius: 5,
+    },
+    backButtonText: {
+        color: '#fff',
+        fontWeight: 'bold',
+        fontSize: 20,
+    },
     header: {
-      position: 'absolute',
-      top: 55,
-      alignItems: 'center',
+        alignItems: 'center',
+        marginBottom: 20,
     },
     logo: {
         width: 150,
@@ -58,13 +76,13 @@ const styles = StyleSheet.create({
     },
     formContainer: {
         alignItems: 'center',
+        marginTop: 100, // Add space between the logo and form
     },
     title: {
         fontSize: 24,
         fontWeight: 'bold',
         color: '#fff',
         marginBottom: 30,
-        marginTop: 20, // Add space between logo and title
     },
     input: {
         width: 300,

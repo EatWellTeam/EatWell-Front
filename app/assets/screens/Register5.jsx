@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, SafeAreaView, ScrollView, Platform, StatusBar, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native'; // Import useNavigation
+import Ionicons from 'react-native-vector-icons/Ionicons'; // Import Ionicons for the "eye" icon
 
 export default function Register5Screen() {
     const [activityLevel, setActivityLevel] = useState("");
@@ -14,6 +15,11 @@ export default function Register5Screen() {
 
     return (
         <SafeAreaView style={styles.container}>
+            {/* Custom Back Button */}
+            <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+                <Ionicons name="arrow-back" size={24} color="#fff" />
+            </TouchableOpacity>
+
             <ScrollView contentContainerStyle={styles.scrollContainer}>
                 <View style={styles.header}>
                     <Image 
@@ -60,6 +66,19 @@ const styles = StyleSheet.create({
         flex: 1,
         paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
         backgroundColor: '#161E21',
+    },
+    backButton: {
+        position: 'absolute',
+        top: 40,
+        left: 20,
+        zIndex: 1, // Ensure the back button is on top
+        padding: 10,
+        borderRadius: 5,
+    },
+    backButtonText: {
+        color: '#fff',
+        fontWeight: 'bold',
+        fontSize: 20,
     },
     scrollContainer: {
         flexGrow: 1,
@@ -132,4 +151,3 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
 });
-
