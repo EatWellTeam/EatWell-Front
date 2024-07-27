@@ -1,6 +1,8 @@
-import React from 'react';
-import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity, SafeAreaView } from 'react-native';
+import React, { useEffect } from 'react';
+import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity, SafeAreaView, Alert } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons'; 
+import { useNavigation } from '@react-navigation/native';
+import * as ImagePicker from 'expo-image-picker';
 
 const sampleRecipes = {
   breakfast: [
@@ -78,13 +80,86 @@ const sampleRecipes = {
   ],
 };
 
-const Recipes = ({ navigation }) => {
+const Recipes = () => {
+  const navigation = useNavigation();
+
+  async function openCamera() {
+    const permissions = await ImagePicker.getCameraPermissionsAsync();
+    if (!permissions.granted) {
+      requestMediaPermissions();
+      return;
+    }
+    let result = await ImagePicker.launchCameraAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      const uri = result.assets[0].uri;
+      console.log('Image selected from camera:', uri);
+    }
+  }
+
+  async function openGallery() {
+    const permissions = await ImagePicker.getMediaLibraryPermissionsAsync();
+    if (!permissions.granted) {
+      requestMediaPermissions();
+      return;
+    }
+
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      const uri = result.assets[0].uri;
+      console.log('Image selected from gallery:', uri);
+    }
+  }
+
+  async function requestMediaPermissions() {
+    const { status } = await ImagePicker.requestCameraPermissionsAsync();
+    if (status !== 'granted') {
+      Alert.alert('Sorry, we need camera roll permissions to make this work!');
+      return;
+    }
+    const mediaLibraryStatus = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (mediaLibraryStatus.status !== 'granted') {
+      Alert.alert('Sorry, we need camera roll permissions to make this work!');
+      return;
+    }
+  }
+
+  useEffect(() => {
+    requestMediaPermissions();
+  }, []);
+
+  const showImagePickerOptions = () => {
+    Alert.alert(
+      'Select Image Source',
+      'Choose an option to select an image:',
+      [
+        { text: 'Camera', onPress: openCamera },
+        { text: 'Gallery', onPress: openGallery },
+        { text: 'Cancel', style: 'cancel' },
+      ],
+      { cancelable: true }
+    );
+  };
+
   return (
     <SafeAreaView style={styles.container}>
-      {/* Custom Back Button */}
-      <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+      <View style={styles.headerContainer}>
+        {/* Custom Back Button */}
+        <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
           <Ionicons name="arrow-back" size={24} color="#fff" />
-      </TouchableOpacity>
+        </TouchableOpacity>
+      </View>
 
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <View style={styles.header}>
@@ -140,6 +215,25 @@ const Recipes = ({ navigation }) => {
           </ScrollView>
         </View>
       </ScrollView>
+      <View style={styles.navBar}>
+        <View style={styles.navButtonContainer}>
+          <TouchableOpacity style={styles.navButton} onPress={() => navigation.navigate('Dashboard')}>
+            <Ionicons name="home-outline" size={24} color="#fff" />
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.navButton} onPress={() => navigation.navigate('TrackCalories')}>
+            <Ionicons name="create-outline" size={24} color="#fff" />
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.navButton} onPress={showImagePickerOptions}>
+            <Ionicons name="camera-outline" size={24} color="#fff" />
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.navButton} onPress={() => navigation.navigate('Recipes')}>
+            <Ionicons name="restaurant-outline" size={24} color="#fff" />
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.navButton} onPress={() => navigation.navigate('EditProfile')}>
+            <Ionicons name="person-outline" size={24} color="#fff" />
+          </TouchableOpacity>
+        </View>
+      </View>
     </SafeAreaView>
   );
 };
@@ -151,15 +245,18 @@ const styles = StyleSheet.create({
   },
   scrollContainer: {
     flexGrow: 1,
-    paddingBottom: 20,
+    paddingBottom: 80, // Add padding to avoid overlap with the navbar
+  },
+  headerContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    marginTop: 40, // Ensure this value is set correctly
   },
   backButton: {
-    position: 'absolute',
-    top: 40,
-    left: 20,
-    zIndex: 1, // Ensure the back button is on top
     padding: 10,
     borderRadius: 5,
+    zIndex: 1, // Ensure the back button is on top
   },
   backButtonText: {
     color: '#fff',
@@ -168,12 +265,12 @@ const styles = StyleSheet.create({
   },
   header: {
     alignItems: 'center',
-    marginVertical: 20,
+    marginBottom: 10, // Adjust vertical margin if necessary
   },
   logo: {
     width: 150,
     height: 150,
-    marginBottom: 10,
+    marginTop: 2, // Add marginTop to move the logo higher
   },
   headerText: {
     fontSize: 24,
@@ -208,6 +305,25 @@ const styles = StyleSheet.create({
     color: '#fff',
     marginTop: 5,
     textAlign: 'center',
+  },
+  navBar: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    width: '100%',
+    position: 'absolute',
+    bottom: 0,
+    backgroundColor: '#161E21', // Add background color
+    paddingVertical: 10,
+  },
+  navButtonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '90%', // Adjust this value to control the spacing and centering
+    paddingHorizontal: 10, // Add padding to create space between buttons
+  },
+  navButton: {
+    alignItems: 'center',
+    padding: 10,
   },
 });
 

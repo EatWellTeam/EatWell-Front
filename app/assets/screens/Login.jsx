@@ -9,7 +9,7 @@ export default function LoginScreen({ navigation }) {
 
     const handleContinue = () => {
         // Add any validation or API calls here
-        navigation.navigate('EditProfile');
+        navigation.navigate('Dashboard');
     };
 
     const handleSignUp = () => {

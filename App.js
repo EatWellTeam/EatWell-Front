@@ -17,6 +17,7 @@ import Register6 from './app/assets/screens/Register6';
 import TrackCalories from './app/assets/screens/TrackCalories';
 import ForgotPassword from './app/assets/screens/ForgotPassword';
 import EmailSent from './app/assets/screens/EmailSent';
+import Dashboard from './app/assets/screens/Dashboard';
 
 const Stack = createNativeStackNavigator();
 
@@ -40,6 +41,8 @@ function App() {
         <Stack.Screen name="TrackCalories" component={TrackCalories} options={{ headerShown: false }}/>
         <Stack.Screen name="ForgotPassword" component={ForgotPassword} options={{ headerShown: false }}/>
         <Stack.Screen name="EmailSent" component={EmailSent} options={{ headerShown: false }}/>
+        <Stack.Screen name="Dashboard" component={Dashboard} options={{ headerShown: false }}/>
+        
       </Stack.Navigator>
     </NavigationContainer>
   );

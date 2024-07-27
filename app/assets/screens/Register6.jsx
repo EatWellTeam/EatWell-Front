@@ -11,7 +11,7 @@ export default function Register6Screen() {
 
     const handleContinue = () => {
         console.log("Navigating to Home");
-        navigation.navigate('Home'); // Navigate to Home screen
+        navigation.navigate('Dashboard'); // Navigate to Home screen
     };
 
     useEffect(() => {
@@ -123,20 +123,26 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         position: 'relative',
+        width: 200,
+        height: 200,
     },
     textContainer: {
         position: 'absolute',
         justifyContent: 'center',
         alignItems: 'center',
+        width: 170, // Ensure the text stays within the circle
+        height: 180,
     },
     caloriesText: {
         color: '#fff',
-        fontSize: 18,
+        fontSize: 17, // Adjusted font size to fit inside the circle
+        textAlign: 'center',
     },
     caloriesAmount: {
         color: '#fff',
-        fontSize: 32,
+        fontSize: 24,
         fontWeight: 'bold',
+        textAlign: 'center',
     },
     continueButton: {
         backgroundColor: '#1E9947', // Green color

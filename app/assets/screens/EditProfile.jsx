@@ -73,23 +73,35 @@ const EditProfile = () => {
     }
   };
 
+  const handleSignOut = () => {
+    // Add sign out logic here
+    console.log("Signing out...");
+    // For example, you might want to clear user data and navigate to the welcome screen
+    navigation.navigate('Welcome');
+  };
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <ScrollView contentContainerStyle={styles.container}>
-        {/* Custom Back Button */}
-        <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+        <View style={styles.headerRow}>
+          <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
             <Ionicons name="arrow-back" size={24} color="#fff" />
-        </TouchableOpacity>
-
-        <View style={styles.header}>
+          </TouchableOpacity>
+          <Text style={styles.title}>Profile</Text>
+          <TouchableOpacity style={styles.editButton} onPress={handleEdit}>
+            <Ionicons name="pencil" size={24} color="#fff" />
+          </TouchableOpacity>
+        </View>
+        <View style={styles.profileSection}>
           <TouchableOpacity style={styles.editPicButton} onPress={pickImage}>
             <Image source={{ uri: 'https://i.postimg.cc/VsKZqCKb/cropped-image-2.png' }} style={styles.editPicIcon} />
           </TouchableOpacity>
         </View>
-        <Text style={styles.title}>Profile</Text>
-        <TouchableOpacity style={styles.editButton} onPress={handleEdit}>
-          <Ionicons name="pencil" size={24} color="#fff" />
-        </TouchableOpacity>
+        {!isEditing && (
+          <TouchableOpacity style={styles.signOutButton} onPress={handleSignOut}>
+            <Text style={styles.signOutButtonText}>Sign Out</Text>
+          </TouchableOpacity>
+        )}
         <View style={styles.profileContainer}>
           {isEditing ? (
             <>
@@ -173,20 +185,30 @@ const styles = StyleSheet.create({
     padding: 20,
     alignItems: 'center',  // Center content horizontally
   },
+  headerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    width: '100%',
+    marginTop: 40,
+  },
   backButton: {
-    position: 'absolute',
-    top: 40,
-    left: 20,
     padding: 10,
     borderRadius: 5,
   },
-  backButtonText: {
-    color: '#fff',
+  title: {
+    fontSize: 24,
     fontWeight: 'bold',
-    fontSize: 20,
+    color: '#fff',
+    textAlign: 'center',
   },
-  header: {
+  editButton: {
+    padding: 10,
+    borderRadius: 5,
+  },
+  profileSection: {
     alignItems: 'center',
+    marginTop: 20,
     marginBottom: 20,
   },
   profilePic: {
@@ -204,19 +226,23 @@ const styles = StyleSheet.create({
     width: 150, // Increased width
     height: 150, // Increased height
   },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#fff',
-    textAlign: 'center',
-    marginBottom: 20,
-  },
-  editButton: {
+  signOutButton: {
     padding: 10,
-    borderRadius: 5,
-    position: 'absolute',
-    right: 20,
-    top: 20,
+    borderRadius: 25,
+    marginBottom: 20, // Adjust margin to move button down
+    backgroundColor: 'transparent',
+    borderWidth: 1,
+    borderColor: '#fff',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.8,
+    shadowRadius: 2,
+    elevation: 5,
+  },
+  signOutButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
   profileContainer: {
     alignItems: 'flex-start',

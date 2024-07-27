@@ -1,11 +1,18 @@
-import React, { useEffect } from 'react';
-import { View, Text, SafeAreaView, Image, StyleSheet, TouchableOpacity, Platform, StatusBar, ScrollView, Alert } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, SafeAreaView, StyleSheet, Platform, StatusBar, TouchableOpacity, Image, ScrollView, Alert } from 'react-native';
+import Svg, { Circle } from 'react-native-svg';
+import { LineChart } from 'react-native-chart-kit';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useNavigation } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
 
-export default function RecipeDetail({ route }) {
-  const { recipe } = route.params;
+export default function DashboardScreen() {
+  const [caloriesConsumed, setCaloriesConsumed] = useState(1183);
+  const [caloriesLeft, setCaloriesLeft] = useState(998);
+  const circleRadius = 45;
+  const circumference = 2 * Math.PI * circleRadius;
+  const strokeDashoffset = circumference - (caloriesConsumed / 2000) * circumference;
+
   const navigation = useNavigation();
 
   async function openCamera() {
@@ -79,11 +86,6 @@ export default function RecipeDetail({ route }) {
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Custom Back Button */}
-      <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-        <Ionicons name="arrow-back" size={24} color="#fff" />
-      </TouchableOpacity>
-
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <View style={styles.header}>
           <Image 
@@ -91,19 +93,86 @@ export default function RecipeDetail({ route }) {
             style={styles.logo} 
           />
         </View>
-        <Text style={styles.title}>Recipes</Text>
-        <Image source={{ uri: recipe.image }} style={styles.recipeImage} />
-        <View style={styles.recipeContent}>
-          <Text style={styles.recipeTitle}>{recipe.name}</Text>
-          <Text style={styles.sectionTitle}>Groceries:</Text>
-          {recipe.groceries.map((item, index) => (
-            <Text key={index} style={styles.recipeText}>- {item}</Text>
-          ))}
-          <Text style={styles.sectionTitle}>Method of Preparation:</Text>
-          {recipe.method.map((step, index) => (
-            <Text key={index} style={styles.recipeText}>{index + 1}. {step}</Text>
-          ))}
-          <Text style={styles.recipeText}>Total Calories: {recipe.calories}</Text>
+        <View style={styles.statsContainer}>
+          <Svg height="120" width="120" viewBox="0 0 100 100">
+            <Circle
+              cx="50"
+              cy="50"
+              r={circleRadius}
+              stroke="#eee"
+              strokeWidth="10"
+              fill="none"
+            />
+            <Circle
+              cx="50"
+              cy="50"
+              r={circleRadius}
+              stroke="#1E9947"
+              strokeWidth="10"
+              fill="none"
+              strokeDasharray={circumference}
+              strokeDashoffset={strokeDashoffset}
+              strokeLinecap="round"
+            />
+          </Svg>
+          <View style={styles.statsTextContainer}>
+            <Text style={styles.caloriesConsumedText}>{caloriesConsumed}</Text>
+            <Text style={styles.labelText}>Calories consumed</Text>
+            <Text style={styles.caloriesLeftText}>{caloriesLeft}</Text>
+            <Text style={styles.labelText}>Calories left to daily goal</Text>
+          </View>
+        </View>
+        <View style={styles.graphContainer}>
+          <Text style={styles.graphTitle}>Track Your Weight Over Time</Text>
+          <LineChart
+            data={{
+              labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
+              datasets: [
+                {
+                  data: [
+                    Math.random() * 100,
+                    Math.random() * 100,
+                    Math.random() * 100,
+                    Math.random() * 100,
+                    Math.random() * 100,
+                    Math.random() * 100,
+                  ]
+                }
+              ]
+            }}
+            width={300}
+            height={220}
+            yAxisLabel=""
+            chartConfig={{
+              backgroundColor: '#161E21',
+              backgroundGradientFrom: '#161E21',
+              backgroundGradientTo: '#161E21',
+              decimalPlaces: 2,
+              color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+              labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+              style: {
+                borderRadius: 16
+              },
+              propsForDots: {
+                r: "6",
+                strokeWidth: "2",
+                stroke: "#1E9947"
+              }
+            }}
+            style={{
+              marginVertical: 8,
+              borderRadius: 16
+            }}
+          />
+        </View>
+        <View style={styles.lastMealContainer}>
+          <Text style={styles.lastMealTitle}>My Last Meal</Text>
+          <Text style={styles.lastMealText}>CheeseBurger with Bacon and Fries</Text>
+          <Text style={styles.lastMealText}>Calories: 460-600</Text>
+          <Image
+            source={{ uri: 'https://example.com/last_meal_image.png' }}
+            style={styles.lastMealImage}
+          />
         </View>
       </ScrollView>
       <View style={styles.navBar}>
@@ -132,70 +201,74 @@ export default function RecipeDetail({ route }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
     backgroundColor: '#161E21',
+    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
   },
   scrollContainer: {
-    flexGrow: 1,
-    justifyContent: 'center',
     alignItems: 'center',
     paddingBottom: 80, // Add padding to avoid overlap with the navbar
-  },
-  backButton: {
-    position: 'absolute',
-    top: 40,
-    left: 20,
-    zIndex: 1, // Ensure the back button is on top
-    padding: 10,
-    borderRadius: 5,
-  },
-  backButtonText: {
-    color: '#fff',
-    fontWeight: 'bold',
-    fontSize: 20,
   },
   header: {
     alignItems: 'center',
     marginBottom: 20,
   },
   logo: {
-    width: 150,
-    height: 150,
-    marginTop: 20,
+    width: 100,
+    height: 100,
   },
-  title: {
+  statsContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 20,
+  },
+  statsTextContainer: {
+    marginLeft: 20,
+    alignItems: 'center',
+  },
+  caloriesConsumedText: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#1E9947',
+  },
+  caloriesLeftText: {
     fontSize: 24,
     fontWeight: 'bold',
     color: '#fff',
-    marginBottom: 10,
-  },
-  recipeImage: {
-    width: '90%',
-    height: 200,
-    borderRadius: 10,
-    marginBottom: 20,
-  },
-  recipeContent: {
-    width: '90%',
-    alignItems: 'flex-start',
-  },
-  recipeTitle: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    color: '#fff',
-    marginBottom: 10,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#fff',
     marginTop: 10,
-    marginBottom: 5,
   },
-  recipeText: {
-    fontSize: 16,
+  labelText: {
+    fontSize: 14,
     color: '#fff',
-    marginBottom: 5,
+  },
+  graphContainer: {
+    alignItems: 'center',
+    marginVertical: 20,
+  },
+  graphTitle: {
+    fontSize: 18,
+    color: '#fff',
+    marginBottom: 10,
+  },
+  lastMealContainer: {
+    alignItems: 'center',
+    marginVertical: 20,
+  },
+  lastMealTitle: {
+    fontSize: 18,
+    color: '#fff',
+    marginBottom: 10,
+  },
+  lastMealText: {
+    fontSize: 14,
+    color: '#fff',
+    textAlign: 'center',
+  },
+  lastMealImage: {
+    width: 100,
+    height: 100,
+    marginTop: 10,
+    borderRadius: 10,
   },
   navBar: {
     flexDirection: 'row',
