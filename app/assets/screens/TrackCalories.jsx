@@ -1,16 +1,19 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, SafeAreaView, StyleSheet, TextInput, TouchableOpacity, Platform, StatusBar, Image, Alert, Keyboard, TouchableWithoutFeedback } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, SafeAreaView, StyleSheet, TextInput, TouchableOpacity, Platform, StatusBar, Image, Keyboard, TouchableWithoutFeedback, Alert } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useNavigation } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
+import Modal from 'react-native-modal';
 
 const TrackCalories = () => {
   const [mealDescription, setMealDescription] = useState('');
+  const [isModalVisible, setModalVisible] = useState(false);
 
   const navigation = useNavigation();
 
   const handleCalculate = () => {
     console.log('Calculating calories for:', mealDescription);
+    setModalVisible(true); // Show the modal
   };
 
   const openCamera = async () => {
@@ -129,6 +132,16 @@ const TrackCalories = () => {
             </TouchableOpacity>
           </View>
         </View>
+
+        {/* Custom Modal */}
+        <Modal isVisible={isModalVisible} onBackdropPress={() => setModalVisible(false)}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalText}>Your data was entered into your last meals!</Text>
+            <TouchableOpacity style={styles.closeButton} onPress={() => setModalVisible(false)}>
+              <Text style={styles.closeButtonText}>Close</Text>
+            </TouchableOpacity>
+          </View>
+        </Modal>
       </SafeAreaView>
     </TouchableWithoutFeedback>
   );
@@ -194,7 +207,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#1E9947',
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 10,
+    borderRadius: 10, // Original style
   },
   buttonText: {
     color: '#fff',
@@ -219,6 +232,34 @@ const styles = StyleSheet.create({
   navButton: {
     alignItems: 'center',
     padding: 10,
+  },
+  modalContent: {
+    backgroundColor: '#161E21',
+    padding: 20,
+    borderRadius: 10,
+    alignItems: 'center',
+  },
+  modalText: {
+    fontSize: 18,
+    textAlign: 'center',
+    color: '#fff',
+    marginBottom: 20,
+  },
+  closeButton: {
+    backgroundColor: '#1E9947', // Green color
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 25, // Rounded corners
+    shadowColor: '#000', // Shadow color
+    shadowOffset: { width: 0, height: 2 }, // Shadow offset
+    shadowOpacity: 0.8, // Shadow opacity
+    shadowRadius: 2, // Shadow radius
+    elevation: 5, // For Android shadow
+  },
+  closeButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
 });
 
