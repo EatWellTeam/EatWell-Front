@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { View, Text, SafeAreaView, StyleSheet, TouchableOpacity, ScrollView, Image, TextInput, Alert } from 'react-native';
-import { useNavigation } from '@react-navigation/native'; // Import useNavigation hook
-import Ionicons from 'react-native-vector-icons/Ionicons'; // Import Ionicons
-import * as ImagePicker from 'expo-image-picker'; // Import ImagePicker
+import { useNavigation } from '@react-navigation/native';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import * as ImagePicker from 'expo-image-picker';
 
 const EditProfile = () => {
-  const navigation = useNavigation(); // Initialize useNavigation
+  const navigation = useNavigation();
 
   const [isEditing, setIsEditing] = useState(false);
   const [profile, setProfile] = useState({
@@ -18,7 +18,7 @@ const EditProfile = () => {
     gender: "Male",
     activityLevel: "Low",
     goals: "Maintain Weight",
-    profilePic: null, // Add profilePic field
+    profilePic: 'https://i.postimg.cc/VsKZqCKb/cropped-image-2.png', // Default profile picture
   });
 
   const handleEdit = () => {
@@ -27,11 +27,10 @@ const EditProfile = () => {
 
   const handleSave = () => {
     setIsEditing(false);
-    // Add any save logic here if needed
   };
 
   const handleContinue = () => {
-    navigation.navigate('Dashboard'); // Navigate to the Recipes page
+    navigation.navigate('Dashboard');
   };
 
   const handleChange = (name, value) => {
@@ -39,15 +38,12 @@ const EditProfile = () => {
   };
 
   const pickImage = async () => {
-    // No permissions request is necessary for launching the image library
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: true,
       aspect: [4, 4],
       quality: 1,
     });
-
-    console.log(result);
 
     if (!result.canceled) {
       handleChange('profilePic', result.assets[0].uri);
@@ -74,9 +70,7 @@ const EditProfile = () => {
   };
 
   const handleSignOut = () => {
-    // Add sign out logic here
     console.log("Signing out...");
-    // For example, you might want to clear user data and navigate to the welcome screen
     navigation.navigate('Welcome');
   };
 
@@ -94,7 +88,10 @@ const EditProfile = () => {
         </View>
         <View style={styles.profileSection}>
           <TouchableOpacity style={styles.editPicButton} onPress={pickImage}>
-            <Image source={{ uri: 'https://i.postimg.cc/VsKZqCKb/cropped-image-2.png' }} style={styles.editPicIcon} />
+            <Image source={{ uri: profile.profilePic }} style={styles.editPicIcon} />
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.takePhotoButton} onPress={takePhoto}>
+            <Ionicons name="camera-outline" size={24} color="#fff" />
           </TouchableOpacity>
         </View>
         {!isEditing && (
@@ -179,11 +176,11 @@ const EditProfile = () => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#161E21', // Background color similar to the provided screenshot
+    backgroundColor: '#161E21',
   },
   container: {
     padding: 20,
-    alignItems: 'center',  // Center content horizontally
+    alignItems: 'center',
   },
   headerRow: {
     flexDirection: 'row',
@@ -222,14 +219,20 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     marginBottom: 10,
   },
+  takePhotoButton: {
+    padding: 10,
+    borderRadius: 5,
+    marginTop: 10,
+  },
   editPicIcon: {
-    width: 150, // Increased width
-    height: 150, // Increased height
+    width: 150,
+    height: 150,
+    borderRadius: 75,
   },
   signOutButton: {
     padding: 10,
     borderRadius: 25,
-    marginBottom: 20, // Adjust margin to move button down
+    marginBottom: 20,
     backgroundColor: 'transparent',
     borderWidth: 1,
     borderColor: '#fff',
