@@ -31,7 +31,7 @@ const EditProfile = () => {
   };
 
   const handleContinue = () => {
-    navigation.navigate('Recipes'); // Navigate to the Recipes page
+    navigation.navigate('Dashboard'); // Navigate to the Recipes page
   };
 
   const handleChange = (name, value) => {
