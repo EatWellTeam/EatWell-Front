@@ -41,7 +41,7 @@ function App() {
         <Stack.Screen name="TrackCalories" component={TrackCalories} options={{ headerShown: false }}/>
         <Stack.Screen name="ForgotPassword" component={ForgotPassword} options={{ headerShown: false }}/>
         <Stack.Screen name="EmailSent" component={EmailSent} options={{ headerShown: false }}/>
-        <Stack.Screen name="Dashboard" component={Dashboard} options={{ headerShown: false }}/>
+        <Stack.Screen name="Dashboard" component={Dashboard} options={{ headerShown: false, gestureEnabled: false }} />
         
       </Stack.Navigator>
     </NavigationContainer>
