@@ -5,10 +5,13 @@ import { LineChart } from 'react-native-chart-kit';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useNavigation } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
+import axios from 'axios';
+import imageUpload from '../../../services/imageUpload'; // Adjust the import path as necessary
 
 export default function DashboardScreen() {
   const [caloriesConsumed, setCaloriesConsumed] = useState(1183);
   const [caloriesLeft, setCaloriesLeft] = useState(998);
+  const [image, setImage] = useState(null);
   const circleRadius = 45;
   const circumference = 2 * Math.PI * circleRadius;
   const strokeDashoffset = circumference - (caloriesConsumed / 2000) * circumference;
@@ -31,6 +34,7 @@ export default function DashboardScreen() {
     if (!result.canceled) {
       const uri = result.assets[0].uri;
       console.log('Image selected from camera:', uri);
+      setImage(uri);
     }
   }
 
@@ -51,6 +55,7 @@ export default function DashboardScreen() {
     if (!result.canceled) {
       const uri = result.assets[0].uri;
       console.log('Image selected from gallery:', uri);
+      setImage(uri);
     }
   }
 
@@ -71,6 +76,52 @@ export default function DashboardScreen() {
     requestMediaPermissions();
   }, []);
 
+  const analyze = async () => {
+    if (!image) {
+      Alert.alert('No image selected', 'Please select an image first.');
+      return;
+    }
+
+    try {
+      console.log('Uploading image:', image);
+      const url = await imageUpload(image);
+      console.log('Image uploaded, URL:', url);
+
+      const payload = {
+        content: [
+          {
+            type: 'image_url',
+            image_url: {
+              url,
+            },
+          },
+        ],
+        role: 'user',
+      };
+
+      const { data } = await axios.post('http://192.168.1.17:3000/middleware/process', [payload], {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      console.log('Analysis data received:', data);
+      navigation.navigate('AnalysisResult', { results: { results: data, image: url } });
+    } catch (e) {
+      console.error('Error during analysis:', e.message);
+      if (e.response) {
+        console.error('Server responded with:', e.response.data);
+        Alert.alert('Server Error', JSON.stringify(e.response.data));
+      } else if (e.request) {
+        console.error('Request made but no response received:', e.request);
+        Alert.alert('Network Error', 'Request was made but no response received.');
+      } else {
+        console.error('Error setting up request:', e.message);
+        Alert.alert('Error', e.message);
+      }
+    }
+  };
+
   const showImagePickerOptions = () => {
     Alert.alert(
       'Select Image Source',
@@ -88,21 +139,11 @@ export default function DashboardScreen() {
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <View style={styles.header}>
-          <Image 
-            source={{ uri: 'https://i.postimg.cc/HxgKzxMj/cropped-image-11.png' }} 
-            style={styles.logo} 
-          />
+          <Image source={{ uri: 'https://i.postimg.cc/HxgKzxMj/cropped-image-11.png' }} style={styles.logo} />
         </View>
         <View style={styles.statsContainer}>
           <Svg height="120" width="120" viewBox="0 0 100 100">
-            <Circle
-              cx="50"
-              cy="50"
-              r={circleRadius}
-              stroke="#eee"
-              strokeWidth="10"
-              fill="none"
-            />
+            <Circle cx="50" cy="50" r={circleRadius} stroke="#eee" strokeWidth="10" fill="none" />
             <Circle
               cx="50"
               cy="50"
@@ -126,7 +167,7 @@ export default function DashboardScreen() {
           <Text style={styles.graphTitle}>Track Your Weight Over Time</Text>
           <LineChart
             data={{
-              labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
+              labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
               datasets: [
                 {
                   data: [
@@ -136,9 +177,9 @@ export default function DashboardScreen() {
                     Math.random() * 100,
                     Math.random() * 100,
                     Math.random() * 100,
-                  ]
-                }
-              ]
+                  ],
+                },
+              ],
             }}
             width={300}
             height={220}
@@ -151,28 +192,30 @@ export default function DashboardScreen() {
               color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
               labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
               style: {
-                borderRadius: 16
+                borderRadius: 16,
               },
               propsForDots: {
-                r: "6",
-                strokeWidth: "2",
-                stroke: "#1E9947"
-              }
+                r: '6',
+                strokeWidth: '2',
+                stroke: '#1E9947',
+              },
             }}
             style={{
               marginVertical: 8,
-              borderRadius: 16
+              borderRadius: 16,
             }}
           />
         </View>
+        {image && (
+          <TouchableOpacity style={styles.button} onPress={analyze}>
+            <Text style={styles.buttonText}>Analyze</Text>
+          </TouchableOpacity>
+        )}
         <View style={styles.lastMealContainer}>
           <Text style={styles.lastMealTitle}>My Last Meal</Text>
           <Text style={styles.lastMealText}>CheeseBurger with Bacon and Fries</Text>
           <Text style={styles.lastMealText}>Calories: 460-600</Text>
-          <Image
-            source={{ uri: 'https://example.com/last_meal_image.png' }}
-            style={styles.lastMealImage}
-          />
+          <Image source={{ uri: 'https://example.com/last_meal_image.png' }} style={styles.lastMealImage} />
         </View>
       </ScrollView>
       <View style={styles.navBar}>
@@ -269,6 +312,20 @@ const styles = StyleSheet.create({
     height: 100,
     marginTop: 10,
     borderRadius: 10,
+  },
+  button: {
+    backgroundColor: '#1E9947',
+    borderRadius: 10,
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    marginTop: 20,
+    marginBottom: 20,
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
+    textAlign: 'center',
   },
   navBar: {
     flexDirection: 'row',

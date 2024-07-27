@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 export default function AnalysisResult({ navigation, route }) {
   const { results } = route.params;
