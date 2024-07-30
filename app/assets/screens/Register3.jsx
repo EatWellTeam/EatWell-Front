@@ -1,24 +1,31 @@
+// app/assets/screens/Register3.js
 import React, { useState } from 'react';
 import { View, Text, SafeAreaView, Platform, StatusBar, StyleSheet, Image, TextInput, TouchableOpacity } from 'react-native';
-import { useNavigation } from '@react-navigation/native'; // Import useNavigation
-import Ionicons from 'react-native-vector-icons/Ionicons'; 
+import { useNavigation } from '@react-navigation/native';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import { useSignUpContext } from '../context/SignUpContext';
 
 export default function Register3Screen() {
+    const { signUpData, setSignUpData } = useSignUpContext();
     const [weight, setWeight] = useState("");
     const [height, setHeight] = useState("");
     const [gender, setGender] = useState("");
 
-    const navigation = useNavigation(); // Get the navigation prop
+    const navigation = useNavigation();
 
     const handleContinue = () => {
-        // Add any validation or API calls here
+        setSignUpData({ 
+            ...signUpData, 
+            weight, 
+            height, 
+            gender 
+        });
         console.log("Registering:", { weight, height, gender });
-        navigation.navigate('Register4'); // Navigate to Register4Screen
+        navigation.navigate('Register4');
     };
 
     return (
         <SafeAreaView style={styles.container}>
-            {/* Custom Back Button */}
             <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
                 <Ionicons name="arrow-back" size={24} color="#fff" />
             </TouchableOpacity>
@@ -78,7 +85,7 @@ const styles = StyleSheet.create({
         position: 'absolute',
         top: 40,
         left: 20,
-        zIndex: 1, // Ensure the back button is on top
+        zIndex: 1,
         padding: 10,
         borderRadius: 5,
     },
@@ -157,4 +164,3 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
 });
-

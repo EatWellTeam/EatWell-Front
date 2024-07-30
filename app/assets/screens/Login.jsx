@@ -1,15 +1,35 @@
+// app/assets/screens/Login.js
 import React, { useState } from 'react';
-import { View, Text, SafeAreaView, Image, Platform, StatusBar, StyleSheet, TextInput, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, SafeAreaView, Image, Platform, StatusBar, StyleSheet, TextInput, TouchableOpacity, ScrollView, Alert } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons'; // Import Ionicons for the "eye" icon
+import axios from 'axios';
 
 export default function LoginScreen({ navigation }) {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [showPassword, setShowPassword] = useState(false); // State to toggle password visibility
 
-    const handleContinue = () => {
-        // Add any validation or API calls here
-        navigation.navigate('Dashboard');
+    const handleContinue = async () => {
+        console.log('Attempting login with email:', email); // Add log
+        try {
+            const response = await axios.post('http://192.168.1.107:3000/auth/login', {
+                email,
+                password
+            });
+            console.log('Response:', response); // Add log
+
+            if (response.status === 200) {
+                console.log('Login successful', response.data);
+                Alert.alert('Success', 'Login successful');
+                navigation.navigate('Dashboard'); // Navigate to the Dashboard or any other screen
+            } else {
+                console.log('Unexpected response', response.data);
+                Alert.alert('Error', 'Unexpected response from the server');
+            }
+        } catch (error) {
+            console.log('Login error', error); // Log the full error object
+            Alert.alert('Error', error.message);
+        }
     };
 
     const handleSignUp = () => {

@@ -1,26 +1,33 @@
+// app/assets/screens/Register2.js
 import React, { useState } from 'react';
 import { View, Text, SafeAreaView, Platform, StatusBar, StyleSheet, Image, TextInput, TouchableOpacity } from 'react-native';
-import { useNavigation } from '@react-navigation/native'; // Import useNavigation
-import Ionicons from 'react-native-vector-icons/Ionicons'; 
+import { useNavigation } from '@react-navigation/native';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import { useSignUpContext } from '../context/SignUpContext';
 
 export default function Register2Screen() {
+    const { signUpData, setSignUpData } = useSignUpContext();
     const [firstName, setFirstName] = useState("");
     const [lastName, setLastName] = useState("");
     const [day, setDay] = useState("");
     const [month, setMonth] = useState("");
     const [year, setYear] = useState("");
 
-    const navigation = useNavigation(); // Get the navigation prop
+    const navigation = useNavigation();
 
     const handleContinue = () => {
-        // Add any validation or API calls here
+        const dob = `${year}-${month}-${day}`;
+        setSignUpData({ 
+            ...signUpData, 
+            fullName: `${firstName} ${lastName}`, 
+            dateOfBirth: dob 
+        });
         console.log("Registering:", { firstName, lastName, day, month, year });
-        navigation.navigate('Register3'); // Navigate to Register3Screen
+        navigation.navigate('Register3');
     };
 
     return (
         <SafeAreaView style={styles.container}>
-            {/* Custom Back Button */}
             <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
                 <Ionicons name="arrow-back" size={24} color="#fff" />
             </TouchableOpacity>
@@ -90,7 +97,7 @@ const styles = StyleSheet.create({
         position: 'absolute',
         top: 40,
         left: 20,
-        zIndex: 1, // Ensure the back button is on top
+        zIndex: 1,
         padding: 10,
         borderRadius: 5,
     },
@@ -160,4 +167,3 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
 });
-

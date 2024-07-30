@@ -1,21 +1,27 @@
+// app/assets/screens/Register4.js
 import React, { useState } from 'react';
 import { View, Text, SafeAreaView, ScrollView, Platform, StatusBar, StyleSheet, Image, TouchableOpacity } from 'react-native';
-import { useNavigation } from '@react-navigation/native'; // Import useNavigation
-import Ionicons from 'react-native-vector-icons/Ionicons'; 
+import { useNavigation } from '@react-navigation/native';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import { useSignUpContext } from '../context/SignUpContext';
 
 export default function Register4Screen() {
+    const { signUpData, setSignUpData } = useSignUpContext();
     const [goal, setGoal] = useState("");
-    const navigation = useNavigation(); // Get the navigation prop
+
+    const navigation = useNavigation();
 
     const handleContinue = () => {
-        // Add any validation or API calls here
+        setSignUpData({ 
+            ...signUpData, 
+            goal 
+        });
         console.log("Registering:", { goal });
-        navigation.navigate('Register5'); // Navigate to Register5Screen
+        navigation.navigate('Register5');
     };
 
     return (
         <SafeAreaView style={styles.container}>
-            {/* Custom Back Button */}
             <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
                 <Ionicons name="arrow-back" size={24} color="#fff" />
             </TouchableOpacity>
@@ -68,7 +74,7 @@ const styles = StyleSheet.create({
         position: 'absolute',
         top: 40,
         left: 20,
-        zIndex: 1, // Ensure the back button is on top
+        zIndex: 1,
         padding: 10,
         borderRadius: 5,
     },

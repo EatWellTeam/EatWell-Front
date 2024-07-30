@@ -1,22 +1,41 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, SafeAreaView, StyleSheet, Platform, StatusBar, Animated, TouchableOpacity, Image } from 'react-native';
+import { View, Text, SafeAreaView, StyleSheet, Platform, StatusBar, Animated, TouchableOpacity, Image, Alert } from 'react-native';
 import Svg, { Circle } from 'react-native-svg';
-import { useNavigation } from '@react-navigation/native'; // Import the useNavigation hook
-import Ionicons from 'react-native-vector-icons/Ionicons'; // Import Ionicons for the "eye" icon
+import { useNavigation } from '@react-navigation/native';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import { useSignUpContext } from '../context/SignUpContext';
+import axios from 'axios';
 
 export default function Register6Screen() {
+    const { signUpData } = useSignUpContext();
     const [calories, setCalories] = useState(0);
     const animatedValue = new Animated.Value(0);
-    const navigation = useNavigation(); // Initialize the navigation hook
+    const navigation = useNavigation();
 
-    const handleContinue = () => {
-        console.log("Navigating to Home");
-        navigation.navigate('Dashboard'); // Navigate to Home screen
+    const handleContinue = async () => {
+        console.log("Navigating to Dashboard");
+        console.log(signUpData);
+        try {
+            const response = await axios.post('http://192.168.1.107:3000/auth/register', signUpData);
+            if (response.status === 201) {
+                console.log('Registration successful', response.data);
+                const { recommendedCalories } = response.data;
+                setCalories(recommendedCalories);
+                Alert.alert('Success', 'Registration successful');
+                navigation.navigate('Dashboard');
+            } else {
+                console.log('Unexpected response', response.data);
+                Alert.alert('Error', 'Unexpected response from the server');
+            }
+        } catch (error) {
+            console.log('Registration error', error);
+            Alert.alert('Error', error.message);
+        }
     };
 
     useEffect(() => {
         Animated.timing(animatedValue, {
-            toValue: 2500,
+            toValue: calories,
             duration: 5000,
             useNativeDriver: false,
         }).start();
@@ -26,12 +45,12 @@ export default function Register6Screen() {
         });
 
         return () => animatedValue.removeAllListeners();
-    }, []);
+    }, [calories]);
 
     const circleRadius = 100;
     const circumference = 2 * Math.PI * circleRadius;
     const animatedCircle = animatedValue.interpolate({
-        inputRange: [0, 2500],
+        inputRange: [0, calories],
         outputRange: [circumference, 0]
     });
 
@@ -88,7 +107,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
-        paddingHorizontal: 20, // Added for better spacing
+        paddingHorizontal: 20,
     },
     backButton: {
         position: 'absolute',
@@ -117,7 +136,7 @@ const styles = StyleSheet.create({
         fontSize: 20,
         fontWeight: 'bold',
         textAlign: 'center',
-        marginBottom: 20, // Space between the text and the circle
+        marginBottom: 20,
     },
     circleContainer: {
         alignItems: 'center',
@@ -130,12 +149,12 @@ const styles = StyleSheet.create({
         position: 'absolute',
         justifyContent: 'center',
         alignItems: 'center',
-        width: 170, // Ensure the text stays within the circle
+        width: 170,
         height: 180,
     },
     caloriesText: {
         color: '#fff',
-        fontSize: 17, // Adjusted font size to fit inside the circle
+        fontSize: 17,
         textAlign: 'center',
     },
     caloriesAmount: {
@@ -145,11 +164,11 @@ const styles = StyleSheet.create({
         textAlign: 'center',
     },
     continueButton: {
-        backgroundColor: '#1E9947', // Green color
+        backgroundColor: '#1E9947',
         borderRadius: 5,
         paddingVertical: 12,
         paddingHorizontal: 24,
-        marginTop: 40, // Adjusted margin to position lower
+        marginTop: 40,
     },
     continueButtonText: {
         color: '#fff',

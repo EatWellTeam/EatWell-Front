@@ -1,16 +1,19 @@
+// app/assets/screens/SignUp.js
 import React, { useState } from 'react';
 import { View, Text, SafeAreaView, Platform, StatusBar, StyleSheet, Image, TextInput, TouchableOpacity, Alert } from 'react-native';
-import { Ionicons } from '@expo/vector-icons'; // Import Ionicons for the "eye" icon
-import { useNavigation } from '@react-navigation/native'; // Import useNavigation
+import { Ionicons } from '@expo/vector-icons'; 
+import { useNavigation } from '@react-navigation/native';
+import { useSignUpContext } from '../context/SignUpContext';
 
 export default function SignUpScreen() {
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [confirmPassword, setConfirmPassword] = useState("");
-    const [showPassword, setShowPassword] = useState(false); // State to toggle password visibility
-    const [showConfirmPassword, setShowConfirmPassword] = useState(false); // State to toggle confirm password visibility
+    const { signUpData, setSignUpData } = useSignUpContext();
+    const [email, setEmail] = useState(signUpData.email);
+    const [password, setPassword] = useState(signUpData.password);
+    const [confirmPassword, setConfirmPassword] = useState(signUpData.password);
+    const [showPassword, setShowPassword] = useState(false); 
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-    const navigation = useNavigation(); // Get the navigation prop
+    const navigation = useNavigation(); 
 
     const handleSignUp = () => {
         if (!email.includes('@')) {
@@ -21,13 +24,12 @@ export default function SignUpScreen() {
             Alert.alert("Passwords do not match", "Please ensure that both passwords are the same.");
             return;
         }
-        console.log("Signing up:", { email, password });
-        navigation.navigate('Register2'); // Navigate to Register2Screen
+        setSignUpData({ ...signUpData, email, password });
+        navigation.navigate('Register2'); 
     };
 
     return (
         <SafeAreaView style={styles.container}>
-            {/* Custom Back Button */}
             <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
               <Ionicons name="arrow-back" size={24} color="#fff" />
             </TouchableOpacity>
@@ -95,7 +97,7 @@ const styles = StyleSheet.create({
         position: 'absolute',
         top: 40,
         left: 20,
-        zIndex: 1, // Ensure the back button is on top
+        zIndex: 1,
         padding: 10,
         borderRadius: 5,
     },
