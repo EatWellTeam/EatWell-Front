@@ -38,20 +38,20 @@ export default function Register4Screen() {
                 <View style={styles.formContainer}>
                     <Text style={styles.questionText}>What are your goals?</Text>
                     <TouchableOpacity 
-                        style={[styles.optionButton, goal === 'Losing Weight' && styles.optionButtonSelected]} 
-                        onPress={() => setGoal('Losing Weight')}
+                        style={[styles.optionButton, goal === 'lose' && styles.optionButtonSelected]} 
+                        onPress={() => setGoal('lose')}
                     >
                         <Text style={styles.optionText}>Losing Weight</Text>
                     </TouchableOpacity>
                     <TouchableOpacity 
-                        style={[styles.optionButton, goal === 'Maintaining Weight' && styles.optionButtonSelected]} 
-                        onPress={() => setGoal('Maintaining Weight')}
+                        style={[styles.optionButton, goal === 'maintain' && styles.optionButtonSelected]} 
+                        onPress={() => setGoal('maintain')}
                     >
                         <Text style={styles.optionText}>Maintaining Weight</Text>
                     </TouchableOpacity>
                     <TouchableOpacity 
-                        style={[styles.optionButton, goal === 'Gaining Weight' && styles.optionButtonSelected]} 
-                        onPress={() => setGoal('Gaining Weight')}
+                        style={[styles.optionButton, goal === 'gain' && styles.optionButtonSelected]} 
+                        onPress={() => setGoal('gain')}
                     >
                         <Text style={styles.optionText}>Gaining Weight</Text>
                     </TouchableOpacity>

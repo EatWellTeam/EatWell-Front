@@ -38,22 +38,22 @@ export default function Register5Screen() {
                 <View style={styles.formContainer}>
                     <Text style={styles.questionText}>What is your activity level?</Text>
                     <TouchableOpacity 
-                        style={[styles.optionButton, activityLevel === 'High' && styles.optionButtonSelected]} 
-                        onPress={() => setActivityLevel('High')}
+                        style={[styles.optionButton, activityLevel === 'veryActive' && styles.optionButtonSelected]} 
+                        onPress={() => setActivityLevel('veryActive')}
                     >
                         <Text style={styles.optionText}>High</Text>
                         <Text style={styles.optionSubText}>20+ hours a week</Text>
                     </TouchableOpacity>
                     <TouchableOpacity 
-                        style={[styles.optionButton, activityLevel === 'Medium' && styles.optionButtonSelected]} 
-                        onPress={() => setActivityLevel('Medium')}
+                        style={[styles.optionButton, activityLevel === 'moderatelyActive' && styles.optionButtonSelected]} 
+                        onPress={() => setActivityLevel('moderatelyActive')}
                     >
                         <Text style={styles.optionText}>Medium</Text>
                         <Text style={styles.optionSubText}>10-20 hours a week</Text>
                     </TouchableOpacity>
                     <TouchableOpacity 
-                        style={[styles.optionButton, activityLevel === 'Low' && styles.optionButtonSelected]} 
-                        onPress={() => setActivityLevel('Low')}
+                        style={[styles.optionButton, activityLevel === 'lightlyActive' && styles.optionButtonSelected]} 
+                        onPress={() => setActivityLevel('lightlyActive')}
                     >
                         <Text style={styles.optionText}>Low</Text>
                         <Text style={styles.optionSubText}>Less than 10 hours a week</Text>

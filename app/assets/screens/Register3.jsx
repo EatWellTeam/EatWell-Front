@@ -55,14 +55,14 @@ export default function Register3Screen() {
                 />
                 <View style={styles.genderContainer}>
                     <TouchableOpacity 
-                        style={[styles.genderButton, gender === 'F' && styles.genderButtonSelected]} 
-                        onPress={() => setGender('F')}
+                        style={[styles.genderButton, gender === 'female' && styles.genderButtonSelected]} 
+                        onPress={() => setGender('female')}
                     >
                         <Text style={styles.genderText}>F</Text>
                     </TouchableOpacity>
                     <TouchableOpacity 
-                        style={[styles.genderButton, gender === 'M' && styles.genderButtonSelected]} 
-                        onPress={() => setGender('M')}
+                        style={[styles.genderButton, gender === 'male' && styles.genderButtonSelected]} 
+                        onPress={() => setGender('male')}
                     >
                         <Text style={styles.genderText}>M</Text>
                     </TouchableOpacity>
