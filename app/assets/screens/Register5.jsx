@@ -1,15 +1,40 @@
 // app/assets/screens/Register5.js
-import React, { useState } from 'react';
+import React, { useState ,useEffect} from 'react';
 import { View, Text, SafeAreaView, ScrollView, Platform, StatusBar, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import axios from 'axios'
 import { useSignUpContext } from '../context/SignUpContext';
 
 export default function Register5Screen() {
     const { signUpData, setSignUpData } = useSignUpContext();
     const [activityLevel, setActivityLevel] = useState("");
-
+    const [loading,setLoading] = useState(false)
     const navigation = useNavigation();
+
+        async function fetchCalories () {
+            try {
+                if(!activityLevel) {
+                    Alert.alert("Please choose activity level")
+                    return
+                }
+                console.log("fetchCalories")
+                setLoading(true)
+                const response = await axios.post('http://10.0.0.6:3000/auth/register', {...signUpData,activityLevel});
+                if (response.status === 201) {
+                    console.log('Registration successful', response.data);
+                    navigation.navigate('Register6', {registerData : response.data});
+                } else {
+                    console.log('Unexpected response', response.data);
+                    Alert.alert('Error', 'Unexpected response from the server');
+                }
+            } catch (error) {
+                console.log('Registration error', error);
+                Alert.alert('Error', error.message);
+            } finally {
+                setLoading(false)
+            }
+        }
 
     const handleContinue = () => {
         setSignUpData({ 
@@ -17,7 +42,7 @@ export default function Register5Screen() {
             activityLevel 
         });
         console.log("Registering:", { activityLevel });
-        navigation.navigate('Register6');
+        fetchCalories()
     };
 
     return (
@@ -58,7 +83,7 @@ export default function Register5Screen() {
                         <Text style={styles.optionText}>Low</Text>
                         <Text style={styles.optionSubText}>Less than 10 hours a week</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.button} onPress={handleContinue}>
+                    <TouchableOpacity style={styles.button} disabled={loading} onPress={handleContinue}>
                         <Text style={styles.buttonText}>Continue</Text>
                     </TouchableOpacity>
                 </View>

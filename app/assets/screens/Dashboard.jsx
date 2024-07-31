@@ -36,44 +36,42 @@ export default function DashboardScreen() {
       console.log('Image selected from camera:', uri);
       setImage(uri);
     }
+    else {
+      console.log("Result cancled?")
+    }
   }
 
   async function openGallery() {
     const permissions = await ImagePicker.getMediaLibraryPermissionsAsync();
-    if (!permissions.granted) {
-      requestMediaPermissions();
-      return;
-    }
+    try {
+      console.log("openGallery 1")
+      let result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [4, 3],
+        quality: 1,
+      });
+      console.log("openGallery 2")
 
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
-    });
-
-    if (!result.canceled) {
-      const uri = result.assets[0].uri;
-      console.log('Image selected from gallery:', uri);
-      setImage(uri);
-    }
+      if (!result.canceled) {
+        const uri = result.assets[0].uri;
+        console.log('Image selected from gallery:', uri);
+        setImage(uri);
+      }
+      else {
+        console.log("Result cancled?")
+      }
+    }catch(e) {console.log(e)}
   }
+  
 
   async function requestMediaPermissions() {
     const { status } = await ImagePicker.requestCameraPermissionsAsync();
-    if (status !== 'granted') {
-      Alert.alert('Sorry, we need camera roll permissions to make this work!');
-      return;
-    }
     const mediaLibraryStatus = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (mediaLibraryStatus.status !== 'granted') {
-      Alert.alert('Sorry, we need camera roll permissions to make this work!');
-      return;
-    }
   }
 
   useEffect(() => {
-    requestMediaPermissions();
+   // requestMediaPermissions();
   }, []);
 
   const analyze = async () => {
@@ -99,7 +97,7 @@ export default function DashboardScreen() {
         role: 'user',
       };
 
-      const { data } = await axios.post('http://192.168.1.17:3000/middleware/process', [payload], {
+      const { data } = await axios.post('http://10.0.0.6:3000/middleware/process', [payload], {
         headers: {
           'Content-Type': 'application/json',
         },

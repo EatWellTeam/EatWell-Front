@@ -6,51 +6,33 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useSignUpContext } from '../context/SignUpContext';
 import axios from 'axios';
 
-export default function Register6Screen() {
+export default function Register6Screen({ route}) {
     const { signUpData } = useSignUpContext();
-    const [calories, setCalories] = useState(0);
     const animatedValue = new Animated.Value(0);
     const navigation = useNavigation();
 
-    const handleContinue = async () => {
-        console.log("Navigating to Dashboard");
-        console.log(signUpData);
-        try {
-            const response = await axios.post('http://192.168.1.107:3000/auth/register', signUpData);
-            if (response.status === 201) {
-                console.log('Registration successful', response.data);
-                const { recommendedCalories } = response.data;
-                setCalories(recommendedCalories);
-                Alert.alert('Success', 'Registration successful');
-                navigation.navigate('Dashboard');
-            } else {
-                console.log('Unexpected response', response.data);
-                Alert.alert('Error', 'Unexpected response from the server');
-            }
-        } catch (error) {
-            console.log('Registration error', error);
-            Alert.alert('Error', error.message);
-        }
-    };
+    const registerData = route.params.registerData
+    const handleContinue = () => {
+        Alert.alert('Registration successful', "Registration successful")
+        navigation.navigate('Dashboard', {registerData });
+    }
+
 
     useEffect(() => {
+        if(!registerData) return
         Animated.timing(animatedValue, {
-            toValue: calories,
+            toValue: registerData.recommendedCalories,
             duration: 5000,
             useNativeDriver: false,
         }).start();
 
-        animatedValue.addListener(({ value }) => {
-            setCalories(Math.round(value));
-        });
-
         return () => animatedValue.removeAllListeners();
-    }, [calories]);
+    }, [registerData]);
 
     const circleRadius = 100;
     const circumference = 2 * Math.PI * circleRadius;
     const animatedCircle = animatedValue.interpolate({
-        inputRange: [0, calories],
+        inputRange: [0, registerData.recommendedCalories],
         outputRange: [circumference, 0]
     });
 
@@ -90,7 +72,7 @@ export default function Register6Screen() {
                 </Svg>
                 <View style={styles.textContainer}>
                     <Text style={styles.caloriesText}>Total calories consumption</Text>
-                    <Text style={styles.caloriesAmount}>{calories}</Text>
+                    <Text style={styles.caloriesAmount}>{registerData.recommendedCalories}</Text>
                 </View>
             </View>
             <TouchableOpacity style={styles.continueButton} onPress={handleContinue}>

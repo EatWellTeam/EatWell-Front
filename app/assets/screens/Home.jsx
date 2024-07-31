@@ -54,6 +54,7 @@ export default function Home({ navigation }) {
     const { status } = await ImagePicker.requestCameraPermissionsAsync();
     if (status !== 'granted') {
       Alert.alert('Sorry, we need camera roll permissions to make this work!');
+      requestMediaPermissions() // recursively try requesting permissions
       return;
     }
     const mediaLibraryStatus = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -91,7 +92,7 @@ export default function Home({ navigation }) {
             role: "user"
         };
 
-        const { data } = await axios.post('http://192.168.1.17:3000/middleware/process', [payload], {
+        const { data } = await axios.post('http://10.0.0.6:3000/middleware/process', [payload], {
             headers: {
                 'Content-Type': 'application/json'
             }
