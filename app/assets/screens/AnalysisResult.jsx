@@ -1,108 +1,136 @@
-import React, { useEffect, useMemo, useState } from "react";
-import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity } from "react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import React, { useState, useMemo } from "react";
+import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity, TextInput, Alert } from "react-native";
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 export default function AnalysisResult({ navigation, route }) {
-  const { results } = route.params;
+    const [isEditing, setIsEditing] = useState(false);
+    const [editIngredients, setEditIngredients] = useState('');
+    const [showRecalculate, setShowRecalculate] = useState(false);
 
-  const Fat = useMemo(() => { 
-    if (!results) return null;
-    else return results.results.nutritionData?.totalNutrients["FAT"];
-  }, [results]);
+    const { results, image } = route.params;
 
-  const Carbs = useMemo(() => { 
-    if (!results) return null;
-    else return results.results.nutritionData?.totalNutrients["CHOCDF"];
-  }, [results]);
-
-  const Protein = useMemo(() => { 
-    if (!results) return null;
-    else return results.results.nutritionData?.totalNutrients["PROCNT"];
-  }, [results]);
-
-  useEffect(() => {
-    const fetchResultsLocally = async () => {
-      if (!results) {
-        const storedResults = await AsyncStorage.getItem("results");
-        if (storedResults) {
-          const parsed = JSON.parse(storedResults);
-          setResults(parsed);
-        }
-      }
+    const handleEdit = () => {
+        setIsEditing(true);
+        setEditIngredients(results.ingredients.join('\n')); // Join ingredients with a newline for editing
+        setShowRecalculate(false);
     };
-    fetchResultsLocally();
-  }, []);
 
-  if (!results || !Protein || !Carbs || !Fat) {
-    return null;
-  }
+    const handleSave = () => {
+        setIsEditing(false);
+        results.ingredients = editIngredients.split('\n').map(ingredient => ingredient.trim()); // Split by newline and trim each ingredient
+        Alert.alert('Saved!', 'Your changes have been saved.');
+        setShowRecalculate(true);
+    };
 
-  return (
-    <View style={styles.container}>
-      {/* Custom Back Button */}
-      <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-          <Ionicons name="arrow-back" size={24} color="#fff" />
-      </TouchableOpacity>
+    const handleRecalculate = async () => {
+        Alert.alert('Recalculate', 'Analysis is being recalculated.');
+    };
 
-      <ScrollView>
-        <Image source={{ uri: results.image }} style={styles.image} />
-        <Text style={styles.textTitle}>{"Ingredients"}</Text>
-        <View style={styles.textSection}>
-          {results.results.ingredients.map((ingredient, index) => {
-            return <Text key={index + ingredient}>{ingredient}</Text>;
-          })}
+    return (
+        <View style={styles.container}>
+            <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+                <Ionicons name="arrow-back" size={24} color="#fff" />
+            </TouchableOpacity>
+            <Image source={{ uri: 'https://i.postimg.cc/HxgKzxMj/cropped-image-11.png' }} style={styles.logo} />
+            <ScrollView style={styles.contentContainer} contentContainerStyle={styles.scrollViewContentContainer}>
+                <Image source={{ uri: image }} style={styles.image} />
+                <Text style={styles.sectionTitle}>Ingredients</Text>
+                {isEditing ? (
+                    <TextInput
+                        style={styles.input}
+                        value={editIngredients}
+                        onChangeText={setEditIngredients}
+                        multiline
+                    />
+                ) : (
+                    results.ingredients.map((ingredient, index) => (
+                        <Text key={index} style={styles.text}>{ingredient}</Text>
+                    ))
+                )}
+                <Text style={styles.sectionTitle}>Nutrition</Text>
+                <Text style={styles.text}>Calories: {results.nutritionData.calories}</Text>
+                <Text style={styles.text}>Protein: {results.nutritionData.totalNutrients.PROCNT.quantity.toFixed(2)}g</Text>
+                <Text style={styles.text}>Carbs: {results.nutritionData.totalNutrients.CHOCDF.quantity.toFixed(2)}g</Text>
+                <Text style={styles.text}>Fat: {results.nutritionData.totalNutrients.FAT.quantity.toFixed(2)}g</Text>
+            </ScrollView>
+            {isEditing ? (
+                <TouchableOpacity style={styles.button} onPress={handleSave}>
+                    <Text style={styles.buttonText}>Save</Text>
+                </TouchableOpacity>
+            ) : (
+                <TouchableOpacity style={styles.button} onPress={handleEdit}>
+                    <Text style={styles.buttonText}>Edit Analysis</Text>
+                </TouchableOpacity>
+            )}
+            {showRecalculate && (
+                <TouchableOpacity style={styles.button} onPress={handleRecalculate}>
+                    <Text style={styles.buttonText}>Recalculate</Text>
+                </TouchableOpacity>
+            )}
         </View>
-
-        <Text style={styles.textTitle}>{"Calories"}</Text>
-        <Text style={styles.textSection}>{results.results.nutritionData.calories}</Text>
-        <Text style={styles.textTitle}>{"Protein"}</Text>
-        <Text style={styles.textSection}>{Protein.quantity.toFixed(3)}</Text>
-        <Text style={styles.textTitle}>{"Carbs"}</Text>
-        <Text style={styles.textSection}>{Carbs.quantity.toFixed(3)}</Text>
-        <Text style={styles.textTitle}>{"Fat"}</Text>
-        <Text style={styles.textSection}>{Fat.quantity.toFixed(3)}</Text>
-      </ScrollView>
-    </View>
-  );
+    );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    padding: 10,
-    flex: 1,
-    justifyContent: 'flex-start',
-    alignItems: 'center'
-  },
-  backButton: {
-    position: 'absolute',
-    top: 40,
-    left: 20,
-    backgroundColor: '#1E9947',
-    padding: 10,
-    borderRadius: 5,
-  },
-  backButtonText: {
-    color: '#fff',
-    fontWeight: 'bold',
-    fontSize: 20,
-  },
-  image: {
-    width: 200,
-    height: 200,
-    margin: 10,
-    borderRadius: 10,
-  },
-  textTitle: {
-    fontSize: 24,
-    fontWeight: 'bold'
-  },
-  textSection: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: 10,
-    fontSize: 16,
-    fontWeight: 'normal',
-    padding: 10
-  }
+    container: {
+        flex: 1,
+        paddingTop: 20,
+        backgroundColor: '#161E21',
+        alignItems: 'center',
+    },
+    backButton: {
+        position: 'absolute',
+        top: 40,
+        left: 20,
+        padding: 10,
+        borderRadius: 5,
+    },
+    logo: {
+        width: 150,
+        height: 150,
+    },
+    contentContainer: {
+        flex: 1,
+        width: '100%',
+    },
+    scrollViewContentContainer: {
+        padding: 20,
+        paddingBottom: 100, // Increase padding to ensure nothing is hidden behind buttons
+    },
+    image: {
+        width: '100%',
+        height: 200,
+        marginBottom: 20,
+    },
+    sectionTitle: {
+        fontSize: 22,
+        fontWeight: 'bold',
+        color: '#fff',
+        marginBottom: 10,
+    },
+    text: {
+        fontSize: 16,
+        color: '#fff',
+        marginBottom: 5,
+    },
+    input: {
+        fontSize: 16,
+        color: '#000',
+        backgroundColor: '#fff',
+        padding: 10,
+        marginBottom: 10,
+    },
+    button: {
+        backgroundColor: '#1E9947',
+        padding: 15,
+        borderRadius: 5,
+        margin: 10,
+        width: '90%',
+        alignItems: 'center',
+    },
+    buttonText: {
+        color: '#fff',
+        fontSize: 16,
+        fontWeight: 'bold',
+    },
 });

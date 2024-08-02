@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { View, Text, SafeAreaView, StyleSheet, Platform, StatusBar, TouchableOpacity, Image, ScrollView, Alert } from 'react-native';
 import Svg, { Circle } from 'react-native-svg';
 import { LineChart } from 'react-native-chart-kit';
@@ -36,43 +36,32 @@ export default function DashboardScreen() {
       console.log('Image selected from camera:', uri);
       setImage(uri);
     }
-    else {
-      console.log("Result cancled?")
-    }
   }
 
   async function openGallery() {
     const permissions = await ImagePicker.getMediaLibraryPermissionsAsync();
     try {
-      console.log("openGallery 1")
       let result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
         allowsEditing: true,
         aspect: [4, 3],
         quality: 1,
       });
-      console.log("openGallery 2")
 
       if (!result.canceled) {
         const uri = result.assets[0].uri;
         console.log('Image selected from gallery:', uri);
         setImage(uri);
       }
-      else {
-        console.log("Result cancled?")
-      }
-    }catch(e) {console.log(e)}
+    } catch (e) {
+      console.log(e);
+    }
   }
-  
 
   async function requestMediaPermissions() {
-    const { status } = await ImagePicker.requestCameraPermissionsAsync();
-    const mediaLibraryStatus = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    await ImagePicker.requestCameraPermissionsAsync();
+    await ImagePicker.requestMediaLibraryPermissionsAsync();
   }
-
-  useEffect(() => {
-   // requestMediaPermissions();
-  }, []);
 
   const analyze = async () => {
     if (!image) {
@@ -104,8 +93,9 @@ export default function DashboardScreen() {
       });
   
       console.log('Analysis data received:', data);
+  
       // Ensure data is correctly passed to the next screen
-      navigation.navigate('AnalysisResult', { results: { results: data, image: url } });
+      navigation.navigate('AnalysisResult', { results: data, image: url });
     } catch (e) {
       console.error('Error during analysis:', e.message);
       if (e.response) {
@@ -121,6 +111,7 @@ export default function DashboardScreen() {
     }
   };
   
+
   const showImagePickerOptions = () => {
     Alert.alert(
       'Select Image Source',
