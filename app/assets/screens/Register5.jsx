@@ -20,7 +20,7 @@ export default function Register5Screen() {
                 }
                 console.log("fetchCalories")
                 setLoading(true)
-                const response = await axios.post('http://10.0.0.6:3000/auth/register', {...signUpData,activityLevel});
+                const response = await axios.post('http://172.27.240.1:3000/auth/register', {...signUpData,activityLevel});
                 if (response.status === 201) {
                     console.log('Registration successful', response.data);
                     navigation.navigate('Register6', {registerData : response.data});
@@ -63,22 +63,22 @@ export default function Register5Screen() {
                 <View style={styles.formContainer}>
                     <Text style={styles.questionText}>What is your activity level?</Text>
                     <TouchableOpacity 
-                        style={[styles.optionButton, activityLevel === 'veryActive' && styles.optionButtonSelected]} 
-                        onPress={() => setActivityLevel('veryActive')}
+                        style={[styles.optionButton, activityLevel === 'High' && styles.optionButtonSelected]} 
+                        onPress={() => setActivityLevel('High')}
                     >
                         <Text style={styles.optionText}>High</Text>
                         <Text style={styles.optionSubText}>20+ hours a week</Text>
                     </TouchableOpacity>
                     <TouchableOpacity 
-                        style={[styles.optionButton, activityLevel === 'moderatelyActive' && styles.optionButtonSelected]} 
-                        onPress={() => setActivityLevel('moderatelyActive')}
+                        style={[styles.optionButton, activityLevel === 'Medium' && styles.optionButtonSelected]} 
+                        onPress={() => setActivityLevel('Medium')}
                     >
                         <Text style={styles.optionText}>Medium</Text>
                         <Text style={styles.optionSubText}>10-20 hours a week</Text>
                     </TouchableOpacity>
                     <TouchableOpacity 
-                        style={[styles.optionButton, activityLevel === 'lightlyActive' && styles.optionButtonSelected]} 
-                        onPress={() => setActivityLevel('lightlyActive')}
+                        style={[styles.optionButton, activityLevel === 'Low' && styles.optionButtonSelected]} 
+                        onPress={() => setActivityLevel('Low')}
                     >
                         <Text style={styles.optionText}>Low</Text>
                         <Text style={styles.optionSubText}>Less than 10 hours a week</Text>
