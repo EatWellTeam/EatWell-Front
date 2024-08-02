@@ -79,12 +79,12 @@ export default function DashboardScreen() {
       Alert.alert('No image selected', 'Please select an image first.');
       return;
     }
-
+  
     try {
       console.log('Uploading image:', image);
       const url = await imageUpload(image);
       console.log('Image uploaded, URL:', url);
-
+  
       const payload = {
         content: [
           {
@@ -96,14 +96,15 @@ export default function DashboardScreen() {
         ],
         role: 'user',
       };
-
+  
       const { data } = await axios.post('http://172.27.240.1:3000/middleware/process', [payload], {
         headers: {
           'Content-Type': 'application/json',
         },
       });
-
+  
       console.log('Analysis data received:', data);
+      // Ensure data is correctly passed to the next screen
       navigation.navigate('AnalysisResult', { results: { results: data, image: url } });
     } catch (e) {
       console.error('Error during analysis:', e.message);
@@ -119,7 +120,7 @@ export default function DashboardScreen() {
       }
     }
   };
-
+  
   const showImagePickerOptions = () => {
     Alert.alert(
       'Select Image Source',
