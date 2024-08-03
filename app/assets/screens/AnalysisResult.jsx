@@ -3,12 +3,12 @@ import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity, TextInput,
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { API_URL } from '@env';
 
-
 export default function AnalysisResult({ navigation, route }) {
     const [isEditing, setIsEditing] = useState(false);
     const [editIngredients, setEditIngredients] = useState('');
     const [showRecalculate, setShowRecalculate] = useState(false);
     const [results, setResults] = useState(route.params.results); // Initialize results with props
+    const imageUri = route.params.image;
 
     const handleEdit = () => {
         setIsEditing(true);
@@ -56,24 +56,50 @@ export default function AnalysisResult({ navigation, route }) {
             </TouchableOpacity>
             <Image source={{ uri: 'https://i.postimg.cc/HxgKzxMj/cropped-image-11.png' }} style={styles.logo} />
             <ScrollView style={styles.contentContainer} contentContainerStyle={styles.scrollViewContentContainer}>
-                <Text style={styles.sectionTitle}>Ingredients</Text>
-                {isEditing ? (
-                    <TextInput
-                        style={styles.input}
-                        value={editIngredients}
-                        onChangeText={setEditIngredients}
-                        multiline
-                    />
+                {imageUri ? (
+                    <>
+                        <Image source={{ uri: imageUri }} style={styles.image} />
+                        <Text style={styles.sectionTitle}>Ingredients</Text>
+                        {isEditing ? (
+                            <TextInput
+                                style={styles.input}
+                                value={editIngredients}
+                                onChangeText={setEditIngredients}
+                                multiline
+                            />
+                        ) : (
+                            results.ingredients.map((ingredient, index) => (
+                                <Text key={index} style={styles.text}>{ingredient}</Text>
+                            ))
+                        )}
+                        <Text style={styles.sectionTitle}>Nutrition</Text>
+                        <Text style={styles.text}>Calories: {results.nutritionData.calories}</Text>
+                        <Text style={styles.text}>Protein: {results.nutritionData.totalNutrients?.PROCNT?.quantity?.toFixed(2) || 0}g</Text>
+                        <Text style={styles.text}>Carbs: {results.nutritionData.totalNutrients?.CHOCDF?.quantity?.toFixed(2) || 0}g</Text>
+                        <Text style={styles.text}>Fat: {results.nutritionData.totalNutrients?.FAT?.quantity?.toFixed(2) || 0}g</Text>
+                    </>
                 ) : (
-                    results.ingredients.map((ingredient, index) => (
-                        <Text key={index} style={styles.text}>{ingredient}</Text>
-                    ))
+                    <>
+                        <Text style={styles.sectionTitle}>Ingredients</Text>
+                        {isEditing ? (
+                            <TextInput
+                                style={styles.input}
+                                value={editIngredients}
+                                onChangeText={setEditIngredients}
+                                multiline
+                            />
+                        ) : (
+                            results.ingredients.map((ingredient, index) => (
+                                <Text key={index} style={styles.text}>{ingredient}</Text>
+                            ))
+                        )}
+                        <Text style={styles.sectionTitle}>Nutrition</Text>
+                        <Text style={styles.text}>Calories: {results.nutritionData.calories}</Text>
+                        <Text style={styles.text}>Protein: {results.nutritionData.totalNutrients?.PROCNT?.quantity?.toFixed(2) || 0}g</Text>
+                        <Text style={styles.text}>Carbs: {results.nutritionData.totalNutrients?.CHOCDF?.quantity?.toFixed(2) || 0}g</Text>
+                        <Text style={styles.text}>Fat: {results.nutritionData.totalNutrients?.FAT?.quantity?.toFixed(2) || 0}g</Text>
+                    </>
                 )}
-                <Text style={styles.sectionTitle}>Nutrition</Text>
-                <Text style={styles.text}>Calories: {results.nutritionData.calories}</Text>
-                <Text style={styles.text}>Protein: {results.nutritionData.totalNutrients?.PROCNT?.quantity?.toFixed(2) || 0}g</Text>
-                <Text style={styles.text}>Carbs: {results.nutritionData.totalNutrients?.CHOCDF?.quantity?.toFixed(2) || 0}g</Text>
-                <Text style={styles.text}>Fat: {results.nutritionData.totalNutrients?.FAT?.quantity?.toFixed(2) || 0}g</Text>
             </ScrollView>
             {isEditing ? (
                 <TouchableOpacity style={styles.button} onPress={handleSave}>
