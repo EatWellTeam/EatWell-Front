@@ -4,29 +4,42 @@ import Svg, { Circle } from 'react-native-svg';
 import { useNavigation } from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useSignUpContext } from '../context/SignUpContext';
-import axios from 'axios';
 
-export default function Register6Screen({ route}) {
+export default function Register6Screen({ route }) {
     const { signUpData } = useSignUpContext();
     const animatedValue = new Animated.Value(0);
+    const [calories, setCalories] = useState(0);
     const navigation = useNavigation();
-
-    const registerData = route.params.registerData
-    const handleContinue = () => {
-        Alert.alert('Registration successful', "Registration successful")
-        navigation.navigate('Dashboard', {registerData });
-    }
-
+    const registerData = route.params.registerData;
 
     useEffect(() => {
-        if(!registerData) return
+        if (!registerData) return;
+
+        // Animation for the circle
         Animated.timing(animatedValue, {
             toValue: registerData.recommendedCalories,
             duration: 5000,
             useNativeDriver: false,
         }).start();
 
-        return () => animatedValue.removeAllListeners();
+        // Fast counting animation
+        const totalCalories = registerData.recommendedCalories;
+        const duration = 1000; // Duration for the counting animation in milliseconds
+        const interval = 50; // Update interval in milliseconds
+        const step = Math.ceil(totalCalories / (duration / interval));
+
+        let count = 0;
+        const countingAnimation = setInterval(() => {
+            count += step;
+            if (count >= totalCalories) {
+                clearInterval(countingAnimation);
+                setCalories(totalCalories);
+            } else {
+                setCalories(count);
+            }
+        }, interval);
+
+        return () => clearInterval(countingAnimation);
     }, [registerData]);
 
     const circleRadius = 100;
@@ -72,10 +85,13 @@ export default function Register6Screen({ route}) {
                 </Svg>
                 <View style={styles.textContainer}>
                     <Text style={styles.caloriesText}>Total calories consumption</Text>
-                    <Text style={styles.caloriesAmount}>{registerData.recommendedCalories}</Text>
+                    <Text style={styles.caloriesAmount}>{Math.round(calories)}</Text>
                 </View>
             </View>
-            <TouchableOpacity style={styles.continueButton} onPress={handleContinue}>
+            <TouchableOpacity style={styles.continueButton} onPress={() => {
+                Alert.alert('Registration successful', "Registration successful");
+                navigation.navigate('Dashboard', { registerData });
+            }}>
                 <Text style={styles.continueButtonText}>Continue</Text>
             </TouchableOpacity>
         </SafeAreaView>

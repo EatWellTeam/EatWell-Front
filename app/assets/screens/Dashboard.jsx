@@ -86,7 +86,7 @@ export default function DashboardScreen() {
         role: 'user',
       };
   
-      const { data } = await axios.post('http://172.27.240.1:3000/middleware/process', [payload], {
+      const { data } = await axios.post('http://192.168.1.17:3000/middleware/process', [payload], {
         headers: {
           'Content-Type': 'application/json',
         },

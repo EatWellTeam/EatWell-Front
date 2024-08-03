@@ -1,6 +1,6 @@
 // app/assets/screens/Register5.js
 import React, { useState ,useEffect} from 'react';
-import { View, Text, SafeAreaView, ScrollView, Platform, StatusBar, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import { View, Text, SafeAreaView, ScrollView, Platform, StatusBar, StyleSheet, Image, TouchableOpacity, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import axios from 'axios'
@@ -20,7 +20,7 @@ export default function Register5Screen() {
                 }
                 console.log("fetchCalories")
                 setLoading(true)
-                const response = await axios.post('http://172.27.240.1:3000/auth/register', {...signUpData,activityLevel});
+                const response = await axios.post('http://192.168.1.17:3000/auth/register', {...signUpData,activityLevel});
                 if (response.status === 201) {
                     console.log('Registration successful', response.data);
                     navigation.navigate('Register6', {registerData : response.data});
