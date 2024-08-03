@@ -10,7 +10,7 @@ export default function Register6Screen({ route }) {
     const animatedValue = new Animated.Value(0);
     const [calories, setCalories] = useState(0);
     const navigation = useNavigation();
-    const registerData = route.params.registerData;
+    const registerData = route.params?.registerData;
 
     useEffect(() => {
         if (!registerData) return;
@@ -90,7 +90,8 @@ export default function Register6Screen({ route }) {
             </View>
             <TouchableOpacity style={styles.continueButton} onPress={() => {
                 Alert.alert('Registration successful', "Registration successful");
-                navigation.navigate('Dashboard', { registerData });
+                // Pass both caloriesLeft and fromRegister6
+                navigation.navigate('Dashboard', { caloriesLeft: registerData.recommendedCalories, fromRegister6: true });
             }}>
                 <Text style={styles.continueButtonText}>Continue</Text>
             </TouchableOpacity>

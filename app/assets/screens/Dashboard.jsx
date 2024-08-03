@@ -3,22 +3,24 @@ import { View, Text, SafeAreaView, StyleSheet, Platform, StatusBar, TouchableOpa
 import Svg, { Circle } from 'react-native-svg';
 import { LineChart } from 'react-native-chart-kit';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
 import axios from 'axios';
 import imageUpload from '../../../services/imageUpload'; // Adjust the import path as necessary
 import { API_URL } from '@env';
 
-
 export default function DashboardScreen() {
+  const route = useRoute();
+  const navigation = useNavigation();
+
+  // Extract caloriesLeft from route params, default to 998 if not provided
+  const [caloriesLeft, setCaloriesLeft] = useState(route.params?.caloriesLeft || 998);
   const [caloriesConsumed, setCaloriesConsumed] = useState(1183);
-  const [caloriesLeft, setCaloriesLeft] = useState(998);
   const [image, setImage] = useState(null);
+
   const circleRadius = 45;
   const circumference = 2 * Math.PI * circleRadius;
   const strokeDashoffset = circumference - (caloriesConsumed / 2000) * circumference;
-
-  const navigation = useNavigation();
 
   async function openCamera() {
     const permissions = await ImagePicker.getCameraPermissionsAsync();
@@ -70,12 +72,12 @@ export default function DashboardScreen() {
       Alert.alert('No image selected', 'Please select an image first.');
       return;
     }
-  
+
     try {
       console.log('Uploading image:', image);
       const url = await imageUpload(image);
       console.log('Image uploaded, URL:', url);
-  
+
       const payload = {
         content: [
           {
@@ -87,15 +89,15 @@ export default function DashboardScreen() {
         ],
         role: 'user',
       };
-  
+
       const { data } = await axios.post(`${API_URL}/middleware/process`, [payload], {
         headers: {
           'Content-Type': 'application/json',
         },
       });
-  
+
       console.log('Analysis data received:', data);
-  
+
       // Ensure data is correctly passed to the next screen
       navigation.navigate('AnalysisResult', { results: data, image: url });
     } catch (e) {
@@ -112,7 +114,6 @@ export default function DashboardScreen() {
       }
     }
   };
-  
 
   const showImagePickerOptions = () => {
     Alert.alert(
@@ -254,30 +255,24 @@ const styles = StyleSheet.create({
   statsContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
     marginBottom: 20,
   },
   statsTextContainer: {
     marginLeft: 20,
-    alignItems: 'center',
   },
   caloriesConsumedText: {
-    fontSize: 24,
-    fontWeight: 'bold',
+    fontSize: 36,
     color: '#1E9947',
-  },
-  caloriesLeftText: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#fff',
-    marginTop: 10,
   },
   labelText: {
     fontSize: 14,
     color: '#fff',
   },
+  caloriesLeftText: {
+    fontSize: 36,
+    color: '#FFFFFF',
+  },
   graphContainer: {
-    alignItems: 'center',
     marginVertical: 20,
   },
   graphTitle: {
@@ -285,9 +280,20 @@ const styles = StyleSheet.create({
     color: '#fff',
     marginBottom: 10,
   },
-  lastMealContainer: {
+  button: {
+    backgroundColor: '#1E9947',
+    borderRadius: 5,
+    padding: 10,
     alignItems: 'center',
     marginVertical: 20,
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 16,
+  },
+  lastMealContainer: {
+    alignItems: 'center',
+    marginTop: 20,
   },
   lastMealTitle: {
     fontSize: 18,
@@ -295,47 +301,27 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   lastMealText: {
-    fontSize: 14,
-    color: '#fff',
     textAlign: 'center',
+    fontSize: 16,
+    color: '#fff',
   },
   lastMealImage: {
-    width: 100,
-    height: 100,
+    width: 150,
+    height: 150,
     marginTop: 10,
-    borderRadius: 10,
-  },
-  button: {
-    backgroundColor: '#1E9947',
-    borderRadius: 10,
-    paddingVertical: 12,
-    paddingHorizontal: 24,
-    marginTop: 20,
-    marginBottom: 20,
-  },
-  buttonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: 'bold',
-    textAlign: 'center',
   },
   navBar: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    width: '100%',
     position: 'absolute',
     bottom: 0,
-    backgroundColor: '#161E21', // Add background color
-    paddingVertical: 10,
+    width: '100%',
+    backgroundColor: '#161E21',
   },
   navButtonContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    width: '90%', // Adjust this value to control the spacing and centering
-    paddingHorizontal: 10, // Add padding to create space between buttons
+    justifyContent: 'space-around',
+    padding: 10,
   },
   navButton: {
-    alignItems: 'center',
     padding: 10,
   },
 });
