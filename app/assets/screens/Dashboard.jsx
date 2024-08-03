@@ -7,6 +7,8 @@ import { useNavigation } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
 import axios from 'axios';
 import imageUpload from '../../../services/imageUpload'; // Adjust the import path as necessary
+import { API_URL } from '@env';
+
 
 export default function DashboardScreen() {
   const [caloriesConsumed, setCaloriesConsumed] = useState(1183);
@@ -86,7 +88,7 @@ export default function DashboardScreen() {
         role: 'user',
       };
   
-      const { data } = await axios.post('http://192.168.1.220:3000/middleware/process', [payload], {
+      const { data } = await axios.post(`${API_URL}/middleware/process`, [payload], {
         headers: {
           'Content-Type': 'application/json',
         },

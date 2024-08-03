@@ -5,6 +5,8 @@ import { useNavigation } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
 import Modal from 'react-native-modal';
 import axios from 'axios';
+import { API_URL } from '@env';
+
 
 const TrackCalories = () => {
   const [mealDescription, setMealDescription] = useState('');
@@ -14,7 +16,7 @@ const TrackCalories = () => {
 
   const handleCalculate = async () => {
     try {
-      const response = await axios.post('http://192.168.1.220:3000/nutrition/get-nutrition', {
+      const response = await axios.post(`${API_URL}/nutrition/get-nutrition`, {
         ingredients: mealDescription.split('\n'),
       });
       

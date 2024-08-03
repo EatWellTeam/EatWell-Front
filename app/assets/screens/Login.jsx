@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { View, Text, SafeAreaView, Image, Platform, StatusBar, StyleSheet, TextInput, TouchableOpacity, ScrollView, Alert } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons'; // Import Ionicons for the "eye" icon
 import axios from 'axios';
+import { API_URL } from '@env';
 
 export default function LoginScreen({ navigation }) {
     const [email, setEmail] = useState("");
@@ -12,7 +13,7 @@ export default function LoginScreen({ navigation }) {
     const handleContinue = async () => {
         console.log('Attempting login with email:', email); // Add log
         try {
-            const response = await axios.post('http://192.168.1.220:3000/auth/login', {
+            const response = await axios.post(`${API_URL}/auth/login`, {
                 email,
                 password
             });

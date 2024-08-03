@@ -5,6 +5,7 @@ import { useNavigation } from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import axios from 'axios'
 import { useSignUpContext } from '../context/SignUpContext';
+import { API_URL } from '@env';
 
 export default function Register5Screen() {
     const { signUpData, setSignUpData } = useSignUpContext();
@@ -20,7 +21,7 @@ export default function Register5Screen() {
                 }
                 console.log("fetchCalories")
                 setLoading(true)
-                const response = await axios.post('http://192.168.1.220:3000/auth/register', {...signUpData,activityLevel});
+                const response = await axios.post(`${API_URL}/auth/register`, {...signUpData,activityLevel});
                 if (response.status === 201) {
                     console.log('Registration successful', response.data);
                     navigation.navigate('Register6', {registerData : response.data});

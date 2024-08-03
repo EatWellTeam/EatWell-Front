@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity, TextInput, Alert } from "react-native";
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import { API_URL } from '@env';
+
 
 export default function AnalysisResult({ navigation, route }) {
     const [isEditing, setIsEditing] = useState(false);
@@ -23,7 +25,7 @@ export default function AnalysisResult({ navigation, route }) {
 
     const handleRecalculate = async () => {
         try {
-            const response = await fetch('http://192.168.1.220:3000/nutrition/get-nutrition', {
+            const response = await fetch(`${API_URL}/nutrition/get-nutrition`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

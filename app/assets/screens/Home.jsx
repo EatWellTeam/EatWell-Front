@@ -5,6 +5,8 @@ import imageUpload from '../../../services/imageUpload';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import CircularProgress from '../../../components/CircularProgress';
+import { API_URL } from '@env';
+
 
 export default function Home({ navigation }) {
   const [image, setImage] = useState(null);
@@ -92,7 +94,7 @@ export default function Home({ navigation }) {
             role: "user"
         };
 
-        const { data } = await axios.post('http://192.168.1.220:3000/middleware/process', [payload], {
+        const { data } = await axios.post(`${API_URL}/middleware/process`, [payload], {
             headers: {
                 'Content-Type': 'application/json'
             }
