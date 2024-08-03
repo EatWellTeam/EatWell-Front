@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState } from "react";
 import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity, TextInput, Alert } from "react-native";
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
@@ -6,8 +6,7 @@ export default function AnalysisResult({ navigation, route }) {
     const [isEditing, setIsEditing] = useState(false);
     const [editIngredients, setEditIngredients] = useState('');
     const [showRecalculate, setShowRecalculate] = useState(false);
-
-    const { results, image } = route.params;
+    const [results, setResults] = useState(route.params.results); // Initialize results with props
 
     const handleEdit = () => {
         setIsEditing(true);
@@ -23,8 +22,31 @@ export default function AnalysisResult({ navigation, route }) {
     };
 
     const handleRecalculate = async () => {
-        Alert.alert('Recalculate', 'Analysis is being recalculated.');
-    };
+      try {
+          const response = await fetch('http://172.27.240.1:3000/nutrition/get-nutrition', {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ ingredients: editIngredients.split('\n').map(ingredient => ingredient.trim()) }),
+          });
+          const data = await response.json();
+  
+          if (response.ok) {
+              // Update the results with new nutrition data
+              setResults({
+                  ...results,
+                  nutritionData: data.nutritionData,
+              });
+              Alert.alert('Recalculated!', 'Nutrition data has been updated.');
+          } else {
+              throw new Error(data.error || 'Failed to recalculate');
+          }
+      } catch (error) {
+          Alert.alert('Error', error.message);
+      }
+  };
+  
 
     return (
         <View style={styles.container}>
@@ -33,7 +55,7 @@ export default function AnalysisResult({ navigation, route }) {
             </TouchableOpacity>
             <Image source={{ uri: 'https://i.postimg.cc/HxgKzxMj/cropped-image-11.png' }} style={styles.logo} />
             <ScrollView style={styles.contentContainer} contentContainerStyle={styles.scrollViewContentContainer}>
-                <Image source={{ uri: image }} style={styles.image} />
+                <Image source={{ uri: route.params.image }} style={styles.image} />
                 <Text style={styles.sectionTitle}>Ingredients</Text>
                 {isEditing ? (
                     <TextInput
@@ -49,9 +71,9 @@ export default function AnalysisResult({ navigation, route }) {
                 )}
                 <Text style={styles.sectionTitle}>Nutrition</Text>
                 <Text style={styles.text}>Calories: {results.nutritionData.calories}</Text>
-                <Text style={styles.text}>Protein: {results.nutritionData.totalNutrients.PROCNT.quantity.toFixed(2)}g</Text>
-                <Text style={styles.text}>Carbs: {results.nutritionData.totalNutrients.CHOCDF.quantity.toFixed(2)}g</Text>
-                <Text style={styles.text}>Fat: {results.nutritionData.totalNutrients.FAT.quantity.toFixed(2)}g</Text>
+                <Text style={styles.text}>Protein: {results.nutritionData.totalNutrients?.PROCNT?.quantity?.toFixed(2) || 0}g</Text>
+                <Text style={styles.text}>Carbs: {results.nutritionData.totalNutrients?.CHOCDF?.quantity?.toFixed(2) || 0}g</Text>
+                <Text style={styles.text}>Fat: {results.nutritionData.totalNutrients?.FAT?.quantity?.toFixed(2) || 0}g</Text>
             </ScrollView>
             {isEditing ? (
                 <TouchableOpacity style={styles.button} onPress={handleSave}>
@@ -95,7 +117,7 @@ const styles = StyleSheet.create({
     },
     scrollViewContentContainer: {
         padding: 20,
-        paddingBottom: 100, // Increase padding to ensure nothing is hidden behind buttons
+        paddingBottom: 100,
     },
     image: {
         width: '100%',
