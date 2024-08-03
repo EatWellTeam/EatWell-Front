@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, SafeAreaView, StyleSheet, Platform, StatusBar, TouchableOpacity, Image, ScrollView, Alert } from 'react-native';
 import Svg, { Circle } from 'react-native-svg';
 import { LineChart } from 'react-native-chart-kit';
@@ -13,10 +13,13 @@ export default function DashboardScreen() {
   const route = useRoute();
   const navigation = useNavigation();
 
-  // Extract caloriesLeft from route params, default to 998 if not provided
+  // Extract parameters from route
   const [caloriesLeft, setCaloriesLeft] = useState(route.params?.caloriesLeft || 998);
-  const [caloriesConsumed, setCaloriesConsumed] = useState(1183);
+  const [caloriesConsumed, setCaloriesConsumed] = useState(route.params?.fromRegister6 ? 0 : 1183);
   const [image, setImage] = useState(null);
+
+  // Determine circle color based on navigation source
+  const circleStroke = route.params?.fromRegister6 ? '#fff' : '#eee';
 
   const circleRadius = 45;
   const circumference = 2 * Math.PI * circleRadius;
@@ -136,7 +139,7 @@ export default function DashboardScreen() {
         </View>
         <View style={styles.statsContainer}>
           <Svg height="120" width="120" viewBox="0 0 100 100">
-            <Circle cx="50" cy="50" r={circleRadius} stroke="#eee" strokeWidth="10" fill="none" />
+            <Circle cx="50" cy="50" r={circleRadius} stroke={circleStroke} strokeWidth="10" fill="none" />
             <Circle
               cx="50"
               cy="50"
