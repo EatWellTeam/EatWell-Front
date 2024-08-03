@@ -12,7 +12,7 @@ export default function LoginScreen({ navigation }) {
     const handleContinue = async () => {
         console.log('Attempting login with email:', email); // Add log
         try {
-            const response = await axios.post('http://192.168.1.17:3000/auth/login', {
+            const response = await axios.post('http://192.168.1.220:3000/auth/login', {
                 email,
                 password
             });

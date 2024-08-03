@@ -22,31 +22,30 @@ export default function AnalysisResult({ navigation, route }) {
     };
 
     const handleRecalculate = async () => {
-      try {
-          const response = await fetch('http://172.27.240.1:3000/nutrition/get-nutrition', {
-              method: 'POST',
-              headers: {
-                  'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({ ingredients: editIngredients.split('\n').map(ingredient => ingredient.trim()) }),
-          });
-          const data = await response.json();
-  
-          if (response.ok) {
-              // Update the results with new nutrition data
-              setResults({
-                  ...results,
-                  nutritionData: data.nutritionData,
-              });
-              Alert.alert('Recalculated!', 'Nutrition data has been updated.');
-          } else {
-              throw new Error(data.error || 'Failed to recalculate');
-          }
-      } catch (error) {
-          Alert.alert('Error', error.message);
-      }
-  };
-  
+        try {
+            const response = await fetch('http://192.168.1.220:3000/nutrition/get-nutrition', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ ingredients: editIngredients.split('\n').map(ingredient => ingredient.trim()) }),
+            });
+            const data = await response.json();
+
+            if (response.ok) {
+                // Update the results with new nutrition data
+                setResults({
+                    ...results,
+                    nutritionData: data.nutritionData,
+                });
+                Alert.alert('Recalculated!', 'Nutrition data has been updated.');
+            } else {
+                throw new Error(data.error || 'Failed to recalculate');
+            }
+        } catch (error) {
+            Alert.alert('Error', error.message);
+        }
+    };
 
     return (
         <View style={styles.container}>
@@ -55,7 +54,6 @@ export default function AnalysisResult({ navigation, route }) {
             </TouchableOpacity>
             <Image source={{ uri: 'https://i.postimg.cc/HxgKzxMj/cropped-image-11.png' }} style={styles.logo} />
             <ScrollView style={styles.contentContainer} contentContainerStyle={styles.scrollViewContentContainer}>
-                <Image source={{ uri: route.params.image }} style={styles.image} />
                 <Text style={styles.sectionTitle}>Ingredients</Text>
                 {isEditing ? (
                     <TextInput

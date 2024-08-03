@@ -92,7 +92,7 @@ export default function Home({ navigation }) {
             role: "user"
         };
 
-        const { data } = await axios.post('http://192.168.1.17:3000/middleware/process', [payload], {
+        const { data } = await axios.post('http://192.168.1.220:3000/middleware/process', [payload], {
             headers: {
                 'Content-Type': 'application/json'
             }

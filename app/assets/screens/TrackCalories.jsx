@@ -4,6 +4,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useNavigation } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
 import Modal from 'react-native-modal';
+import axios from 'axios';
 
 const TrackCalories = () => {
   const [mealDescription, setMealDescription] = useState('');
@@ -11,9 +12,20 @@ const TrackCalories = () => {
 
   const navigation = useNavigation();
 
-  const handleCalculate = () => {
-    console.log('Calculating calories for:', mealDescription);
-    setModalVisible(true); // Show the modal
+  const handleCalculate = async () => {
+    try {
+      const response = await axios.post('http://192.168.1.220:3000/nutrition/get-nutrition', {
+        ingredients: mealDescription.split('\n'),
+      });
+      
+      const nutritionData = response.data.nutritionData;
+      const ingredients = mealDescription.split('\n');
+      navigation.navigate('AnalysisResult', { results: { nutritionData, ingredients } });
+
+    } catch (error) {
+      console.error('Error calculating calories:', error);
+      Alert.alert('Error', 'Failed to calculate calories.');
+    }
   };
 
   const openCamera = async () => {
@@ -171,11 +183,6 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 5,
   },
-  backButtonText: {
-    color: '#fff',
-    fontWeight: 'bold',
-    fontSize: 20,
-  },
   logo: {
     width: 150,
     height: 150,
@@ -207,7 +214,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#1E9947',
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 10, // Original style
+    borderRadius: 10,
   },
   buttonText: {
     color: '#fff',
@@ -219,7 +226,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     width: '100%',
     position: 'absolute',
-    bottom: 0, // Move the navigation bar to the bottom
+    bottom: 0,
     backgroundColor: '#161E21',
     paddingVertical: 10,
   },
@@ -230,8 +237,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
   },
   navButton: {
+    flex: 1,
     alignItems: 'center',
-    padding: 10,
   },
   modalContent: {
     backgroundColor: '#161E21',
@@ -246,20 +253,23 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   closeButton: {
-    backgroundColor: '#1E9947', // Green color
+    backgroundColor: '#1E9947',
     paddingVertical: 10,
     paddingHorizontal: 20,
-    borderRadius: 25, // Rounded corners
-    shadowColor: '#000', // Shadow color
-    shadowOffset: { width: 0, height: 2 }, // Shadow offset
-    shadowOpacity: 0.8, // Shadow opacity
-    shadowRadius: 2, // Shadow radius
-    elevation: 5, // For Android shadow
+    borderRadius: 25,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.8,
+    shadowRadius: 2,
+    elevation: 5,
   },
   closeButtonText: {
     color: '#fff',
     fontSize: 16,
     fontWeight: 'bold',
+  },
+  nutritionDataContainer: {
+    marginBottom: 20,
   },
 });
 
