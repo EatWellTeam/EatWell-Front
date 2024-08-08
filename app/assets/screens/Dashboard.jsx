@@ -279,6 +279,7 @@ const styles = StyleSheet.create({
     marginVertical: 20,
   },
   graphTitle: {
+    textAlign: 'center',
     fontSize: 18,
     color: '#fff',
     marginBottom: 10,
