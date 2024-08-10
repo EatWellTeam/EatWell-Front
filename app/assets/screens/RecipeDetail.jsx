@@ -97,18 +97,44 @@ export default function RecipeDetail({ route }) {
         <View style={styles.recipeContent}>
           <Text style={styles.recipeTitle}>{recipe.label}</Text>
           <Text style={styles.sectionTitle}>Ingredients:</Text>
-          {recipe.ingredientLines.map((ingredient, index) => (
-            <Text key={index} style={styles.recipeText}>- {ingredient}</Text>
-          ))}
+          {recipe.ingredientLines && recipe.ingredientLines.length > 0 ? (
+            recipe.ingredientLines.map((ingredient, index) => (
+              <Text key={index} style={styles.recipeText}>- {ingredient}</Text>
+            ))
+          ) : (
+            <Text style={styles.recipeText}>Ingredients not available.</Text>
+          )}
           <Text style={styles.sectionTitle}>Method of Preparation:</Text>
           {recipe.instructions && recipe.instructions.length > 0 ? (
-            recipe.instructions.map((step, index) => (
-              <Text key={index} style={styles.recipeText}>{index + 1}. {step}</Text>
-            ))
+            <Text style={styles.recipeText}>{recipe.instructions}</Text>
           ) : (
             <Text style={styles.recipeText}>Method not available.</Text>
           )}
-          <Text style={styles.recipeText}>Total Calories: {recipe.calories.toFixed(2)}</Text>
+          <Text style={styles.sectionTitle}>Nutritional Information:</Text>
+          {recipe.totalNutrients ? (
+            <>
+              <Text style={styles.recipeText}>
+                Total Calories: {recipe.calories ? recipe.calories.toFixed(2) : 'N/A'}
+              </Text>
+              {recipe.totalNutrients.CHOCDF && (
+                <Text style={styles.recipeText}>
+                  Carbohydrates: {recipe.totalNutrients.CHOCDF.quantity.toFixed(2)} {recipe.totalNutrients.CHOCDF.unit}
+                </Text>
+              )}
+              {recipe.totalNutrients.PROCNT && (
+                <Text style={styles.recipeText}>
+                  Protein: {recipe.totalNutrients.PROCNT.quantity.toFixed(2)} {recipe.totalNutrients.PROCNT.unit}
+                </Text>
+              )}
+              {recipe.totalNutrients.FAT && (
+                <Text style={styles.recipeText}>
+                  Fat: {recipe.totalNutrients.FAT.quantity.toFixed(2)} {recipe.totalNutrients.FAT.unit}
+                </Text>
+              )}
+            </>
+          ) : (
+            <Text style={styles.recipeText}>Nutritional information not available.</Text>
+          )}
         </View>
       </ScrollView>
       <View style={styles.navBar}>
