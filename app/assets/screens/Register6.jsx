@@ -90,8 +90,8 @@ export default function Register6Screen({ route }) {
             </View>
             <TouchableOpacity style={styles.continueButton} onPress={() => {
                 Alert.alert('Registration successful', "Registration successful");
-                // Pass both caloriesLeft and fromRegister6
-                navigation.navigate('Dashboard', { caloriesLeft: registerData.recommendedCalories, fromRegister6: true });
+                // Pass both initialCaloriesLeft and fromRegister6
+                navigation.navigate('Dashboard', { initialCaloriesLeft: registerData.recommendedCalories, fromRegister6: true });
             }}>
                 <Text style={styles.continueButtonText}>Continue</Text>
             </TouchableOpacity>

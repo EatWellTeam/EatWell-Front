@@ -14,8 +14,9 @@ export default function DashboardScreen() {
   const navigation = useNavigation();
 
   // Extract parameters from route
-  const [caloriesLeft, setCaloriesLeft] = useState(route.params?.caloriesLeft || 998);
-  const [caloriesConsumed, setCaloriesConsumed] = useState(route.params?.fromRegister6 ? 0 : 1183);
+  const initialCaloriesLeft = route.params?.initialCaloriesLeft || 2000; // Use the initial value passed from Register6Screen
+  const [caloriesLeft, setCaloriesLeft] = useState(route.params?.caloriesLeft || initialCaloriesLeft);
+  const [caloriesConsumed, setCaloriesConsumed] = useState(route.params?.caloriesConsumed || 0);
   const [image, setImage] = useState(null);
 
   // Determine circle color based on navigation source
@@ -23,7 +24,19 @@ export default function DashboardScreen() {
 
   const circleRadius = 45;
   const circumference = 2 * Math.PI * circleRadius;
-  const strokeDashoffset = circumference - (caloriesConsumed / 2000) * circumference;
+
+  // Calculate strokeDashoffset using initialCaloriesLeft
+  const strokeDashoffset = 
+    caloriesConsumed >= initialCaloriesLeft ? 0 : circumference - (caloriesConsumed / initialCaloriesLeft) * circumference;
+
+  useEffect(() => {
+    if (route.params?.updatedCaloriesConsumed !== undefined) {
+      setCaloriesConsumed(route.params.updatedCaloriesConsumed);
+    }
+    if (route.params?.updatedCaloriesLeft !== undefined) {
+      setCaloriesLeft(route.params.updatedCaloriesLeft);
+    }
+  }, [route.params]);
 
   async function openCamera() {
     const permissions = await ImagePicker.getCameraPermissionsAsync();
@@ -102,7 +115,13 @@ export default function DashboardScreen() {
       console.log('Analysis data received:', data);
 
       // Ensure data is correctly passed to the next screen
-      navigation.navigate('AnalysisResult', { results: data, image: url });
+      navigation.navigate('AnalysisResult', {
+        results: data,
+        image: url,
+        caloriesConsumed: caloriesConsumed,
+        caloriesLeft: caloriesLeft,
+        initialCaloriesLeft: initialCaloriesLeft,
+      });
     } catch (e) {
       console.error('Error during analysis:', e.message);
       if (e.response) {
@@ -138,7 +157,7 @@ export default function DashboardScreen() {
           <Image source={{ uri: 'https://i.postimg.cc/HxgKzxMj/cropped-image-11.png' }} style={styles.logo} />
         </View>
         <View style={styles.statsContainer}>
-          <Svg height="120" width="120" viewBox="0 0 100 100">
+          <Svg height="120" width="120" viewBox="0 0 100 100" style={styles.circle}>
             <Circle cx="50" cy="50" r={circleRadius} stroke={circleStroke} strokeWidth="10" fill="none" />
             <Circle
               cx="50"
@@ -153,10 +172,18 @@ export default function DashboardScreen() {
             />
           </Svg>
           <View style={styles.statsTextContainer}>
-            <Text style={styles.caloriesConsumedText}>{caloriesConsumed}</Text>
-            <Text style={styles.labelText}>Calories consumed</Text>
-            <Text style={styles.caloriesLeftText}>{caloriesLeft}</Text>
-            <Text style={styles.labelText}>Calories left to daily goal</Text>
+            <View style={styles.calorieTextWrapper}>
+              <Text style={styles.caloriesConsumedText}>{caloriesConsumed}</Text>
+              <Text style={styles.labelText}>Calories consumed</Text>
+            </View>
+            <View style={styles.calorieTextWrapper}>
+              <Text style={[styles.caloriesLeftText, { color: caloriesLeft < 0 ? 'orange' : '#FFFFFF' }]}>
+                {Math.abs(caloriesLeft)}
+              </Text>
+              <Text style={styles.labelText}>
+                {caloriesLeft < 0 ? 'Calories exceeded\nthe daily amount' : 'Calories left to daily goal'}
+              </Text>
+            </View>
           </View>
         </View>
         <View style={styles.graphContainer}>
@@ -258,22 +285,39 @@ const styles = StyleSheet.create({
   statsContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-around',
     marginBottom: 20,
+    width: '100%',
+    paddingHorizontal: 20,
+  },
+  circle: {
+    alignItems: 'center',
+    marginRight: 10,
+    marginLeft: 25,
   },
   statsTextContainer: {
-    marginLeft: 20,
+    flex: 1,
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  calorieTextWrapper: {
+    alignItems: 'center',
+    marginVertical: 5,
   },
   caloriesConsumedText: {
     fontSize: 36,
     color: '#1E9947',
+    textAlign: 'center',
   },
   labelText: {
     fontSize: 14,
     color: '#fff',
+    textAlign: 'center',
   },
   caloriesLeftText: {
     fontSize: 36,
-    color: '#FFFFFF',
+    textAlign: 'center',
   },
   graphContainer: {
     marginVertical: 20,

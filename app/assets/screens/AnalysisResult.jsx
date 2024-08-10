@@ -8,6 +8,9 @@ export default function AnalysisResult({ navigation, route }) {
     const [editIngredients, setEditIngredients] = useState('');
     const [showRecalculate, setShowRecalculate] = useState(false);
     const [results, setResults] = useState(route.params.results); // Initialize results with props
+    const [caloriesConsumed, setCaloriesConsumed] = useState(route.params.caloriesConsumed || 0); // Use caloriesConsumed from params
+    const [caloriesLeft, setCaloriesLeft] = useState(route.params.caloriesLeft || 0); // Use caloriesLeft from params
+    const initialCaloriesLeft = route.params.initialCaloriesLeft; // Use initialCaloriesLeft from params
     const imageUri = route.params.image;
 
     const handleEdit = () => {
@@ -49,10 +52,31 @@ export default function AnalysisResult({ navigation, route }) {
         }
     };
 
+    const handleXButtonPress = () => {
+        const caloriesFromPhoto = results.nutritionData.calories; // Calories from the analyzed photo
+    
+        console.log("Calories from photo:", caloriesFromPhoto);
+        console.log("Initial caloriesConsumed:", caloriesConsumed);
+        console.log("Initial caloriesLeft:", caloriesLeft);
+    
+        const updatedCaloriesConsumed = caloriesConsumed + caloriesFromPhoto; // Correctly update calories consumed
+        const updatedCaloriesLeft = caloriesLeft - caloriesFromPhoto; // Correctly update calories left
+    
+        console.log("Updated caloriesConsumed:", updatedCaloriesConsumed);
+        console.log("Updated caloriesLeft:", updatedCaloriesLeft);
+    
+        // Navigate back and pass updated values
+        navigation.navigate('Dashboard', {
+            updatedCaloriesConsumed: updatedCaloriesConsumed, 
+            updatedCaloriesLeft: updatedCaloriesLeft,
+            initialCaloriesLeft: initialCaloriesLeft,
+        });
+    };
+
     return (
         <View style={styles.container}>
-            <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-                <Ionicons name="arrow-back" size={24} color="#fff" />
+            <TouchableOpacity style={styles.backButton} onPress={handleXButtonPress}>
+                <Ionicons name="close-outline" size={30} color="#fff" />
             </TouchableOpacity>
             <Image source={{ uri: 'https://i.postimg.cc/HxgKzxMj/cropped-image-11.png' }} style={styles.logo} />
             <ScrollView style={styles.contentContainer} contentContainerStyle={styles.scrollViewContentContainer}>
