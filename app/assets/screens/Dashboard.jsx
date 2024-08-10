@@ -14,7 +14,7 @@ export default function DashboardScreen() {
   const navigation = useNavigation();
 
   // Extract parameters from route
-  const initialCaloriesLeft = route.params?.initialCaloriesLeft || 2000; // Use the initial value passed from Register6Screen
+  const initialCaloriesLeft = route.params?.initialCaloriesLeft; // Use the initial value passed from Register6Screen
   const [caloriesLeft, setCaloriesLeft] = useState(route.params?.caloriesLeft || initialCaloriesLeft);
   const [caloriesConsumed, setCaloriesConsumed] = useState(route.params?.caloriesConsumed || 0);
   const [image, setImage] = useState(null);
