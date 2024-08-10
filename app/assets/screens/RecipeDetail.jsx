@@ -62,6 +62,8 @@ export default function RecipeDetail({ route }) {
 
   useEffect(() => {
     requestMediaPermissions();
+    // Log the recipe object to see what it contains
+    console.log('Recipe details:', recipe);
   }, []);
 
   const showImagePickerOptions = () => {
@@ -79,7 +81,6 @@ export default function RecipeDetail({ route }) {
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Custom Back Button */}
       <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
         <Ionicons name="arrow-back" size={24} color="#fff" />
       </TouchableOpacity>
@@ -91,19 +92,23 @@ export default function RecipeDetail({ route }) {
             style={styles.logo} 
           />
         </View>
-        <Text style={styles.title}>Recipes</Text>
+        <Text style={styles.title}>Recipe Details</Text>
         <Image source={{ uri: recipe.image }} style={styles.recipeImage} />
         <View style={styles.recipeContent}>
-          <Text style={styles.recipeTitle}>{recipe.name}</Text>
-          <Text style={styles.sectionTitle}>Groceries:</Text>
-          {recipe.groceries.map((item, index) => (
-            <Text key={index} style={styles.recipeText}>- {item}</Text>
+          <Text style={styles.recipeTitle}>{recipe.label}</Text>
+          <Text style={styles.sectionTitle}>Ingredients:</Text>
+          {recipe.ingredientLines.map((ingredient, index) => (
+            <Text key={index} style={styles.recipeText}>- {ingredient}</Text>
           ))}
           <Text style={styles.sectionTitle}>Method of Preparation:</Text>
-          {recipe.method.map((step, index) => (
-            <Text key={index} style={styles.recipeText}>{index + 1}. {step}</Text>
-          ))}
-          <Text style={styles.recipeText}>Total Calories: {recipe.calories}</Text>
+          {recipe.instructions && recipe.instructions.length > 0 ? (
+            recipe.instructions.map((step, index) => (
+              <Text key={index} style={styles.recipeText}>{index + 1}. {step}</Text>
+            ))
+          ) : (
+            <Text style={styles.recipeText}>Method not available.</Text>
+          )}
+          <Text style={styles.recipeText}>Total Calories: {recipe.calories.toFixed(2)}</Text>
         </View>
       </ScrollView>
       <View style={styles.navBar}>
