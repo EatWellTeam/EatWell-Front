@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { View, Text, SafeAreaView, StyleSheet, TouchableOpacity, ScrollView, Image, TextInput, Alert } from 'react-native';
-import { useNavigation } from '@react-navigation/native'; // Import useNavigation hook
-import Ionicons from 'react-native-vector-icons/Ionicons'; // Import Ionicons
-import * as ImagePicker from 'expo-image-picker'; // Import ImagePicker
+import { useNavigation } from '@react-navigation/native';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import * as ImagePicker from 'expo-image-picker';
 
 const EditProfile = () => {
-  const navigation = useNavigation(); // Initialize useNavigation
+  const navigation = useNavigation();
 
   const [isEditing, setIsEditing] = useState(false);
   const [profile, setProfile] = useState({
@@ -18,7 +18,7 @@ const EditProfile = () => {
     gender: "Male",
     activityLevel: "Low",
     goals: "Maintain Weight",
-    profilePic: null, // Add profilePic field
+    profilePic: 'https://i.postimg.cc/VsKZqCKb/cropped-image-2.png', // Default profile picture
   });
 
   const handleEdit = () => {
@@ -27,11 +27,10 @@ const EditProfile = () => {
 
   const handleSave = () => {
     setIsEditing(false);
-    // Add any save logic here if needed
   };
 
   const handleContinue = () => {
-    navigation.navigate('Recipes'); // Navigate to the Recipes page
+    navigation.navigate('Dashboard');
   };
 
   const handleChange = (name, value) => {
@@ -39,15 +38,12 @@ const EditProfile = () => {
   };
 
   const pickImage = async () => {
-    // No permissions request is necessary for launching the image library
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: true,
       aspect: [4, 4],
       quality: 1,
     });
-
-    console.log(result);
 
     if (!result.canceled) {
       handleChange('profilePic', result.assets[0].uri);
@@ -73,18 +69,36 @@ const EditProfile = () => {
     }
   };
 
+  const handleSignOut = () => {
+    console.log("Signing out...");
+    navigation.navigate('Welcome');
+  };
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <ScrollView contentContainerStyle={styles.container}>
-        <View style={styles.header}>
-          <TouchableOpacity style={styles.editPicButton} onPress={pickImage}>
-            <Image source={{ uri: 'https://i.postimg.cc/VsKZqCKb/cropped-image-2.png' }} style={styles.editPicIcon} />
+        <View style={styles.headerRow}>
+          <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+            <Ionicons name="arrow-back" size={24} color="#fff" />
+          </TouchableOpacity>
+          <Text style={styles.title}>Profile</Text>
+          <TouchableOpacity style={styles.editButton} onPress={handleEdit}>
+            <Ionicons name="pencil" size={24} color="#fff" />
           </TouchableOpacity>
         </View>
-        <Text style={styles.title}>Profile</Text>
-        <TouchableOpacity style={styles.editButton} onPress={handleEdit}>
-          <Ionicons name="pencil" size={24} color="#fff" />
-        </TouchableOpacity>
+        <View style={styles.profileSection}>
+          <TouchableOpacity style={styles.editPicButton} onPress={pickImage}>
+            <Image source={{ uri: profile.profilePic }} style={styles.editPicIcon} />
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.takePhotoButton} onPress={takePhoto}>
+            <Ionicons name="camera-outline" size={24} color="#fff" />
+          </TouchableOpacity>
+        </View>
+        {!isEditing && (
+          <TouchableOpacity style={styles.signOutButton} onPress={handleSignOut}>
+            <Text style={styles.signOutButtonText}>Sign Out</Text>
+          </TouchableOpacity>
+        )}
         <View style={styles.profileContainer}>
           {isEditing ? (
             <>
@@ -162,14 +176,36 @@ const EditProfile = () => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#161E21', // Background color similar to the provided screenshot
+    backgroundColor: '#161E21',
   },
   container: {
     padding: 20,
-    alignItems: 'center',  // Center content horizontally
-  },
-  header: {
     alignItems: 'center',
+  },
+  headerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    width: '100%',
+    marginTop: 40,
+  },
+  backButton: {
+    padding: 10,
+    borderRadius: 5,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#fff',
+    textAlign: 'center',
+  },
+  editButton: {
+    padding: 10,
+    borderRadius: 5,
+  },
+  profileSection: {
+    alignItems: 'center',
+    marginTop: 20,
     marginBottom: 20,
   },
   profilePic: {
@@ -183,23 +219,33 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     marginBottom: 10,
   },
-  editPicIcon: {
-    width: 150, // Increased width
-    height: 150, // Increased height
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#fff',
-    textAlign: 'center',
-    marginBottom: 20,
-  },
-  editButton: {
+  takePhotoButton: {
     padding: 10,
     borderRadius: 5,
-    position: 'absolute',
-    right: 20,
-    top: 20,
+    marginTop: 10,
+  },
+  editPicIcon: {
+    width: 150,
+    height: 150,
+    borderRadius: 75,
+  },
+  signOutButton: {
+    padding: 10,
+    borderRadius: 25,
+    marginBottom: 20,
+    backgroundColor: 'transparent',
+    borderWidth: 1,
+    borderColor: '#fff',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.8,
+    shadowRadius: 2,
+    elevation: 5,
+  },
+  signOutButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
   profileContainer: {
     alignItems: 'flex-start',
@@ -219,7 +265,7 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   button: {
-    backgroundColor: '#6200ee',
+    backgroundColor: '#1E9947',
     padding: 15,
     borderRadius: 10,
     alignItems: 'center',

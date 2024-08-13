@@ -1,23 +1,35 @@
+// app/assets/screens/Register4.js
 import React, { useState } from 'react';
 import { View, Text, SafeAreaView, ScrollView, Platform, StatusBar, StyleSheet, Image, TouchableOpacity } from 'react-native';
-import { useNavigation } from '@react-navigation/native'; // Import useNavigation
+import { useNavigation } from '@react-navigation/native';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import { useSignUpContext } from '../context/SignUpContext';
 
 export default function Register4Screen() {
+    const { signUpData, setSignUpData } = useSignUpContext();
     const [goal, setGoal] = useState("");
-    const navigation = useNavigation(); // Get the navigation prop
+
+    const navigation = useNavigation();
 
     const handleContinue = () => {
-        // Add any validation or API calls here
+        setSignUpData({ 
+            ...signUpData, 
+            goal 
+        });
         console.log("Registering:", { goal });
-        navigation.navigate('Register5'); // Navigate to Register5Screen
+        navigation.navigate('Register5');
     };
 
     return (
         <SafeAreaView style={styles.container}>
+            <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+                <Ionicons name="arrow-back" size={24} color="#fff" />
+            </TouchableOpacity>
+
             <ScrollView contentContainerStyle={styles.scrollContainer}>
                 <View style={styles.header}>
                     <Image 
-                        source={{ uri: 'https://i.postimg.cc/rmJCZ5G4/cropped-image.png' }} 
+                        source={{ uri: 'https://i.postimg.cc/HxgKzxMj/cropped-image-11.png' }} 
                         style={styles.logo} 
                     />
                     <Text style={styles.title}>Register</Text>
@@ -26,20 +38,20 @@ export default function Register4Screen() {
                 <View style={styles.formContainer}>
                     <Text style={styles.questionText}>What are your goals?</Text>
                     <TouchableOpacity 
-                        style={[styles.optionButton, goal === 'Losing Weight' && styles.optionButtonSelected]} 
-                        onPress={() => setGoal('Losing Weight')}
+                        style={[styles.optionButton, goal === 'lose' && styles.optionButtonSelected]} 
+                        onPress={() => setGoal('lose')}
                     >
                         <Text style={styles.optionText}>Losing Weight</Text>
                     </TouchableOpacity>
                     <TouchableOpacity 
-                        style={[styles.optionButton, goal === 'Maintaining Weight' && styles.optionButtonSelected]} 
-                        onPress={() => setGoal('Maintaining Weight')}
+                        style={[styles.optionButton, goal === 'maintain' && styles.optionButtonSelected]} 
+                        onPress={() => setGoal('maintain')}
                     >
                         <Text style={styles.optionText}>Maintaining Weight</Text>
                     </TouchableOpacity>
                     <TouchableOpacity 
-                        style={[styles.optionButton, goal === 'Gaining Weight' && styles.optionButtonSelected]} 
-                        onPress={() => setGoal('Gaining Weight')}
+                        style={[styles.optionButton, goal === 'gain' && styles.optionButtonSelected]} 
+                        onPress={() => setGoal('gain')}
                     >
                         <Text style={styles.optionText}>Gaining Weight</Text>
                     </TouchableOpacity>
@@ -58,6 +70,19 @@ const styles = StyleSheet.create({
         paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
         backgroundColor: '#161E21',
     },
+    backButton: {
+        position: 'absolute',
+        top: 40,
+        left: 20,
+        zIndex: 1,
+        padding: 10,
+        borderRadius: 5,
+    },
+    backButtonText: {
+        color: '#fff',
+        fontWeight: 'bold',
+        fontSize: 20,
+    },
     scrollContainer: {
         flexGrow: 1,
         alignItems: 'center',
@@ -68,8 +93,8 @@ const styles = StyleSheet.create({
         marginBottom: 20,
     },
     logo: {
-        width: 100,
-        height: 100,
+        width: 150,
+        height: 150,
         marginTop: 20,
         marginBottom: 10,
     },
@@ -104,7 +129,7 @@ const styles = StyleSheet.create({
         marginBottom: 20,
     },
     optionButtonSelected: {
-        backgroundColor: '#6200ee',
+        backgroundColor: '#1E9947',
     },
     optionText: {
         color: '#000',
@@ -114,7 +139,7 @@ const styles = StyleSheet.create({
     button: {
         width: 300,
         height: 50,
-        backgroundColor: '#6200ee',
+        backgroundColor: '#1E9947',
         justifyContent: 'center',
         alignItems: 'center',
         borderRadius: 10,
@@ -125,4 +150,3 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
 });
-

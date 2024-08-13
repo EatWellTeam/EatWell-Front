@@ -1,10 +1,12 @@
 import * as ImagePicker from 'expo-image-picker';
 import { useEffect, useState } from 'react';
-import { Alert, View, Button, StyleSheet, TouchableOpacity, Text, ImageBackground } from 'react-native';
+import { Alert, View, StyleSheet, TouchableOpacity, Text } from 'react-native';
 import imageUpload from '../../../services/imageUpload';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import CircularProgress from '../../../components/CircularProgress';
+import { API_URL } from '@env';
+
 
 export default function Home({ navigation }) {
   const [image, setImage] = useState(null);
@@ -25,6 +27,7 @@ export default function Home({ navigation }) {
     if (!result.canceled) {
       const uri = result.assets[0].uri;
       setImage(uri);
+      console.log('Image selected from camera:', uri);
     }
   }
 
@@ -45,6 +48,7 @@ export default function Home({ navigation }) {
     if (!result.canceled) {
       const uri = result.assets[0].uri;
       setImage(uri);
+      console.log('Image selected from gallery:', uri);
     }
   }
 
@@ -52,6 +56,7 @@ export default function Home({ navigation }) {
     const { status } = await ImagePicker.requestCameraPermissionsAsync();
     if (status !== 'granted') {
       Alert.alert('Sorry, we need camera roll permissions to make this work!');
+      requestMediaPermissions() // recursively try requesting permissions
       return;
     }
     const mediaLibraryStatus = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -67,23 +72,62 @@ export default function Home({ navigation }) {
   }, []);
 
   const analyze = async () => {
-    try {
-      const url = await imageUpload(image);
-
-      const { data } = await axios.post('http://192.168.1.17:3000/middleware/process', [{ content: [{ type: "image_url", image_url: { url } }], role: "user" }]);
-
-      navigation.navigate('AnalasysResult', { results: { results: data, image: url } });
-    } catch (e) {
-      console.log(e.message);
+    if (!image) {
+        Alert.alert('No image selected', 'Please select an image first.');
+        return;
     }
-  }
+
+    try {
+        console.log('Uploading image:', image);
+        const url = await imageUpload(image);
+        console.log('Image uploaded, URL:', url);
+
+        const payload = {
+            content: [
+                {
+                    type: "image_url",
+                    image_url: {
+                        url
+                    }
+                }
+            ],
+            role: "user"
+        };
+
+        const { data } = await axios.post(`${API_URL}/middleware/process`, [payload], {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        console.log('Analysis data received:', data);
+        navigation.navigate('AnalysisResult', { results: { results: data, image: url } });
+    } catch (e) {
+        console.error('Error during analysis:', e.message);
+        if (e.response) {
+            console.error('Server responded with:', e.response.data);
+            Alert.alert('Server Error', JSON.stringify(e.response.data));
+        } else if (e.request) {
+            console.error('Request made but no response received:', e.request);
+            Alert.alert('Network Error', 'Request was made but no response received.');
+        } else {
+            console.error('Error setting up request:', e.message);
+            Alert.alert('Error', e.message);
+        }
+    }
+}
+
 
   const signOut = () => {
     navigation.navigate('Welcome');
   }
 
+  const handleDescribeMealManually = () => {
+    navigation.navigate('TrackCalories');
+  }
+
   return (
-    <ImageBackground source={{ uri: 'https://i.ibb.co/pvY7xcx/Default-Create-a-background-image-similar-to-the-image-you-mad-3.jpg' }} style={styles.background}>
+    <View style={styles.background}>
       <View style={styles.container}>
         <View style={styles.signOutContainer}>
           <TouchableOpacity style={styles.signOutButton} onPress={signOut}>
@@ -91,17 +135,18 @@ export default function Home({ navigation }) {
           </TouchableOpacity>
         </View>
         
-
-    
         <View style={styles.buttonContainer}>
           <View style={{padding: 20}}>
             <CircularProgress progress={0.5}/>
-        </View>
+          </View>
           <TouchableOpacity style={styles.button} onPress={openCamera}>
             <Text style={styles.buttonText}>Open Camera</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.button} onPress={openGallery}>
             <Text style={styles.buttonText}>Open Gallery</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.button} onPress={handleDescribeMealManually}>
+            <Text style={styles.buttonText}>Describe Meal Manually</Text>
           </TouchableOpacity>
           {image && (
             <TouchableOpacity style={styles.button} onPress={analyze}>
@@ -110,14 +155,14 @@ export default function Home({ navigation }) {
           )}
         </View>
       </View>
-    </ImageBackground>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   background: {
     flex: 1,
-    resizeMode: 'cover',
+    backgroundColor: '#161E21',
   },
   container: {
     flex: 1,
@@ -129,7 +174,7 @@ const styles = StyleSheet.create({
     right: 20,
   },
   signOutButton: {
-    backgroundColor: '#f8b049',
+    backgroundColor: '#1E9947',
     padding: 10,
     borderRadius: 5,
   },
@@ -143,7 +188,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   button: {
-    backgroundColor: '#f8b049',
+    backgroundColor: '#1E9947',
     paddingVertical: 15,
     paddingHorizontal: 25,
     borderRadius: 5,
