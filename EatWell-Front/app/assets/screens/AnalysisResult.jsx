@@ -28,7 +28,7 @@ export default function AnalysisResult({ navigation, route }) {
 
     const handleRecalculate = async () => {
         try {
-            const response = await fetch(`${API_URL}/nutrition/get-nutrition`, {
+            const response = await fetch(`http://10.160.1.46:3000/nutrition/get-nutrition`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

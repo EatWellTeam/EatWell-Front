@@ -21,7 +21,7 @@ export default function Register5Screen() {
                 }
                 console.log("fetchCalories")
                 setLoading(true)
-                const response = await axios.post(`${API_URL}/auth/register`, {...signUpData,activityLevel});
+                const response = await axios.post(`http://10.160.1.46:3000/auth/register`, {...signUpData,activityLevel});
                 if (response.status === 201) {
                     console.log('Registration successful', response.data);
                     navigation.navigate('Register6', {registerData : response.data});
