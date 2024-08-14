@@ -6,6 +6,7 @@ import * as ImagePicker from 'expo-image-picker';
 import Modal from 'react-native-modal';
 import axios from 'axios';
 import { API_URL } from '@env';
+import NavBar from '../../../components/navBar'; 
 
 
 const TrackCalories = () => {
@@ -16,7 +17,7 @@ const TrackCalories = () => {
 
   const handleCalculate = async () => {
     try {
-      const response = await axios.post(`${API_URL}/nutrition/get-nutrition`, {
+      const response = await axios.post("http://10.0.0.6:3000/nutrition/get-nutrition", {
         ingredients: mealDescription.split('\n'),
       });
       
@@ -28,76 +29,6 @@ const TrackCalories = () => {
       console.error('Error calculating calories:', error);
       Alert.alert('Error', 'Failed to calculate calories.');
     }
-  };
-
-  const openCamera = async () => {
-    const permissions = await ImagePicker.getCameraPermissionsAsync();
-    if (!permissions.granted) {
-      requestMediaPermissions();
-      return;
-    }
-
-    let result = await ImagePicker.launchCameraAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
-    });
-
-    if (!result.canceled) {
-      const uri = result.assets[0].uri;
-      console.log('Image selected from camera:', uri);
-    }
-  };
-
-  const openGallery = async () => {
-    const permissions = await ImagePicker.getMediaLibraryPermissionsAsync();
-    if (!permissions.granted) {
-      requestMediaPermissions();
-      return;
-    }
-
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
-    });
-
-    if (!result.canceled) {
-      const uri = result.assets[0].uri;
-      console.log('Image selected from gallery:', uri);
-    }
-  };
-
-  const requestMediaPermissions = async () => {
-    const { status } = await ImagePicker.requestCameraPermissionsAsync();
-    if (status !== 'granted') {
-      Alert.alert('Sorry, we need camera roll permissions to make this work!');
-      return;
-    }
-    const mediaLibraryStatus = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (mediaLibraryStatus.status !== 'granted') {
-      Alert.alert('Sorry, we need camera roll permissions to make this work!');
-      return;
-    }
-  };
-
-  useEffect(() => {
-    requestMediaPermissions();
-  }, []);
-
-  const showImagePickerOptions = () => {
-    Alert.alert(
-      'Select Image Source',
-      'Choose an option to select an image:',
-      [
-        { text: 'Camera', onPress: openCamera },
-        { text: 'Gallery', onPress: openGallery },
-        { text: 'Cancel', style: 'cancel' },
-      ],
-      { cancelable: true }
-    );
   };
 
   return (
@@ -126,25 +57,6 @@ const TrackCalories = () => {
           <TouchableOpacity style={styles.button} onPress={handleCalculate}>
             <Text style={styles.buttonText}>Calculate</Text>
           </TouchableOpacity>
-        </View>
-        <View style={styles.navBar}>
-          <View style={styles.navButtonContainer}>
-            <TouchableOpacity style={styles.navButton} onPress={() => navigation.navigate('Dashboard')}>
-              <Ionicons name="home-outline" size={24} color="#fff" />
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.navButton} onPress={() => navigation.navigate('TrackCalories')}>
-              <Ionicons name="create-outline" size={24} color="#fff" />
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.navButton} onPress={showImagePickerOptions}>
-              <Ionicons name="camera-outline" size={24} color="#fff" />
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.navButton} onPress={() => navigation.navigate('Recipes')}>
-              <Ionicons name="restaurant-outline" size={24} color="#fff" />
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.navButton} onPress={() => navigation.navigate('EditProfile')}>
-              <Ionicons name="person-outline" size={24} color="#fff" />
-            </TouchableOpacity>
-          </View>
         </View>
 
         {/* Custom Modal */}

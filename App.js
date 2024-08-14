@@ -20,6 +20,8 @@ import ForgotPassword from './app/assets/screens/ForgotPassword';
 import EmailSent from './app/assets/screens/EmailSent';
 import Dashboard from './app/assets/screens/Dashboard';
 import { SignUpProvider } from './app/assets/context/SignUpContext'; // Import the SignUpProvider
+import MyLastMeals from './app/assets/screens/MyLastMeals';
+import PictureMeal from './app/assets/screens/PictureMeal';
 
 const Stack = createNativeStackNavigator();
 
@@ -45,6 +47,8 @@ function App() {
           <Stack.Screen name="ForgotPassword" component={ForgotPassword} options={{ headerShown: false }} />
           <Stack.Screen name="EmailSent" component={EmailSent} options={{ headerShown: false }} />
           <Stack.Screen name="Dashboard" component={Dashboard} options={{ headerShown: false, gestureEnabled: false }} />
+          <Stack.Screen name="MyLastMeals" component={MyLastMeals} options={{ headerShown: false }} />
+          <Stack.Screen name="PictureMeal" component={PictureMeal} options={{ headerShown: false }} />
         </Stack.Navigator>
       </NavigationContainer>
     </SignUpProvider>

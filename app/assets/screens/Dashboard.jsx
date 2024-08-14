@@ -1,20 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, SafeAreaView, StyleSheet, Platform, StatusBar, TouchableOpacity, Image, ScrollView, Alert } from 'react-native';
+import { View, Text, SafeAreaView, StyleSheet, StatusBar, TouchableOpacity, Image, ScrollView, Alert } from 'react-native';
 import Svg, { Circle } from 'react-native-svg';
 import { LineChart } from 'react-native-chart-kit';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import { useNavigation, useRoute } from '@react-navigation/native';
-import * as ImagePicker from 'expo-image-picker';
-import axios from 'axios';
-import imageUpload from '../../../services/imageUpload'; // Adjust the import path as necessary
-import { API_URL } from '@env';
+import { useRoute, useNavigation } from '@react-navigation/native';
+import NavBar from '../../../components/navBar'; // Adjust the import path as necessary
+import Ionicons from 'react-native-vector-icons/Ionicons'; // Import Ionicons
 
 export default function DashboardScreen() {
   const route = useRoute();
   const navigation = useNavigation();
 
-  // Extract parameters from route
-  const initialCaloriesLeft = route.params?.initialCaloriesLeft; // Use the initial value passed from Register6Screen
+  const initialCaloriesLeft = route.params?.initialCaloriesLeft;
   const [caloriesLeft, setCaloriesLeft] = useState(route.params?.caloriesLeft || initialCaloriesLeft);
   const [caloriesConsumed, setCaloriesConsumed] = useState(route.params?.caloriesConsumed || 0);
   const [image, setImage] = useState(null);
@@ -24,9 +20,7 @@ export default function DashboardScreen() {
 
   const circleRadius = 45;
   const circumference = 2 * Math.PI * circleRadius;
-
-  // Calculate strokeDashoffset using initialCaloriesLeft
-  const strokeDashoffset = 
+  const strokeDashoffset =
     caloriesConsumed >= initialCaloriesLeft ? 0 : circumference - (caloriesConsumed / initialCaloriesLeft) * circumference;
 
   useEffect(() => {
@@ -38,51 +32,6 @@ export default function DashboardScreen() {
     }
   }, [route.params]);
 
-  async function openCamera() {
-    const permissions = await ImagePicker.getCameraPermissionsAsync();
-    if (!permissions.granted) {
-      requestMediaPermissions();
-      return;
-    }
-    let result = await ImagePicker.launchCameraAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
-    });
-
-    if (!result.canceled) {
-      const uri = result.assets[0].uri;
-      console.log('Image selected from camera:', uri);
-      setImage(uri);
-    }
-  }
-
-  async function openGallery() {
-    const permissions = await ImagePicker.getMediaLibraryPermissionsAsync();
-    try {
-      let result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        allowsEditing: true,
-        aspect: [4, 3],
-        quality: 1,
-      });
-
-      if (!result.canceled) {
-        const uri = result.assets[0].uri;
-        console.log('Image selected from gallery:', uri);
-        setImage(uri);
-      }
-    } catch (e) {
-      console.log(e);
-    }
-  }
-
-  async function requestMediaPermissions() {
-    await ImagePicker.requestCameraPermissionsAsync();
-    await ImagePicker.requestMediaLibraryPermissionsAsync();
-  }
-
   const analyze = async () => {
     if (!image) {
       Alert.alert('No image selected', 'Please select an image first.');
@@ -90,7 +39,7 @@ export default function DashboardScreen() {
     }
 
     try {
-      console.log('Uploading image:', image);
+      // Assuming imageUpload function exists and works as intended
       const url = await imageUpload(image);
       console.log('Image uploaded, URL:', url);
 
@@ -106,15 +55,13 @@ export default function DashboardScreen() {
         role: 'user',
       };
 
-      const { data } = await axios.post(`${API_URL}/middleware/process`, [payload], {
+      const { data } = await axios.post("http://10.0.0.6:3000/middleware/process", [payload], {
         headers: {
           'Content-Type': 'application/json',
         },
       });
 
       console.log('Analysis data received:', data);
-
-      // Ensure data is correctly passed to the next screen
       navigation.navigate('AnalysisResult', {
         results: data,
         image: url,
@@ -137,17 +84,8 @@ export default function DashboardScreen() {
     }
   };
 
-  const showImagePickerOptions = () => {
-    Alert.alert(
-      'Select Image Source',
-      'Choose an option to select an image:',
-      [
-        { text: 'Camera', onPress: openCamera },
-        { text: 'Gallery', onPress: openGallery },
-        { text: 'Cancel', style: 'cancel' },
-      ],
-      { cancelable: true }
-    );
+  const navigateToEditProfile = () => {
+    navigation.navigate('EditProfile'); // Navigate to the Edit Profile screen
   };
 
   return (
@@ -155,6 +93,9 @@ export default function DashboardScreen() {
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <View style={styles.header}>
           <Image source={{ uri: 'https://i.postimg.cc/HxgKzxMj/cropped-image-11.png' }} style={styles.logo} />
+          <TouchableOpacity style={styles.profileButton} onPress={navigateToEditProfile}>
+            <Ionicons name="person-outline" size={24} color="#fff" />
+          </TouchableOpacity>
         </View>
         <View style={styles.statsContainer}>
           <Svg height="120" width="120" viewBox="0 0 100 100" style={styles.circle}>
@@ -241,25 +182,7 @@ export default function DashboardScreen() {
           <Image source={{ uri: 'https://example.com/last_meal_image.png' }} style={styles.lastMealImage} />
         </View>
       </ScrollView>
-      <View style={styles.navBar}>
-        <View style={styles.navButtonContainer}>
-          <TouchableOpacity style={styles.navButton} onPress={() => navigation.navigate('Dashboard')}>
-            <Ionicons name="home-outline" size={24} color="#fff" />
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.navButton} onPress={() => navigation.navigate('TrackCalories')}>
-            <Ionicons name="create-outline" size={24} color="#fff" />
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.navButton} onPress={showImagePickerOptions}>
-            <Ionicons name="camera-outline" size={24} color="#fff" />
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.navButton} onPress={() => navigation.navigate('Recipes')}>
-            <Ionicons name="restaurant-outline" size={24} color="#fff" />
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.navButton} onPress={() => navigation.navigate('EditProfile')}>
-            <Ionicons name="person-outline" size={24} color="#fff" />
-          </TouchableOpacity>
-        </View>
-      </View>
+      <NavBar />
     </SafeAreaView>
   );
 }
@@ -268,108 +191,86 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#161E21',
-    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
   },
   scrollContainer: {
-    alignItems: 'center',
-    paddingBottom: 80, // Add padding to avoid overlap with the navbar
+    flexGrow: 1,
   },
   header: {
     alignItems: 'center',
-    marginBottom: 20,
+    margin: 20,
+    position: 'relative',
   },
   logo: {
     width: 100,
     height: 100,
   },
+  profileButton: {
+    position: 'absolute',
+    top: 10,
+    right: 10,
+    padding: 10,
+  },
   statsContainer: {
     flexDirection: 'row',
-    alignItems: 'center',
     justifyContent: 'space-around',
-    marginBottom: 20,
-    width: '100%',
-    paddingHorizontal: 20,
+    marginVertical: 20,
   },
   circle: {
-    alignItems: 'center',
-    marginRight: 10,
-    marginLeft: 25,
+    margin: 10,
   },
   statsTextContainer: {
-    flex: 1,
-    flexDirection: 'column',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    justifyContent: 'center',
   },
   calorieTextWrapper: {
     alignItems: 'center',
     marginVertical: 5,
   },
   caloriesConsumedText: {
-    fontSize: 36,
-    color: '#1E9947',
-    textAlign: 'center',
-  },
-  labelText: {
-    fontSize: 14,
-    color: '#fff',
-    textAlign: 'center',
+    fontSize: 24,
+    color: '#FFFFFF',
   },
   caloriesLeftText: {
-    fontSize: 36,
-    textAlign: 'center',
+    fontSize: 24,
+  },
+  labelText: {
+    fontSize: 12,
+    color: '#FFFFFF',
   },
   graphContainer: {
+    alignItems: 'center',
     marginVertical: 20,
   },
   graphTitle: {
-    textAlign: 'center',
     fontSize: 18,
-    color: '#fff',
+    color: '#FFFFFF',
     marginBottom: 10,
   },
   button: {
     backgroundColor: '#1E9947',
+    padding: 15,
+    margin: 20,
     borderRadius: 5,
-    padding: 10,
     alignItems: 'center',
-    marginVertical: 20,
   },
   buttonText: {
-    color: '#fff',
-    fontSize: 16,
+    color: '#FFFFFF',
+    fontSize: 18,
   },
   lastMealContainer: {
     alignItems: 'center',
-    marginTop: 20,
+    marginVertical: 20,
   },
   lastMealTitle: {
     fontSize: 18,
-    color: '#fff',
-    marginBottom: 10,
+    color: '#FFFFFF',
   },
   lastMealText: {
-    textAlign: 'center',
     fontSize: 16,
-    color: '#fff',
+    color: '#FFFFFF',
   },
   lastMealImage: {
-    width: 150,
-    height: 150,
+    width: 100,
+    height: 100,
     marginTop: 10,
-  },
-  navBar: {
-    position: 'absolute',
-    bottom: 0,
-    width: '100%',
-    backgroundColor: '#161E21',
-  },
-  navButtonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    padding: 10,
-  },
-  navButton: {
-    padding: 10,
   },
 });
