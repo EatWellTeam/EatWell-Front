@@ -1,23 +1,27 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { View, Text, SafeAreaView, StyleSheet, TouchableOpacity, ScrollView, Image, TextInput, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import * as ImagePicker from 'expo-image-picker';
+import { useSignUpContext } from "../context/SignUpContext";
 
 const EditProfile = () => {
   const navigation = useNavigation();
+  const { signUpData, setSignUpData } = useSignUpContext();
+  
 
   const [isEditing, setIsEditing] = useState(false);
   const [profile, setProfile] = useState({
-    firstName: "John",
-    lastName: "Doe",
-    email: "abc123@gmail.com",
-    dateOfBirth: "10/10/2020",
-    weight: "60 Kg",
-    height: "170 Cm",
-    gender: "Male",
-    activityLevel: "Low",
-    goals: "Maintain Weight",
+
+    firstName: signUpData.firstName,
+    lastName: signUpData.lastName,
+    email: signUpData.email,
+    dateOfBirth: signUpData.dateOfBirth,
+    weight: signUpData.weight,
+    height: signUpData.height,
+    gender: signUpData.gender,
+    activityLevel: signUpData.activityLevel,
+    goals: signUpData.goal,
     profilePic: 'https://i.postimg.cc/VsKZqCKb/cropped-image-2.png', // Default profile picture
   });
 

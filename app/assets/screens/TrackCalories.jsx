@@ -16,7 +16,7 @@ const TrackCalories = () => {
 
   const handleCalculate = async () => {
     try {
-      const response = await axios.post(`${API_URL}/nutrition/get-nutrition`, {
+      const response = await axios.post(`${process.env.API_URL}/nutrition/get-nutrition`, {
         ingredients: mealDescription.split('\n'),
       });
       
