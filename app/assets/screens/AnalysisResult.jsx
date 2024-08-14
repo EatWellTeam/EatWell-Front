@@ -13,6 +13,11 @@ export default function AnalysisResult({ navigation, route }) {
     const initialCaloriesLeft = route.params.initialCaloriesLeft; // Use initialCaloriesLeft from params
     const imageUri = route.params.image;
 
+    // Determine which buttons to show
+    const showInitialButtons = !isEditing && !showRecalculate;
+    const showEditingButtons = isEditing;
+    const showRecalculateButtons = showRecalculate;
+
     const handleEdit = () => {
         setIsEditing(true);
         setEditIngredients(results.ingredients.join('\n')); // Join ingredients with a newline for editing
@@ -44,6 +49,7 @@ export default function AnalysisResult({ navigation, route }) {
                     nutritionData: data.nutritionData,
                 });
                 Alert.alert('Recalculated!', 'Nutrition data has been updated.');
+                setShowRecalculate(false);
             } else {
                 throw new Error(data.error || 'Failed to recalculate');
             }
@@ -53,21 +59,23 @@ export default function AnalysisResult({ navigation, route }) {
     };
 
     const handleXButtonPress = () => {
+        // Navigate back to the dashboard without saving changes
+        navigation.navigate('Dashboard', {
+            updatedCaloriesConsumed: caloriesConsumed,
+            updatedCaloriesLeft: caloriesLeft,
+            initialCaloriesLeft: initialCaloriesLeft,
+        });
+    };
+
+    const handleSaveFinal = () => {
         const caloriesFromPhoto = results.nutritionData.calories; // Calories from the analyzed photo
-    
-        console.log("Calories from photo:", caloriesFromPhoto);
-        console.log("Initial caloriesConsumed:", caloriesConsumed);
-        console.log("Initial caloriesLeft:", caloriesLeft);
-    
+
         const updatedCaloriesConsumed = caloriesConsumed + caloriesFromPhoto; // Correctly update calories consumed
         const updatedCaloriesLeft = caloriesLeft - caloriesFromPhoto; // Correctly update calories left
-    
-        console.log("Updated caloriesConsumed:", updatedCaloriesConsumed);
-        console.log("Updated caloriesLeft:", updatedCaloriesLeft);
-    
-        // Navigate back and pass updated values
+
+        // Save changes and navigate back
         navigation.navigate('Dashboard', {
-            updatedCaloriesConsumed: updatedCaloriesConsumed, 
+            updatedCaloriesConsumed: updatedCaloriesConsumed,
             updatedCaloriesLeft: updatedCaloriesLeft,
             initialCaloriesLeft: initialCaloriesLeft,
         });
@@ -125,19 +133,32 @@ export default function AnalysisResult({ navigation, route }) {
                     </>
                 )}
             </ScrollView>
-            {isEditing ? (
-                <TouchableOpacity style={styles.button} onPress={handleSave}>
-                    <Text style={styles.buttonText}>Save</Text>
-                </TouchableOpacity>
-            ) : (
-                <TouchableOpacity style={styles.button} onPress={handleEdit}>
-                    <Text style={styles.buttonText}>Edit Analysis</Text>
-                </TouchableOpacity>
+            {showInitialButtons && (
+                <>
+                    <TouchableOpacity style={styles.button} onPress={handleSaveFinal}>
+                        <Text style={styles.buttonText}>Save</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.button} onPress={handleEdit}>
+                        <Text style={styles.buttonText}>Edit Analysis</Text>
+                    </TouchableOpacity>
+                </>
             )}
-            {showRecalculate && (
-                <TouchableOpacity style={styles.button} onPress={handleRecalculate}>
-                    <Text style={styles.buttonText}>Recalculate</Text>
-                </TouchableOpacity>
+            {showEditingButtons && (
+                <>
+                    <TouchableOpacity style={styles.button} onPress={handleSave}>
+                        <Text style={styles.buttonText}>Save</Text>
+                    </TouchableOpacity>
+                </>
+            )}
+            {showRecalculateButtons && (
+                <>
+                    <TouchableOpacity style={styles.button} onPress={handleRecalculate}>
+                        <Text style={styles.buttonText}>Recalculate</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.button} onPress={handleEdit}>
+                        <Text style={styles.buttonText}>Edit Analysis</Text>
+                    </TouchableOpacity>
+                </>
             )}
         </View>
     );
