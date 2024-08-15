@@ -5,6 +5,7 @@ import { useNavigation } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
 import { API_URL } from '@env'; // Ensure this imports correctly
 
+
 const Recipes = () => {
   const [breakfastRecipes, setBreakfastRecipes] = useState([]);
   const [lunchRecipes, setLunchRecipes] = useState([]);
@@ -14,7 +15,7 @@ const Recipes = () => {
   // Function to fetch recipes for a specific meal type
   const fetchRecipesForMealType = async (mealType, setRecipes) => {
     try {
-      const response = await fetch(`${API_URL}/nutrition/get-recipes`, {
+      const response = await fetch(`http://10.0.0.101:3000/nutrition/get-recipes`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -39,9 +40,9 @@ const Recipes = () => {
   };
 
   useEffect(() => {
-    fetchRecipesForMealType('breakfast', setBreakfastRecipes);
-    fetchRecipesForMealType('lunch', setLunchRecipes);
-    fetchRecipesForMealType('dinner', setDinnerRecipes);
+    fetchRecipesForMealType('healthy breakfast', setBreakfastRecipes);
+    fetchRecipesForMealType('healthy lunch', setLunchRecipes);
+    fetchRecipesForMealType('healthy dinner', setDinnerRecipes);
     requestMediaPermissions();
   }, []);
 
