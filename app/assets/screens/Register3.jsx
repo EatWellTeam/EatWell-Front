@@ -1,6 +1,6 @@
 // app/assets/screens/Register3.js
 import React, { useState } from 'react';
-import { View, Text, SafeAreaView, Platform, StatusBar, StyleSheet, Image, TextInput, TouchableOpacity } from 'react-native';
+import { View, Text, SafeAreaView, Platform, StatusBar, StyleSheet, Image, TextInput,Alert, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useSignUpContext } from '../context/SignUpContext';
@@ -10,6 +10,7 @@ export default function Register3Screen() {
     const [weight, setWeight] = useState("");
     const [height, setHeight] = useState("");
     const [gender, setGender] = useState("");
+    const [weightGoal, setWeightGoal] = useState(""); 
 
     const navigation = useNavigation();
 
@@ -18,8 +19,45 @@ export default function Register3Screen() {
             ...signUpData, 
             weight, 
             height, 
-            gender 
+            gender,
+            weightGoal 
         });
+
+        const validateWeight = (weight) => {
+            const weightNum = parseFloat(weight);
+            return !isNaN(weightNum) && weightNum >= 30 && weightNum <= 300;
+        };
+
+        if (!validateWeight(weight)) {
+            Alert.alert("Invalid weight", "Please enter a valid weight between 30 and 300 kg.");
+            return;
+        }
+
+        const validateWeightGoal = (weightGoal) => {
+            const weightNum = parseFloat(weight);
+            return !isNaN(weightNum) && weightNum >= 30 && weightNum <= 300;
+        };
+
+        if (!validateWeightGoal(weightGoal)) {
+            Alert.alert("Invalid weight", "Please enter a valid weight between 30 and 300 kg.");
+            return;
+        }
+
+        const validateHeight = (height) => {
+            const heightNum = parseFloat(height);
+            return !isNaN(heightNum) && heightNum >= 100 && heightNum <= 300;
+        };
+        
+        if (!validateHeight(height)) {
+            Alert.alert("Invalid height", "Please enter a valid height between 100 and 300 cm.");
+            return;
+        }
+        if (!gender) {
+            Alert.alert("Gender not selected", "Please select your gender.");
+            return;
+        }
+
+
         console.log("Registering:", { weight, height, gender });
         navigation.navigate('Register4');
     };
@@ -50,6 +88,13 @@ export default function Register3Screen() {
                     value={height}
                     onChangeText={(text) => setHeight(text)}
                     placeholder="Height (Cm)"
+                    style={styles.input}
+                    keyboardType="numeric"
+                />
+                <TextInput
+                    value={weightGoal}
+                    onChangeText={(text) => setWeightGoal(text)}
+                    placeholder="Weight Goal (Kg)"  // New input field for weight goal
                     style={styles.input}
                     keyboardType="numeric"
                 />

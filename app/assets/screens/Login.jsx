@@ -34,7 +34,7 @@ export default function LoginScreen({ navigation }) {
       if (response.status === 200) {
         console.log("Login successful", response.data);
         Alert.alert("Success", "Login successful");
-
+      
         setSignUpData(prevData => ({
           ...prevData,
           _id: response.data._id, 
@@ -42,9 +42,9 @@ export default function LoginScreen({ navigation }) {
           refreshToken: response.data.refreshToken,
         }));
         console.log("Current SignUpData:", JSON.stringify(signUpData, null, 2));
-
-
-        navigation.navigate("Dashboard"); 
+        
+        
+        navigation.navigate("Dashboard"); // Navigate to the Dashboard or any other screen
       } else {
         console.log("Unexpected response", response.data);
         Alert.alert("Error", "Unexpected response from the server");

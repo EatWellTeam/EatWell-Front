@@ -22,9 +22,15 @@ export default function Register2Screen() {
             Alert.alert("Error", "First name should contain letters only.");
             return;
         }
+        if(firstName.length < 2) {
+            Alert.alert("Error", "First name should be at least 2 characters long.");
+        }
         if (!validateName(lastName)) {
             Alert.alert("Error", "Last name should contain letters only.");
             return;
+        }
+        if(lastName.length < 2) {
+            Alert.alert("Error", "Last name should be at least 2 characters long.");
         }
         const dayNum = parseInt(day);
         const monthNum = parseInt(month);

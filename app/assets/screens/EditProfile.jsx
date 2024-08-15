@@ -24,7 +24,6 @@ const EditProfile = () => {
     profilePic: 'https://i.postimg.cc/VsKZqCKb/cropped-image-2.png', // Default profile picture
   });
 
-  // Fetch user data when the component mounts
   useEffect(() => {
     const fetchUserData = async () => {
       try {
@@ -64,15 +63,15 @@ const EditProfile = () => {
         weight: parseFloat(profile.weight),  
         height: parseFloat(profile.height), 
       };
-
-      // const response = await axios.put(`${process.env.API_URL}/auth/${signUpData._id}`, updatedProfile);
-      // if (response.status === 200) {
-      //   setSignUpData(updatedProfile);  // Update context with new data
-      //   setIsEditing(false);
-      //   Alert.alert("Success", "Profile updated successfully");
-      // } else {
-      //   Alert.alert("Error", "Failed to update profile");
-      // }
+      
+      const response = await axios.put(`${process.env.API_URL}/user/${signUpData._id}`, updatedProfile);
+      if (response.status === 200) {
+        setSignUpData(updatedProfile);  
+        setIsEditing(false);
+        Alert.alert("Success", "Profile updated successfully");
+      } else {
+        Alert.alert("Error", "Failed to update profile");
+      }
     } catch (error) {
       console.log("Error updating profile", error);
       Alert.alert("Error", error.message);
@@ -85,36 +84,8 @@ const EditProfile = () => {
     setProfile({ ...profile, [name]: value });
   };
 
-  const pickImage = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
-      allowsEditing: true,
-      aspect: [4, 4],
-      quality: 1,
-    });
-
-    if (!result.canceled) {
-      handleChange('profilePic', result.assets[0].uri);
-    }
-  };
-
-  const takePhoto = async () => {
-    const permissionResult = await ImagePicker.requestCameraPermissionsAsync();
-
-    if (permissionResult.granted === false) {
-      Alert.alert("You've refused to allow this app to access your camera!");
-      return;
-    }
-
-    let result = await ImagePicker.launchCameraAsync({
-      allowsEditing: true,
-      aspect: [4, 4],
-      quality: 1,
-    });
-    
-    if (!result.canceled) {
-      handleChange('profilePic', result.assets[0].uri);
-    }
+  const handleContinue = () => {
+    navigation.navigate('Dashboard');
   };
 
   const handleContinue = () => {
@@ -129,21 +100,18 @@ const EditProfile = () => {
   return (
     <SafeAreaView style={styles.safeArea}>
       <ScrollView contentContainerStyle={styles.container}>
+      <View style={styles.logoContainer}>
+          <Image 
+            source={{ uri: 'https://i.postimg.cc/HxgKzxMj/cropped-image-11.png' }} 
+            style={styles.logo} 
+          />
+        </View>
         <View style={styles.headerRow}>
           <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
             <Ionicons name="arrow-back" size={24} color="#fff" />
           </TouchableOpacity>
-          <Text style={styles.title}>Profile</Text>
           <TouchableOpacity style={styles.editButton} onPress={handleEdit}>
             <Ionicons name="pencil" size={24} color="#fff" />
-          </TouchableOpacity>
-        </View>
-        <View style={styles.profileSection}>
-          <TouchableOpacity style={styles.editPicButton} onPress={pickImage}>
-            <Image source={{ uri: profile.profilePic }} style={styles.editPicIcon} />
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.takePhotoButton} onPress={takePhoto}>
-            <Ionicons name="camera-outline" size={24} color="#fff" />
           </TouchableOpacity>
         </View>
         {!isEditing && (
@@ -154,7 +122,7 @@ const EditProfile = () => {
         <View style={styles.profileContainer}>
           {isEditing ? (
             <>
-              <TextInput
+              {/* <TextInput
                 style={styles.input}
                 value={profile.firstName}
                 onChangeText={(value) => handleChange('firstName', value)}
@@ -168,44 +136,44 @@ const EditProfile = () => {
                 style={styles.input}
                 value={profile.email}
                 onChangeText={(value) => handleChange('email', value)}
-                />
-                <TextInput
-                  style={styles.input}
-                  value={profile.dateOfBirth}
-                  onChangeText={(value) => handleChange('dateOfBirth', value)}
-                />
-                <TextInput
-                  style={styles.input}
-                  value={profile.weight}
-                  onChangeText={(value) => handleChange('weight', value)}
-                />
-                <TextInput
-                  style={styles.input}
-                  value={profile.height}
-                  onChangeText={(value) => handleChange('height', value)}
-                />
-                <TextInput
-                  style={styles.input}
-                  value={profile.gender}
-                  onChangeText={(value) => handleChange('gender', value)}
-                />
-                <TextInput
-                  style={styles.input}
-                  value={profile.activityLevel}
-                  onChangeText={(value) => handleChange('activityLevel', value)}
-                />
-                <TextInput
-                  style={styles.input}
-                  value={profile.goals}
-                  onChangeText={(value) => handleChange('goals', value)}
-                />
-                <TouchableOpacity style={styles.button} onPress={handleSave}>
-                  <Text style={styles.buttonText}>Save</Text>
-                </TouchableOpacity>
-              </>
-            ) : (
-              <>
-                        <Text style={styles.profileText}>Name: {profile.firstName}</Text>
+              />
+              <TextInput
+                style={styles.input}
+                value={profile.dateOfBirth}
+                onChangeText={(value) => handleChange('dateOfBirth', value)}
+              /> */}
+              <TextInput
+                style={styles.input}
+                value={profile.weight}
+                onChangeText={(value) => handleChange('weight', value)}
+              />
+              <TextInput
+                style={styles.input}
+                value={profile.height}
+                onChangeText={(value) => handleChange('height', value)}
+              />
+              <TextInput
+                style={styles.input}
+                value={profile.gender}
+                onChangeText={(value) => handleChange('gender', value)}
+              />
+              <TextInput
+                style={styles.input}
+                value={profile.activityLevel}
+                onChangeText={(value) => handleChange('activityLevel', value)}
+              />
+              <TextInput
+                style={styles.input}
+                value={profile.goals}
+                onChangeText={(value) => handleChange('goals', value)}
+              />
+              <TouchableOpacity style={styles.button} onPress={handleSave}>
+                <Text style={styles.buttonText}>Save</Text>
+              </TouchableOpacity>
+            </>
+          ) : (
+            <>
+              <Text style={styles.profileText}>Name: {profile.firstName}</Text>
               <Text style={styles.profileText}>Email: {profile.email}</Text>
               <Text style={styles.profileText}>Date of Birth: {profile.dateOfBirth}</Text>
               <Text style={styles.profileText}>Weight: {profile.weight}</Text>
@@ -327,6 +295,15 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 16,
     fontWeight: 'bold',
+  },
+  logoContainer: {
+    alignItems: 'center',
+    marginTop: 20,
+  },
+  logo: {
+    width: 100,
+    height: 100,
+    resizeMode: 'contain',
   },
 });
 
