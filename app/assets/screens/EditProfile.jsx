@@ -64,7 +64,7 @@ const EditProfile = () => {
         height: parseFloat(profile.height), 
       };
       
-      const response = await axios.put(`${process.env.API_URL}/user/${signUpData._id}`, updatedProfile);
+      const response = await axios.put(`http://10.0.0.6:3000/user/${signUpData._id}`, updatedProfile);
       if (response.status === 200) {
         setSignUpData(updatedProfile);  
         setIsEditing(false);
@@ -79,13 +79,9 @@ const EditProfile = () => {
       setLoading(false);
     }
   };
-  
+
   const handleChange = (name, value) => {
     setProfile({ ...profile, [name]: value });
-  };
-
-  const handleContinue = () => {
-    navigation.navigate('Dashboard');
   };
 
   const handleContinue = () => {
@@ -127,11 +123,11 @@ const EditProfile = () => {
                 value={profile.firstName}
                 onChangeText={(value) => handleChange('firstName', value)}
               />
-                        {/* <TextInput
+              <TextInput
                 style={styles.input}
                 value={profile.lastName}
                 onChangeText={(value) => handleChange('lastName', value)}
-                           /> */}
+              />
               <TextInput
                 style={styles.input}
                 value={profile.email}
