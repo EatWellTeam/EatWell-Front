@@ -16,11 +16,13 @@ import {
 import Ionicons from "react-native-vector-icons/Ionicons"; // Import Ionicons for the "eye" icon
 import axios from "axios";
 import { API_URL } from "@env";
+import { useSignUpContext } from "../context/SignUpContext";
 
 export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false); // State to toggle password visibility
+  const { signUpData, setSignUpData } = useSignUpContext();
 
   const handleContinue = async () => {
     console.log("Attempting login with email:", email); // Add log
@@ -29,12 +31,20 @@ export default function LoginScreen({ navigation }) {
         email,
         password,
       });
-      console.log("Response:", response); // Add log
-
       if (response.status === 200) {
         console.log("Login successful", response.data);
         Alert.alert("Success", "Login successful");
-        navigation.navigate("Dashboard"); // Navigate to the Dashboard or any other screen
+
+        setSignUpData(prevData => ({
+          ...prevData,
+          _id: response.data._id, 
+          accessToken: response.data.accessToken,
+          refreshToken: response.data.refreshToken,
+        }));
+        console.log("Current SignUpData:", JSON.stringify(signUpData, null, 2));
+
+
+        navigation.navigate("Dashboard"); 
       } else {
         console.log("Unexpected response", response.data);
         Alert.alert("Error", "Unexpected response from the server");

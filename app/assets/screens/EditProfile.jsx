@@ -4,39 +4,83 @@ import { useNavigation } from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import * as ImagePicker from 'expo-image-picker';
 import { useSignUpContext } from "../context/SignUpContext";
+import axios from 'axios';
+import { useEffect } from 'react';
 
 const EditProfile = () => {
   const navigation = useNavigation();
   const { signUpData, setSignUpData } = useSignUpContext();
-
-
   const [isEditing, setIsEditing] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [profile, setProfile] = useState({
-
-    firstName: signUpData.firstName,
-    lastName: signUpData.lastName,
-    email: signUpData.email,
-    dateOfBirth: signUpData.dateOfBirth,
-    weight: signUpData.weight,
-    height: signUpData.height,
-    gender: signUpData.gender,
-    activityLevel: signUpData.activityLevel,
-    goals: signUpData.goal,
+    fullName: '',
+    email: '',
+    dateOfBirth: '',
+    weight: '',
+    height: '',
+    gender: '',
+    activityLevel: '',
+    goal: '',
     profilePic: 'https://i.postimg.cc/VsKZqCKb/cropped-image-2.png', // Default profile picture
   });
+
+  // Fetch user data when the component mounts
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        setLoading(true);
+        const response = await axios.get(`${process.env.API_URL}/user/${signUpData._id}`);
+        if (response.status === 200) {
+          setProfile({
+            ...response.data,
+            firstName: response.data.fullName,
+            weight: response.data.weight + " kg",
+            height: response.data.height + " cm",
+            goals: response.data.goal,
+          });
+        } else {
+          Alert.alert("Error", "Failed to fetch user data");
+        }
+      } catch (error) {
+        console.log("Error fetching user data", error);
+        Alert.alert("Error", error.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUserData();
+  }, []);
 
   const handleEdit = () => {
     setIsEditing(true);
   };
 
-  const handleSave = () => {
-    setIsEditing(false);
-  };
+  const handleSave = async () => {
+    try {
+      setLoading(true);
+      const updatedProfile = {
+        ...profile,
+        weight: parseFloat(profile.weight),  
+        height: parseFloat(profile.height), 
+      };
 
-  const handleContinue = () => {
-    navigation.navigate('Dashboard');
+      // const response = await axios.put(`${process.env.API_URL}/auth/${signUpData._id}`, updatedProfile);
+      // if (response.status === 200) {
+      //   setSignUpData(updatedProfile);  // Update context with new data
+      //   setIsEditing(false);
+      //   Alert.alert("Success", "Profile updated successfully");
+      // } else {
+      //   Alert.alert("Error", "Failed to update profile");
+      // }
+    } catch (error) {
+      console.log("Error updating profile", error);
+      Alert.alert("Error", error.message);
+    } finally {
+      setLoading(false);
+    }
   };
-
+  
   const handleChange = (name, value) => {
     setProfile({ ...profile, [name]: value });
   };
@@ -67,10 +111,14 @@ const EditProfile = () => {
       aspect: [4, 4],
       quality: 1,
     });
-
+    
     if (!result.canceled) {
       handleChange('profilePic', result.assets[0].uri);
     }
+  };
+
+  const handleContinue = () => {
+    navigation.navigate('Dashboard');
   };
 
   const handleSignOut = () => {
@@ -111,54 +159,53 @@ const EditProfile = () => {
                 value={profile.firstName}
                 onChangeText={(value) => handleChange('firstName', value)}
               />
-              <TextInput
+                        {/* <TextInput
                 style={styles.input}
                 value={profile.lastName}
                 onChangeText={(value) => handleChange('lastName', value)}
-              />
+                           /> */}
               <TextInput
                 style={styles.input}
                 value={profile.email}
                 onChangeText={(value) => handleChange('email', value)}
-              />
-              <TextInput
-                style={styles.input}
-                value={profile.dateOfBirth}
-                onChangeText={(value) => handleChange('dateOfBirth', value)}
-              />
-              <TextInput
-                style={styles.input}
-                value={profile.weight}
-                onChangeText={(value) => handleChange('weight', value)}
-              />
-              <TextInput
-                style={styles.input}
-                value={profile.height}
-                onChangeText={(value) => handleChange('height', value)}
-              />
-              <TextInput
-                style={styles.input}
-                value={profile.gender}
-                onChangeText={(value) => handleChange('gender', value)}
-              />
-              <TextInput
-                style={styles.input}
-                value={profile.activityLevel}
-                onChangeText={(value) => handleChange('activityLevel', value)}
-              />
-              <TextInput
-                style={styles.input}
-                value={profile.goals}
-                onChangeText={(value) => handleChange('goals', value)}
-              />
-              <TouchableOpacity style={styles.button} onPress={handleSave}>
-                <Text style={styles.buttonText}>Save</Text>
-              </TouchableOpacity>
-            </>
-          ) : (
-            <>
-              <Text style={styles.profileText}>First Name: {profile.firstName}</Text>
-              <Text style={styles.profileText}>Last Name: {profile.lastName}</Text>
+                />
+                <TextInput
+                  style={styles.input}
+                  value={profile.dateOfBirth}
+                  onChangeText={(value) => handleChange('dateOfBirth', value)}
+                />
+                <TextInput
+                  style={styles.input}
+                  value={profile.weight}
+                  onChangeText={(value) => handleChange('weight', value)}
+                />
+                <TextInput
+                  style={styles.input}
+                  value={profile.height}
+                  onChangeText={(value) => handleChange('height', value)}
+                />
+                <TextInput
+                  style={styles.input}
+                  value={profile.gender}
+                  onChangeText={(value) => handleChange('gender', value)}
+                />
+                <TextInput
+                  style={styles.input}
+                  value={profile.activityLevel}
+                  onChangeText={(value) => handleChange('activityLevel', value)}
+                />
+                <TextInput
+                  style={styles.input}
+                  value={profile.goals}
+                  onChangeText={(value) => handleChange('goals', value)}
+                />
+                <TouchableOpacity style={styles.button} onPress={handleSave}>
+                  <Text style={styles.buttonText}>Save</Text>
+                </TouchableOpacity>
+              </>
+            ) : (
+              <>
+                        <Text style={styles.profileText}>Name: {profile.firstName}</Text>
               <Text style={styles.profileText}>Email: {profile.email}</Text>
               <Text style={styles.profileText}>Date of Birth: {profile.dateOfBirth}</Text>
               <Text style={styles.profileText}>Weight: {profile.weight}</Text>
