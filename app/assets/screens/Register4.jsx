@@ -1,6 +1,6 @@
 // app/assets/screens/Register4.js
 import React, { useState } from 'react';
-import { View, Text, SafeAreaView, ScrollView, Platform, StatusBar, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import { View, Text, SafeAreaView, ScrollView, Platform, StatusBar, StyleSheet, Image,Alert, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useSignUpContext } from '../context/SignUpContext';
@@ -12,6 +12,13 @@ export default function Register4Screen() {
     const navigation = useNavigation();
 
     const handleContinue = () => {
+
+        if (!goal) {
+            Alert.alert("Selection Required", "Please select one of the options for your goal.");
+            return;
+        }
+
+
         setSignUpData({ 
             ...signUpData, 
             goal 
