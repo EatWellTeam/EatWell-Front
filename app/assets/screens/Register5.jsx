@@ -35,9 +35,17 @@ export default function Register5Screen() {
       const response = await axios.post(
         `http://10.0.0.101:3000/auth/register`,
         { ...signUpData, activityLevel }
+        
       );
       if (response.status === 201) {
         console.log("Registration successful", response.data);
+        setSignUpData(prevData => ({
+          ...prevData,
+          _id: response.data._id,
+          accessToken: response.data.accessToken,
+          refreshToken: response.data.refreshToken, 
+        }));
+        console.log("Current SignUpData:", JSON.stringify(signUpData, null, 2));
         navigation.navigate("Register6", { registerData: response.data });
       } else {
         console.log("Unexpected response", response.data);

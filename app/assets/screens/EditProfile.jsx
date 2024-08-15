@@ -1,36 +1,84 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { View, Text, SafeAreaView, StyleSheet, TouchableOpacity, ScrollView, Image, TextInput, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import * as ImagePicker from 'expo-image-picker';
+import { useSignUpContext } from "../context/SignUpContext";
+import axios from 'axios';
+import { useEffect } from 'react';
 
 const EditProfile = () => {
   const navigation = useNavigation();
-
+  const { signUpData, setSignUpData } = useSignUpContext();
   const [isEditing, setIsEditing] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [profile, setProfile] = useState({
-    firstName: "John",
-    lastName: "Doe",
-    email: "abc123@gmail.com",
-    dateOfBirth: "10/10/2020",
-    weight: "60 Kg",
-    height: "170 Cm",
-    gender: "Male",
-    activityLevel: "Low",
-    goals: "Maintain Weight",
+    fullName: '',
+    email: '',
+    dateOfBirth: '',
+    weight: '',
+    height: '',
+    gender: '',
+    activityLevel: '',
+    goal: '',
     profilePic: 'https://i.postimg.cc/VsKZqCKb/cropped-image-2.png', // Default profile picture
   });
+
+  // Fetch user data when the component mounts
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        setLoading(true);
+        const response = await axios.get(`${process.env.API_URL}/user/${signUpData._id}`);
+        if (response.status === 200) {
+          setProfile({
+            ...response.data,
+            firstName: response.data.fullName,
+            weight: response.data.weight + " kg",
+            height: response.data.height + " cm",
+            goals: response.data.goal,
+          });
+        } else {
+          Alert.alert("Error", "Failed to fetch user data");
+        }
+      } catch (error) {
+        console.log("Error fetching user data", error);
+        Alert.alert("Error", error.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUserData();
+  }, []);
 
   const handleEdit = () => {
     setIsEditing(true);
   };
 
-  const handleSave = () => {
-    setIsEditing(false);
-  };
-
-  const handleContinue = () => {
-    navigation.navigate('Dashboard');
+  const handleSave = async () => {
+    try {
+      setLoading(true);
+      const updatedProfile = {
+        ...profile,
+        weight: parseFloat(profile.weight),  
+        height: parseFloat(profile.height), 
+      };
+      
+      // const response = await axios.put(`${process.env.API_URL}/auth/${signUpData._id}`, updatedProfile);
+      // if (response.status === 200) {
+      //   setSignUpData(updatedProfile);  // Update context with new data
+      //   setIsEditing(false);
+      //   Alert.alert("Success", "Profile updated successfully");
+      // } else {
+      //   Alert.alert("Error", "Failed to update profile");
+      // }
+    } catch (error) {
+      console.log("Error updating profile", error);
+      Alert.alert("Error", error.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleChange = (name, value) => {
@@ -67,6 +115,10 @@ const EditProfile = () => {
     if (!result.canceled) {
       handleChange('profilePic', result.assets[0].uri);
     }
+  };
+
+  const handleContinue = () => {
+    navigation.navigate('Dashboard');
   };
 
   const handleSignOut = () => {
@@ -107,11 +159,11 @@ const EditProfile = () => {
                 value={profile.firstName}
                 onChangeText={(value) => handleChange('firstName', value)}
               />
-              <TextInput
+              {/* <TextInput
                 style={styles.input}
                 value={profile.lastName}
                 onChangeText={(value) => handleChange('lastName', value)}
-              />
+              /> */}
               <TextInput
                 style={styles.input}
                 value={profile.email}
@@ -153,8 +205,7 @@ const EditProfile = () => {
             </>
           ) : (
             <>
-              <Text style={styles.profileText}>First Name: {profile.firstName}</Text>
-              <Text style={styles.profileText}>Last Name: {profile.lastName}</Text>
+              <Text style={styles.profileText}>Name: {profile.firstName}</Text>
               <Text style={styles.profileText}>Email: {profile.email}</Text>
               <Text style={styles.profileText}>Date of Birth: {profile.dateOfBirth}</Text>
               <Text style={styles.profileText}>Weight: {profile.weight}</Text>
