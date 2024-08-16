@@ -18,6 +18,7 @@ const EditProfile = () => {
     dateOfBirth: '',
     weight: '',
     height: '',
+    weightGoal: '',
     gender: '',
     activityLevel: '',
     goal: '',
@@ -32,10 +33,15 @@ const EditProfile = () => {
         if (response.status === 200) {
           setProfile({
             ...response.data,
-            firstName: response.data.fullName,
-            weight: response.data.weight + " kg",
-            height: response.data.height + " cm",
-            goals: response.data.goal,
+            fullName: response.data.fullName,
+            email: response.data.email,
+            dateOfBirth: response.data.dateOfBirth,
+            weight: response.data.weight.toString(),  // Convert to string for TextInput
+            height: response.data.height.toString(),  // Convert to string for TextInput
+            weightGoal: response.data.weightGoal.toString(),  // Convert to string for TextInput
+            gender: response.data.gender,
+            activityLevel: response.data.activityLevel,
+            goal: response.data.goal,
           });
         } else {
           Alert.alert("Error", "Failed to fetch user data");
@@ -50,6 +56,7 @@ const EditProfile = () => {
 
     fetchUserData();
   }, []);
+
 
   const handleEdit = () => {
     setIsEditing(true);
@@ -118,26 +125,6 @@ const EditProfile = () => {
         <View style={styles.profileContainer}>
           {isEditing ? (
             <>
-              {/* <TextInput
-                style={styles.input}
-                value={profile.firstName}
-                onChangeText={(value) => handleChange('firstName', value)}
-              />
-              <TextInput
-                style={styles.input}
-                value={profile.lastName}
-                onChangeText={(value) => handleChange('lastName', value)}
-              />
-              <TextInput
-                style={styles.input}
-                value={profile.email}
-                onChangeText={(value) => handleChange('email', value)}
-              />
-              <TextInput
-                style={styles.input}
-                value={profile.dateOfBirth}
-                onChangeText={(value) => handleChange('dateOfBirth', value)}
-              /> */}
               <TextInput
                 style={styles.input}
                 value={profile.weight}
@@ -147,6 +134,11 @@ const EditProfile = () => {
                 style={styles.input}
                 value={profile.height}
                 onChangeText={(value) => handleChange('height', value)}
+              />
+              <TextInput
+                style={styles.input}
+                value={profile.weightGoal}
+                onChangeText={(value) => handleChange('weightGoal', value)}
               />
               <TextInput
                 style={styles.input}
@@ -160,8 +152,8 @@ const EditProfile = () => {
               />
               <TextInput
                 style={styles.input}
-                value={profile.goals}
-                onChangeText={(value) => handleChange('goals', value)}
+                value={profile.goal}
+                onChangeText={(value) => handleChange('goal', value)}
               />
               <TouchableOpacity style={styles.button} onPress={handleSave}>
                 <Text style={styles.buttonText}>Save</Text>
@@ -169,14 +161,15 @@ const EditProfile = () => {
             </>
           ) : (
             <>
-              <Text style={styles.profileText}>Name: {profile.firstName}</Text>
+            <Text style={styles.profileText}>Name: {profile.fullName}</Text>
               <Text style={styles.profileText}>Email: {profile.email}</Text>
               <Text style={styles.profileText}>Date of Birth: {profile.dateOfBirth}</Text>
-              <Text style={styles.profileText}>Weight: {profile.weight}</Text>
-              <Text style={styles.profileText}>Height: {profile.height}</Text>
+              <Text style={styles.profileText}>Weight (kg) : {profile.weight}</Text>
+              <Text style={styles.profileText}>Height (cm): {profile.height}</Text>
+              <Text style={styles.profileText}>Weight Goal (kg): {profile.weightGoal}</Text>
               <Text style={styles.profileText}>Gender: {profile.gender}</Text>
               <Text style={styles.profileText}>Activity Level: {profile.activityLevel}</Text>
-              <Text style={styles.profileText}>Goals: {profile.goals}</Text>
+              <Text style={styles.profileText}>Goals: {profile.goal}</Text>
               <TouchableOpacity style={styles.button} onPress={handleContinue}>
                 <Text style={styles.buttonText}>Continue</Text>
               </TouchableOpacity>
