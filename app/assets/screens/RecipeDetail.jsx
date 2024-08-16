@@ -3,15 +3,12 @@ import { View, Text, SafeAreaView, Image, StyleSheet, TouchableOpacity, Platform
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useNavigation } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
-import getRecipeSteps from '../../../services/recipeSteps';
 import HTMLView from 'react-native-htmlview';
 
 export default function RecipeDetail({ route }) {
   const { recipe } = route.params;
-  const url = recipe.url;
   const navigation = useNavigation();
-  const [steps, setSteps] = useState('');
-
+  const htmlContent = `<a href="${recipe.url}">View Recipe</a>`;
   async function openCamera() {
     const permissions = await ImagePicker.getCameraPermissionsAsync();
     if (!permissions.granted) {
@@ -67,13 +64,8 @@ export default function RecipeDetail({ route }) {
   useEffect(() => {
     requestMediaPermissions();
     // Log the recipe object to see what it contains
-    console.log('Recipe url:', recipe.url);
-      if(url){
-        getRecipeSteps(url).then((data) => {
-          setSteps(data);
-        });
-      }
-  }, [url]);
+    console.log('Recipe:', recipe);
+  }, []);
 
   const showImagePickerOptions = () => {
     Alert.alert(
@@ -114,7 +106,7 @@ export default function RecipeDetail({ route }) {
             <Text style={styles.recipeText}>Ingredients not available.</Text>
           )}
           <Text style={styles.sectionTitle}>Method of Preparation:</Text>
-          {recipe.url?(<HTMLView value={steps}/>):(<Text style={styles.recipeText}>Method not available.</Text>)}
+          {recipe.url?(<HTMLView value={htmlContent}/>):(<Text style={styles.recipeText}>Method not available.</Text>)}
           <Text style={styles.sectionTitle}>Nutritional Information:</Text>
           {recipe.totalNutrients ? (
             <>
