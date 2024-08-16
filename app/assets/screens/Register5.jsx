@@ -33,7 +33,7 @@ export default function Register5Screen() {
       console.log("fetchCalories");
       setLoading(true);
       const response = await axios.post(
-        `${API_URL}/auth/register`,
+        `${process.env.API_URL}/auth/register`,
         { ...signUpData, activityLevel }
         
       );

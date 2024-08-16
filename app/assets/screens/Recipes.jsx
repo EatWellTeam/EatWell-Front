@@ -15,8 +15,7 @@ const Recipes = () => {
   // Function to fetch recipes for a specific meal type
   const fetchRecipesForMealType = async (mealType, setRecipes) => {
     try {
-      console.log("API_URL:", API_URL); // Add log
-      const response = await fetch(`${API_URL}/nutrition/get-recipes`, {
+      const response = await fetch(`${process.env.API_URL}/nutrition/get-recipes`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

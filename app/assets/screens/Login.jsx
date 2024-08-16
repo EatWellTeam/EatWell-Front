@@ -26,9 +26,8 @@ export default function LoginScreen({ navigation }) {
 
   const handleContinue = async () => {
     console.log("Attempting login with email:", email); // Add log
-    console.log("API_URL:", API_URL); // Add log
     try {
-      const response = await axios.post(`${API_URL}/auth/login`, {
+      const response = await axios.post(`${process.env.API_URL}/auth/login`, {
         email,
         password,
       });
