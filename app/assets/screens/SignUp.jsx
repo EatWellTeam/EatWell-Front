@@ -17,22 +17,24 @@ export default function SignUpScreen() {
 
     const handleSignUp = () => {
         const validateEmail = (email) => {
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            const emailRegex = /^[^\s@]+@[^\s@]+.[^\s@]+$/;
             return emailRegex.test(email);
         };
-    
-        if (!validateEmail(email)) {
+        const lowercasedEmail = email.toLowerCase();
+
+        if (!validateEmail(lowercasedEmail)) {
             Alert.alert("Invalid email", "Please enter a valid email address.");
             return;
         }
         if(password.length < 6) {
             Alert.alert("Weak password", "Password should be at least 6 characters long.");
+            return;
         }
         if (password !== confirmPassword) {
             Alert.alert("Passwords do not match", "Please ensure that both passwords are the same.");
             return;
         }
-        setSignUpData({ ...signUpData, email, password });
+        setSignUpData({ ...signUpData, email:lowercasedEmail, password });
         navigation.navigate('Register2'); 
     };
 

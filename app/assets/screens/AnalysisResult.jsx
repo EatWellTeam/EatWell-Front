@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity, TextInput, Alert } from "react-native";
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { API_URL } from '@env';
+import{useSignUpContext} from '../context/SignUpContext';
+
 
 export default function AnalysisResult({ navigation, route }) {
     const [isEditing, setIsEditing] = useState(false);
@@ -12,18 +14,67 @@ export default function AnalysisResult({ navigation, route }) {
     const [caloriesLeft, setCaloriesLeft] = useState(route.params.caloriesLeft || 0); // Use caloriesLeft from params
     const initialCaloriesLeft = route.params.initialCaloriesLeft; // Use initialCaloriesLeft from params
     const imageUri = route.params.image;
+    const { signUpData, setSignUpData } = useSignUpContext();
+     
 
+
+    
     const handleEdit = () => {
         setIsEditing(true);
         setEditIngredients(results.ingredients.join('\n')); // Join ingredients with a newline for editing
         setShowRecalculate(false);
     };
 
-    const handleSave = () => {
-        setIsEditing(false);
-        results.ingredients = editIngredients.split('\n').map(ingredient => ingredient.trim()); // Split by newline and trim each ingredient
-        Alert.alert('Saved!', 'Your changes have been saved.');
-        setShowRecalculate(true);
+    const handleSaveMeal = async () => {
+        
+        try {
+            const caloriesFromMeal = results.nutritionData.calories;
+            
+
+            const mealData = {
+                name: results.ingredients[0],  // Use the first ingredient as the meal name
+                calories: caloriesFromMeal,
+                nutritionValues: {
+                    calories: results.nutritionData.calories,
+                    protein: results.nutritionData.totalNutrients?.PROCNT?.quantity || 0,
+                    carbs: results.nutritionData.totalNutrients?.CHOCDF?.quantity || 0,
+                    fat: results.nutritionData.totalNutrients?.FAT?.quantity || 0,
+                },
+                userId: signUpData._id,  
+                imageUrl: imageUri || '', 
+            };
+
+            const response = await fetch(`${process.env.API_URL}/food/save-meal`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(mealData),
+            });
+    
+            if (response.ok) {
+                Alert.alert('Success', 'Meal saved successfully!');
+                const updatedCaloriesConsumed = caloriesConsumed + caloriesFromMeal; //  update calories consumed
+                const updatedCaloriesLeft = caloriesLeft - caloriesFromMeal; // update calories left
+
+                setCaloriesConsumed(updatedCaloriesConsumed);
+                setCaloriesLeft(updatedCaloriesLeft);
+                
+                navigation.navigate('Dashboard', {
+                    updatedCaloriesConsumed,
+                    updatedCaloriesLeft,
+                    initialCaloriesLeft,
+                }); 
+            } else {
+                const errorData = await response.json();
+                Alert.alert('Error', errorData.message || 'Failed to save meal');
+            }
+        } catch (error) {
+            console.error('Error saving meal:', error);
+            Alert.alert('Error', 'An error occurred while saving the meal.');
+        }
+    
+    
     };
 
     const handleRecalculate = async () => {
@@ -36,14 +87,19 @@ export default function AnalysisResult({ navigation, route }) {
                 body: JSON.stringify({ ingredients: editIngredients.split('\n').map(ingredient => ingredient.trim()) }),
             });
             const data = await response.json();
-
+    
             if (response.ok) {
-                // Update the results with new nutrition data
+                
                 setResults({
                     ...results,
-                    nutritionData: data.nutritionData,
+                    ingredients: editIngredients.split('\n').map(ingredient => ingredient.trim()), // Update ingredients with new ones
+                    nutritionData: data.nutritionData, // Update nutrition data
                 });
                 Alert.alert('Recalculated!', 'Nutrition data has been updated.');
+                
+                
+                setIsEditing(false);
+                setShowRecalculate(false);
             } else {
                 throw new Error(data.error || 'Failed to recalculate');
             }
@@ -52,25 +108,31 @@ export default function AnalysisResult({ navigation, route }) {
         }
     };
 
+    const handleCancelMeal = () => {
+        // Navigate back to the Dashboard or previous screen without saving
+        navigation.navigate('Dashboard')
+    };
+
+    const handleCancelEdit = () => {
+        
+        setIsEditing(false);
+        setShowRecalculate(false);
+        setEditIngredients(''); 
+    };
+
     const handleXButtonPress = () => {
-        const caloriesFromPhoto = results.nutritionData.calories; // Calories from the analyzed photo
+        const caloriesFromMeal = results.nutritionData.calories; // Calories from the analyzed meal
     
-        console.log("Calories from photo:", caloriesFromPhoto);
+        console.log("Calories from meal:", caloriesFromMeal);
         console.log("Initial caloriesConsumed:", caloriesConsumed);
         console.log("Initial caloriesLeft:", caloriesLeft);
     
-        const updatedCaloriesConsumed = caloriesConsumed + caloriesFromPhoto; // Correctly update calories consumed
-        const updatedCaloriesLeft = caloriesLeft - caloriesFromPhoto; // Correctly update calories left
-    
-        console.log("Updated caloriesConsumed:", updatedCaloriesConsumed);
-        console.log("Updated caloriesLeft:", updatedCaloriesLeft);
-    
-        // Navigate back and pass updated values
         navigation.navigate('Dashboard', {
-            updatedCaloriesConsumed: updatedCaloriesConsumed, 
-            updatedCaloriesLeft: updatedCaloriesLeft,
+            updatedCaloriesConsumed: caloriesConsumed,
+            updatedCaloriesLeft: caloriesLeft,
             initialCaloriesLeft: initialCaloriesLeft,
         });
+    
     };
 
     return (
@@ -125,19 +187,28 @@ export default function AnalysisResult({ navigation, route }) {
                     </>
                 )}
             </ScrollView>
-            {isEditing ? (
-                <TouchableOpacity style={styles.button} onPress={handleSave}>
-                    <Text style={styles.buttonText}>Save</Text>
-                </TouchableOpacity>
+           
+            {!isEditing ? (
+                <>
+                    <TouchableOpacity style={styles.button} onPress={handleSaveMeal}>
+                        <Text style={styles.buttonText}>Save Meal</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.button} onPress={handleCancelMeal}>
+                        <Text style={styles.buttonText}>Cancel Meal</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.button} onPress={handleEdit}>
+                        <Text style={styles.buttonText}>Edit Analysis</Text>
+                    </TouchableOpacity>
+                </>
             ) : (
-                <TouchableOpacity style={styles.button} onPress={handleEdit}>
-                    <Text style={styles.buttonText}>Edit Analysis</Text>
-                </TouchableOpacity>
-            )}
-            {showRecalculate && (
-                <TouchableOpacity style={styles.button} onPress={handleRecalculate}>
-                    <Text style={styles.buttonText}>Recalculate</Text>
-                </TouchableOpacity>
+                <>
+                    <TouchableOpacity style={styles.button} onPress={handleRecalculate}>
+                        <Text style={styles.buttonText}>Recalculate</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.button} onPress={handleCancelEdit}>
+                        <Text style={styles.buttonText}>Cancel Changes</Text>
+                    </TouchableOpacity>
+                </>
             )}
         </View>
     );
@@ -204,5 +275,5 @@ const styles = StyleSheet.create({
         color: '#fff',
         fontSize: 16,
         fontWeight: 'bold',
-    },
+    },
 });
