@@ -12,6 +12,7 @@ const EditProfile = () => {
   const { signUpData, setSignUpData } = useSignUpContext();
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(false);
+  
   const [profile, setProfile] = useState({
     fullName: '',
     email: '',
@@ -35,11 +36,11 @@ const EditProfile = () => {
             ...response.data,
             fullName: response.data.fullName,
             email: response.data.email,
-            dateOfBirth: response.data.dateOfBirth,
-            weight: response.data.weight.toString(),  // Convert to string for TextInput
-            height: response.data.height.toString(),  // Convert to string for TextInput
-            weightGoal: response.data.weightGoal.toString(),  // Convert to string for TextInput
-            gender: response.data.gender,
+            dateOfBirth: response.data.dateOfBirth.substring(0, 10),  
+            weight: response.data.weight.toString(),  
+            height: response.data.height.toString(),  
+            weightGoal: response.data.weightGoal.toString(),  
+            gender: response.data.gender|| '',
             activityLevel: response.data.activityLevel,
             goal: response.data.goal,
           });
@@ -91,9 +92,6 @@ const EditProfile = () => {
     setProfile({ ...profile, [name]: value });
   };
 
-  const handleContinue = () => {
-    navigation.navigate('Dashboard');
-  };
 
   const handleSignOut = () => {
     console.log("Signing out...");
@@ -125,36 +123,168 @@ const EditProfile = () => {
         <View style={styles.profileContainer}>
           {isEditing ? (
             <>
+            <Text style={styles.label}>Weight (kg)</Text>
               <TextInput
                 style={styles.input}
                 value={profile.weight}
                 onChangeText={(value) => handleChange('weight', value)}
               />
+              <Text style={styles.label}>Height (cm)</Text>
               <TextInput
                 style={styles.input}
                 value={profile.height}
                 onChangeText={(value) => handleChange('height', value)}
               />
+              <Text style={styles.label}>Weight Goal</Text>
               <TextInput
                 style={styles.input}
                 value={profile.weightGoal}
                 onChangeText={(value) => handleChange('weightGoal', value)}
               />
-              <TextInput
-                style={styles.input}
-                value={profile.gender}
-                onChangeText={(value) => handleChange('gender', value)}
-              />
-              <TextInput
-                style={styles.input}
-                value={profile.activityLevel}
-                onChangeText={(value) => handleChange('activityLevel', value)}
-              />
-              <TextInput
-                style={styles.input}
-                value={profile.goal}
-                onChangeText={(value) => handleChange('goal', value)}
-              />
+
+              <Text style={styles.label}>Gender</Text>
+              <View style={styles.genderContainer}>
+                <TouchableOpacity
+                  style={[
+                    styles.genderButton,
+                    profile.gender === 'male' ? styles.genderButtonSelected : null,
+                  ]}
+                  onPress={() => handleChange('gender', 'male')}
+                >
+                  <Text
+                    style={[
+                      styles.genderButtonText,
+                      profile.gender === 'male' ? styles.genderButtonTextSelected : null,
+                    ]}
+                  >
+                    Male
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[
+                    styles.genderButton,
+                    profile.gender === 'female' ? styles.genderButtonSelected : null,
+                  ]}
+                  onPress={() => handleChange('gender', 'female')}
+                >
+                  <Text
+                    style={[
+                      styles.genderButtonText,
+                      profile.gender === 'female' ? styles.genderButtonTextSelected : null,
+                    ]}
+                  >
+                    Female
+                  </Text>
+                </TouchableOpacity>
+              </View>
+               <Text style={styles.label}>Activity Level</Text>
+               <View style={styles.activityContainer}>
+                <TouchableOpacity
+                  style={[
+                    styles.activityButton,
+                    profile.activityLevel === 'High' ? styles.activityButtonSelected : null,
+                  ]}
+                  onPress={() => handleChange('activityLevel', 'High')}
+                >
+                  <Text
+                    style={[
+                      styles.activityButtonText,
+                      profile.activityLevel === 'High' ? styles.activityButtonTextSelected : null,
+                    ]}
+                  >
+                    High
+                  </Text>
+                  <Text style={styles.activitySubText}>(20+ hours a week)</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[
+                    styles.activityButton,
+                    profile.activityLevel === 'Medium' ? styles.activityButtonSelected : null,
+                  ]}
+                  onPress={() => handleChange('activityLevel', 'Medium')}
+                >
+                  <Text
+                    style={[
+                      styles.activityButtonText,
+                      profile.activityLevel === 'Medium' ? styles.activityButtonTextSelected : null,
+                    ]}
+                  >
+                    Medium
+                  </Text>
+                  <Text style={styles.activitySubText}>(10-20 hours a week)</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[
+                    styles.activityButton,
+                    profile.activityLevel === 'Low' ? styles.activityButtonSelected : null,
+                  ]}
+                  onPress={() => handleChange('activityLevel', 'Low')}
+                >
+                  <Text
+                    style={[
+                      styles.activityButtonText,
+                      profile.activityLevel === 'Low' ? styles.activityButtonTextSelected : null,
+                    ]}
+                  >
+                    Low
+                  </Text>
+                  <Text style={styles.activitySubText}>(Less than 10 hours a week)</Text>
+                </TouchableOpacity>
+              </View>
+               <Text style={styles.label}>Goal</Text>
+               <View style={styles.activityContainer}>
+                <TouchableOpacity
+                  style={[
+                    styles.activityButton,
+                    profile.goal === 'lose' ? styles.activityButtonSelected : null,
+                  ]}
+                  onPress={() => handleChange('goal', 'lose')}
+                >
+                  <Text
+                    style={[
+                      styles.activityButtonText,
+                      profile.goal === 'lose' ? styles.activityButtonTextSelected : null,
+                    ]}
+                  >
+                    Losing Weight
+                  </Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={[
+                    styles.activityButton,
+                    profile.goal === 'maintain' ? styles.activityButtonSelected : null,
+                  ]}
+                  onPress={() => handleChange('goal', 'maintain')}
+                >
+                  <Text
+                    style={[
+                      styles.activityButtonText,
+                      profile.goal === 'maintain' ? styles.activityButtonTextSelected : null,
+                    ]}
+                  >
+                    Maintaining Weight
+                  </Text>
+                
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[
+                    styles.activityButton,
+                    profile.goal === 'gain' ? styles.activityButtonSelected : null,
+                  ]}
+                  onPress={() => handleChange('goal', 'gain')}
+                >
+                  <Text
+                    style={[
+                      styles.activityButtonText,
+                      profile.goal === 'gain' ? styles.activityButtonTextSelected : null,
+                    ]}
+                  >
+                    Gaining Weight
+                  </Text>
+                  
+                </TouchableOpacity>
+              </View>
               <TouchableOpacity style={styles.button} onPress={handleSave}>
                 <Text style={styles.buttonText}>Save</Text>
               </TouchableOpacity>
@@ -170,9 +300,7 @@ const EditProfile = () => {
               <Text style={styles.profileText}>Gender: {profile.gender}</Text>
               <Text style={styles.profileText}>Activity Level: {profile.activityLevel}</Text>
               <Text style={styles.profileText}>Goals: {profile.goal}</Text>
-              <TouchableOpacity style={styles.button} onPress={handleContinue}>
-                <Text style={styles.buttonText}>Continue</Text>
-              </TouchableOpacity>
+              
             </>
           )}
         </View>
@@ -216,27 +344,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
     marginBottom: 20,
   },
-  profilePic: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    marginBottom: 10,
-  },
-  editPicButton: {
-    padding: 10,
-    borderRadius: 5,
-    marginBottom: 10,
-  },
-  takePhotoButton: {
-    padding: 10,
-    borderRadius: 5,
-    marginTop: 10,
-  },
-  editPicIcon: {
-    width: 150,
-    height: 150,
-    borderRadius: 75,
-  },
+
   signOutButton: {
     padding: 10,
     borderRadius: 25,
@@ -256,14 +364,23 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   profileContainer: {
-    alignItems: 'flex-start',
+   alignItems: 'center',
     width: '100%',
     marginBottom: 20,
+    borderRadius: 10,
+    padding: 20,
   },
   profileText: {
     color: '#fff',
     fontSize: 16,
-    marginBottom: 10,
+    marginBottom: 15, // Increased margin for better spacing
+    textAlign: 'center',
+    width: '100%',
+    backgroundColor: '#2E2E2E', // Background color for each row
+    paddingVertical: 10, // Padding for each row
+    borderRadius: 5,
+    borderWidth: 1,
+    borderColor: '#444', // Border color for each row
   },
   input: {
     backgroundColor: '#fff',
@@ -294,6 +411,64 @@ const styles = StyleSheet.create({
     height: 100,
     resizeMode: 'contain',
   },
+  label: {
+    color: '#fff',
+    fontSize: 16,
+    marginBottom: 5,
+  },
+ genderContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginVertical: 10,
+  },
+  genderButton: {
+    flex: 1,
+    padding: 10,
+    borderRadius: 5,
+    backgroundColor: '#ccc',
+    alignItems: 'center',
+    marginHorizontal: 5,
+  },
+  genderButtonSelected: {
+  backgroundColor: '#1E9947',
+    borderWidth: 2,
+    borderColor: '#fff',
+  },
+  genderButtonText: {
+    color: '#fff',
+    
+  },
+  genderButtonTextSelected: {
+    fontWeight: 'bold',
+  },
+
+  activityContainer: {
+    flexDirection: 'column',
+    marginVertical: 10,
+  },
+  activityButton: {
+    padding: 15,
+    borderRadius: 5,
+    marginVertical: 5,
+    backgroundColor: '#ccc',
+  },
+  activityButtonText: {
+    color: '#fff',
+  },
+  activitySubText: {
+    color: '#fff',
+    fontSize: 12,
+  },
+  activityButtonSelected: {
+    backgroundColor: '#1E9947',
+    borderWidth: 2,
+    borderColor: '#fff',
+  },
+  activityButtonTextSelected: {
+    fontWeight: 'bold',
+    
+  },
+
 });
 
 export default EditProfile;
