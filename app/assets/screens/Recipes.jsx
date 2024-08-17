@@ -1,9 +1,18 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity, SafeAreaView, Alert } from 'react-native';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import { useNavigation } from '@react-navigation/native';
-import * as ImagePicker from 'expo-image-picker';
-import { API_URL } from '@env'; // Ensure this imports correctly
+import React, { useEffect, useState } from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  Image,
+  TouchableOpacity,
+  SafeAreaView,
+  Alert,
+} from "react-native";
+import Ionicons from "react-native-vector-icons/Ionicons";
+import { useNavigation } from "@react-navigation/native";
+import * as ImagePicker from "expo-image-picker";
+import { API_URL } from "@env"; // Ensure this imports correctly
 
 const Recipes = () => {
   const [breakfastRecipes, setBreakfastRecipes] = useState([]);
@@ -14,34 +23,39 @@ const Recipes = () => {
   // Function to fetch recipes for a specific meal type
   const fetchRecipesForMealType = async (mealType, setRecipes) => {
     try {
-      const response = await fetch(`${process.env.API_URL}/nutrition/get-recipes`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          query: mealType,
-        }),
-      });
+      const response = await fetch(
+        `http://192.168.1.17:3000/nutrition/get-recipes`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            query: mealType,
+          }),
+        }
+      );
 
       console.log(`Response Status for ${mealType}: ${response.status}`);
 
       if (!response.ok) {
-        throw new Error(`Network response was not ok. Status: ${response.status}`);
+        throw new Error(
+          `Network response was not ok. Status: ${response.status}`
+        );
       }
 
       const data = await response.json();
       console.log(`Recipes data received for ${mealType}:`, data);
-      setRecipes(data.hits.map(hit => hit.recipe)); // Assume 'hits' is where the recipes are in the API response
+      setRecipes(data.hits.map((hit) => hit.recipe)); // Assume 'hits' is where the recipes are in the API response
     } catch (error) {
       console.error(`Error fetching ${mealType} recipes:`, error);
     }
   };
 
   useEffect(() => {
-    fetchRecipesForMealType('breakfast', setBreakfastRecipes);
-    fetchRecipesForMealType('lunch', setLunchRecipes);
-    fetchRecipesForMealType('dinner', setDinnerRecipes);
+    fetchRecipesForMealType("breakfast", setBreakfastRecipes);
+    fetchRecipesForMealType("lunch", setLunchRecipes);
+    fetchRecipesForMealType("dinner", setDinnerRecipes);
     requestMediaPermissions();
   }, []);
 
@@ -60,7 +74,7 @@ const Recipes = () => {
 
     if (!result.canceled) {
       const uri = result.assets[0].uri;
-      console.log('Image selected from camera:', uri);
+      console.log("Image selected from camera:", uri);
     }
   }
 
@@ -80,31 +94,32 @@ const Recipes = () => {
 
     if (!result.canceled) {
       const uri = result.assets[0].uri;
-      console.log('Image selected from gallery:', uri);
+      console.log("Image selected from gallery:", uri);
     }
   }
 
   async function requestMediaPermissions() {
     const { status } = await ImagePicker.requestCameraPermissionsAsync();
-    if (status !== 'granted') {
-      Alert.alert('Sorry, we need camera roll permissions to make this work!');
+    if (status !== "granted") {
+      Alert.alert("Sorry, we need camera roll permissions to make this work!");
       return;
     }
-    const mediaLibraryStatus = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (mediaLibraryStatus.status !== 'granted') {
-      Alert.alert('Sorry, we need camera roll permissions to make this work!');
+    const mediaLibraryStatus =
+      await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (mediaLibraryStatus.status !== "granted") {
+      Alert.alert("Sorry, we need camera roll permissions to make this work!");
       return;
     }
   }
 
   const showImagePickerOptions = () => {
     Alert.alert(
-      'Select Image Source',
-      'Choose an option to select an image:',
+      "Select Image Source",
+      "Choose an option to select an image:",
       [
-        { text: 'Camera', onPress: openCamera },
-        { text: 'Gallery', onPress: openGallery },
-        { text: 'Cancel', style: 'cancel' },
+        { text: "Camera", onPress: openCamera },
+        { text: "Gallery", onPress: openGallery },
+        { text: "Cancel", style: "cancel" },
       ],
       { cancelable: true }
     );
@@ -113,14 +128,22 @@ const Recipes = () => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.headerContainer}>
-        <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={() => navigation.goBack()}
+        >
           <Ionicons name="arrow-back" size={24} color="#fff" />
         </TouchableOpacity>
       </View>
 
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <View style={styles.header}>
-          <Image source={{ uri: 'https://i.postimg.cc/HxgKzxMj/cropped-image-11.png' }} style={styles.logo} />
+          <Image
+            source={{
+              uri: "https://i.postimg.cc/HxgKzxMj/cropped-image-11.png",
+            }}
+            style={styles.logo}
+          />
           <Text style={styles.headerText}>Recipes</Text>
         </View>
 
@@ -128,12 +151,15 @@ const Recipes = () => {
           <Text style={styles.categoryText}>Breakfast</Text>
           <ScrollView horizontal contentContainerStyle={styles.recipeContainer}>
             {breakfastRecipes.map((recipe, index) => (
-              <TouchableOpacity 
-                key={index} 
-                style={styles.recipe} 
-                onPress={() => navigation.navigate('RecipeDetail', { recipe })}
+              <TouchableOpacity
+                key={index}
+                style={styles.recipe}
+                onPress={() => navigation.navigate("RecipeDetail", { recipe })}
               >
-                <Image style={styles.recipeImage} source={{ uri: recipe.image }} />
+                <Image
+                  style={styles.recipeImage}
+                  source={{ uri: recipe.image }}
+                />
                 <Text style={styles.recipeText}>{recipe.label}</Text>
               </TouchableOpacity>
             ))}
@@ -144,12 +170,15 @@ const Recipes = () => {
           <Text style={styles.categoryText}>Lunch</Text>
           <ScrollView horizontal contentContainerStyle={styles.recipeContainer}>
             {lunchRecipes.map((recipe, index) => (
-              <TouchableOpacity 
-                key={index} 
-                style={styles.recipe} 
-                onPress={() => navigation.navigate('RecipeDetail', { recipe })}
+              <TouchableOpacity
+                key={index}
+                style={styles.recipe}
+                onPress={() => navigation.navigate("RecipeDetail", { recipe })}
               >
-                <Image style={styles.recipeImage} source={{ uri: recipe.image }} />
+                <Image
+                  style={styles.recipeImage}
+                  source={{ uri: recipe.image }}
+                />
                 <Text style={styles.recipeText}>{recipe.label}</Text>
               </TouchableOpacity>
             ))}
@@ -160,12 +189,15 @@ const Recipes = () => {
           <Text style={styles.categoryText}>Dinner</Text>
           <ScrollView horizontal contentContainerStyle={styles.recipeContainer}>
             {dinnerRecipes.map((recipe, index) => (
-              <TouchableOpacity 
-                key={index} 
-                style={styles.recipe} 
-                onPress={() => navigation.navigate('RecipeDetail', { recipe })}
+              <TouchableOpacity
+                key={index}
+                style={styles.recipe}
+                onPress={() => navigation.navigate("RecipeDetail", { recipe })}
               >
-                <Image style={styles.recipeImage} source={{ uri: recipe.image }} />
+                <Image
+                  style={styles.recipeImage}
+                  source={{ uri: recipe.image }}
+                />
                 <Text style={styles.recipeText}>{recipe.label}</Text>
               </TouchableOpacity>
             ))}
@@ -174,19 +206,34 @@ const Recipes = () => {
       </ScrollView>
       <View style={styles.navBar}>
         <View style={styles.navButtonContainer}>
-          <TouchableOpacity style={styles.navButton} onPress={() => navigation.navigate('Dashboard')}>
+          <TouchableOpacity
+            style={styles.navButton}
+            onPress={() => navigation.navigate("Dashboard")}
+          >
             <Ionicons name="home-outline" size={24} color="#fff" />
           </TouchableOpacity>
-          <TouchableOpacity style={styles.navButton} onPress={() => navigation.navigate('TrackCalories')}>
+          <TouchableOpacity
+            style={styles.navButton}
+            onPress={() => navigation.navigate("TrackCalories")}
+          >
             <Ionicons name="create-outline" size={24} color="#fff" />
           </TouchableOpacity>
-          <TouchableOpacity style={styles.navButton} onPress={showImagePickerOptions}>
+          <TouchableOpacity
+            style={styles.navButton}
+            onPress={showImagePickerOptions}
+          >
             <Ionicons name="camera-outline" size={24} color="#fff" />
           </TouchableOpacity>
-          <TouchableOpacity style={styles.navButton} onPress={() => navigation.navigate('Recipes')}>
+          <TouchableOpacity
+            style={styles.navButton}
+            onPress={() => navigation.navigate("Recipes")}
+          >
             <Ionicons name="restaurant-outline" size={24} color="#fff" />
           </TouchableOpacity>
-          <TouchableOpacity style={styles.navButton} onPress={() => navigation.navigate('EditProfile')}>
+          <TouchableOpacity
+            style={styles.navButton}
+            onPress={() => navigation.navigate("EditProfile")}
+          >
             <Ionicons name="person-outline" size={24} color="#fff" />
           </TouchableOpacity>
         </View>
@@ -198,15 +245,15 @@ const Recipes = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#161E21', // Set background color to black
+    backgroundColor: "#161E21", // Set background color to black
   },
   scrollContainer: {
     flexGrow: 1,
     paddingBottom: 80, // Add padding to avoid overlap with the navbar
   },
   headerContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     paddingHorizontal: 20,
     marginTop: 40, // Ensure this value is set correctly
   },
@@ -216,12 +263,12 @@ const styles = StyleSheet.create({
     zIndex: 1, // Ensure the back button is on top
   },
   backButtonText: {
-    color: '#fff',
-    fontWeight: 'bold',
+    color: "#fff",
+    fontWeight: "bold",
     fontSize: 20,
   },
   header: {
-    alignItems: 'center',
+    alignItems: "center",
     marginBottom: 10, // Adjust vertical margin if necessary
   },
   logo: {
@@ -231,8 +278,8 @@ const styles = StyleSheet.create({
   },
   headerText: {
     fontSize: 24,
-    fontWeight: 'bold',
-    color: '#fff',
+    fontWeight: "bold",
+    color: "#fff",
     marginTop: 10,
   },
   category: {
@@ -241,15 +288,15 @@ const styles = StyleSheet.create({
   },
   categoryText: {
     fontSize: 20,
-    fontWeight: 'bold',
-    color: '#fff',
+    fontWeight: "bold",
+    color: "#fff",
     marginVertical: 10,
   },
   recipeContainer: {
-    flexDirection: 'row',
+    flexDirection: "row",
   },
   recipe: {
-    alignItems: 'center',
+    alignItems: "center",
     marginRight: 20, // Add margin to space out the items in the horizontal scroll
     width: 150, // Set a fixed width for the items
   },
@@ -259,27 +306,27 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   recipeText: {
-    color: '#fff',
+    color: "#fff",
     marginTop: 5,
-    textAlign: 'center',
+    textAlign: "center",
   },
   navBar: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    width: '100%',
-    position: 'absolute',
+    flexDirection: "row",
+    justifyContent: "center",
+    width: "100%",
+    position: "absolute",
     bottom: 0,
-    backgroundColor: '#161E21', // Add background color
+    backgroundColor: "#161E21", // Add background color
     paddingVertical: 10,
   },
   navButtonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    width: '90%', // Adjust this value to control the spacing and centering
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: "90%", // Adjust this value to control the spacing and centering
     paddingHorizontal: 10, // Add padding to create space between buttons
   },
   navButton: {
-    alignItems: 'center',
+    alignItems: "center",
     padding: 10,
   },
 });

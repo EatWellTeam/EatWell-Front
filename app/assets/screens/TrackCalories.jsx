@@ -1,32 +1,48 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, SafeAreaView, StyleSheet, TextInput, TouchableOpacity, Platform, StatusBar, Image, Keyboard, TouchableWithoutFeedback, Alert } from 'react-native';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import { useNavigation } from '@react-navigation/native';
-import * as ImagePicker from 'expo-image-picker';
-import Modal from 'react-native-modal';
-import axios from 'axios';
-import { API_URL } from '@env';
-
+import React, { useState, useEffect } from "react";
+import {
+  View,
+  Text,
+  SafeAreaView,
+  StyleSheet,
+  TextInput,
+  TouchableOpacity,
+  Platform,
+  StatusBar,
+  Image,
+  Keyboard,
+  TouchableWithoutFeedback,
+  Alert,
+} from "react-native";
+import Ionicons from "react-native-vector-icons/Ionicons";
+import { useNavigation } from "@react-navigation/native";
+import * as ImagePicker from "expo-image-picker";
+import Modal from "react-native-modal";
+import axios from "axios";
+import { API_URL } from "@env";
 
 const TrackCalories = () => {
-  const [mealDescription, setMealDescription] = useState('');
+  const [mealDescription, setMealDescription] = useState("");
   const [isModalVisible, setModalVisible] = useState(false);
 
   const navigation = useNavigation();
 
   const handleCalculate = async () => {
     try {
-      const response = await axios.post(`${process.env.API_URL}/nutrition/get-nutrition`, {
-        ingredients: mealDescription.split('\n'),
-      });
-      
-      const nutritionData = response.data.nutritionData;
-      const ingredients = mealDescription.split('\n');
-      navigation.navigate('AnalysisResult', { results: { nutritionData, ingredients } });
+      const response = await axios.post(
+        `http://192.168.1.17:3000/nutrition/get-nutrition`,
+        {
+          ingredients: mealDescription.split("\n"),
+        }
+      );
 
+      const nutritionData = response.data.nutritionData;
+      const ingredients = mealDescription.split("\n");
+      navigation.navigate("AnalysisResult", {
+        results: { nutritionData, ingredients },
+      });
     } catch (error) {
-      console.error('Error calculating calories:', error);
-      Alert.alert('Error', 'Failed to calculate calories.');
+      console.error("Error calculating calories:", error);
+      Alert.alert("Error", "Failed to calculate calories.");
     }
   };
 
@@ -46,7 +62,7 @@ const TrackCalories = () => {
 
     if (!result.canceled) {
       const uri = result.assets[0].uri;
-      console.log('Image selected from camera:', uri);
+      console.log("Image selected from camera:", uri);
     }
   };
 
@@ -66,19 +82,20 @@ const TrackCalories = () => {
 
     if (!result.canceled) {
       const uri = result.assets[0].uri;
-      console.log('Image selected from gallery:', uri);
+      console.log("Image selected from gallery:", uri);
     }
   };
 
   const requestMediaPermissions = async () => {
     const { status } = await ImagePicker.requestCameraPermissionsAsync();
-    if (status !== 'granted') {
-      Alert.alert('Sorry, we need camera roll permissions to make this work!');
+    if (status !== "granted") {
+      Alert.alert("Sorry, we need camera roll permissions to make this work!");
       return;
     }
-    const mediaLibraryStatus = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (mediaLibraryStatus.status !== 'granted') {
-      Alert.alert('Sorry, we need camera roll permissions to make this work!');
+    const mediaLibraryStatus =
+      await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (mediaLibraryStatus.status !== "granted") {
+      Alert.alert("Sorry, we need camera roll permissions to make this work!");
       return;
     }
   };
@@ -89,12 +106,12 @@ const TrackCalories = () => {
 
   const showImagePickerOptions = () => {
     Alert.alert(
-      'Select Image Source',
-      'Choose an option to select an image:',
+      "Select Image Source",
+      "Choose an option to select an image:",
       [
-        { text: 'Camera', onPress: openCamera },
-        { text: 'Gallery', onPress: openGallery },
-        { text: 'Cancel', style: 'cancel' },
+        { text: "Camera", onPress: openCamera },
+        { text: "Gallery", onPress: openGallery },
+        { text: "Cancel", style: "cancel" },
       ],
       { cancelable: true }
     );
@@ -104,16 +121,23 @@ const TrackCalories = () => {
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <SafeAreaView style={styles.container}>
         <View style={styles.header}>
-          <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+          <TouchableOpacity
+            style={styles.backButton}
+            onPress={() => navigation.goBack()}
+          >
             <Ionicons name="arrow-back" size={24} color="#fff" />
           </TouchableOpacity>
-          <Image 
-            source={{ uri: 'https://i.postimg.cc/HxgKzxMj/cropped-image-11.png' }} 
-            style={styles.logo} 
+          <Image
+            source={{
+              uri: "https://i.postimg.cc/HxgKzxMj/cropped-image-11.png",
+            }}
+            style={styles.logo}
           />
         </View>
         <View style={styles.content}>
-          <Text style={styles.instructions}>Manually type in your last meal, to calculate the caloric worth</Text>
+          <Text style={styles.instructions}>
+            Manually type in your last meal, to calculate the caloric worth
+          </Text>
           <TextInput
             value={mealDescription}
             onChangeText={setMealDescription}
@@ -129,29 +153,52 @@ const TrackCalories = () => {
         </View>
         <View style={styles.navBar}>
           <View style={styles.navButtonContainer}>
-            <TouchableOpacity style={styles.navButton} onPress={() => navigation.navigate('Dashboard')}>
+            <TouchableOpacity
+              style={styles.navButton}
+              onPress={() => navigation.navigate("Dashboard")}
+            >
               <Ionicons name="home-outline" size={24} color="#fff" />
             </TouchableOpacity>
-            <TouchableOpacity style={styles.navButton} onPress={() => navigation.navigate('TrackCalories')}>
+            <TouchableOpacity
+              style={styles.navButton}
+              onPress={() => navigation.navigate("TrackCalories")}
+            >
               <Ionicons name="create-outline" size={24} color="#fff" />
             </TouchableOpacity>
-            <TouchableOpacity style={styles.navButton} onPress={showImagePickerOptions}>
+            <TouchableOpacity
+              style={styles.navButton}
+              onPress={showImagePickerOptions}
+            >
               <Ionicons name="camera-outline" size={24} color="#fff" />
             </TouchableOpacity>
-            <TouchableOpacity style={styles.navButton} onPress={() => navigation.navigate('Recipes')}>
+            <TouchableOpacity
+              style={styles.navButton}
+              onPress={() => navigation.navigate("Recipes")}
+            >
               <Ionicons name="restaurant-outline" size={24} color="#fff" />
             </TouchableOpacity>
-            <TouchableOpacity style={styles.navButton} onPress={() => navigation.navigate('EditProfile')}>
+            <TouchableOpacity
+              style={styles.navButton}
+              onPress={() => navigation.navigate("EditProfile")}
+            >
               <Ionicons name="person-outline" size={24} color="#fff" />
             </TouchableOpacity>
           </View>
         </View>
 
         {/* Custom Modal */}
-        <Modal isVisible={isModalVisible} onBackdropPress={() => setModalVisible(false)}>
+        <Modal
+          isVisible={isModalVisible}
+          onBackdropPress={() => setModalVisible(false)}
+        >
           <View style={styles.modalContent}>
-            <Text style={styles.modalText}>Your data was entered into your last meals!</Text>
-            <TouchableOpacity style={styles.closeButton} onPress={() => setModalVisible(false)}>
+            <Text style={styles.modalText}>
+              Your data was entered into your last meals!
+            </Text>
+            <TouchableOpacity
+              style={styles.closeButton}
+              onPress={() => setModalVisible(false)}
+            >
               <Text style={styles.closeButtonText}>Close</Text>
             </TouchableOpacity>
           </View>
@@ -164,23 +211,23 @@ const TrackCalories = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
-    backgroundColor: '#161E21',
-    justifyContent: 'center',
-    alignItems: 'center',
+    paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
+    backgroundColor: "#161E21",
+    justifyContent: "center",
+    alignItems: "center",
   },
   header: {
-    alignItems: 'center',
+    alignItems: "center",
     marginBottom: 20,
-    position: 'absolute',
-    top: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
-    width: '100%',
+    position: "absolute",
+    top: Platform.OS === "android" ? StatusBar.currentHeight : 0,
+    width: "100%",
     paddingTop: 20,
-    backgroundColor: '#161E21',
+    backgroundColor: "#161E21",
   },
   backButton: {
-    position: 'absolute',
-    top: Platform.OS === 'android' ? StatusBar.currentHeight : 40,
+    position: "absolute",
+    top: Platform.OS === "android" ? StatusBar.currentHeight : 40,
     left: 20,
     padding: 10,
     borderRadius: 5,
@@ -191,84 +238,84 @@ const styles = StyleSheet.create({
     marginTop: 40,
   },
   content: {
-    width: '80%',
-    alignItems: 'center',
+    width: "80%",
+    alignItems: "center",
     marginTop: 150, // Adjusted to account for the header
   },
   instructions: {
     fontSize: 25,
-    color: '#fff',
-    textAlign: 'center',
+    color: "#fff",
+    textAlign: "center",
     marginBottom: 20,
   },
   input: {
-    width: '100%',
+    width: "100%",
     height: 150,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     borderRadius: 10,
     padding: 10,
     marginBottom: 20,
-    textAlignVertical: 'top',
+    textAlignVertical: "top",
   },
   button: {
-    width: '100%',
+    width: "100%",
     height: 50,
-    backgroundColor: '#1E9947',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "#1E9947",
+    justifyContent: "center",
+    alignItems: "center",
     borderRadius: 10,
   },
   buttonText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   navBar: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    width: '100%',
-    position: 'absolute',
+    flexDirection: "row",
+    justifyContent: "center",
+    width: "100%",
+    position: "absolute",
     bottom: 0,
-    backgroundColor: '#161E21',
+    backgroundColor: "#161E21",
     paddingVertical: 10,
   },
   navButtonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    width: '90%',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: "90%",
     paddingHorizontal: 10,
   },
   navButton: {
     flex: 1,
-    alignItems: 'center',
+    alignItems: "center",
   },
   modalContent: {
-    backgroundColor: '#161E21',
+    backgroundColor: "#161E21",
     padding: 20,
     borderRadius: 10,
-    alignItems: 'center',
+    alignItems: "center",
   },
   modalText: {
     fontSize: 18,
-    textAlign: 'center',
-    color: '#fff',
+    textAlign: "center",
+    color: "#fff",
     marginBottom: 20,
   },
   closeButton: {
-    backgroundColor: '#1E9947',
+    backgroundColor: "#1E9947",
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 25,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.8,
     shadowRadius: 2,
     elevation: 5,
   },
   closeButtonText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   nutritionDataContainer: {
     marginBottom: 20,

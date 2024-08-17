@@ -27,23 +27,22 @@ export default function LoginScreen({ navigation }) {
   const handleContinue = async () => {
     console.log("Attempting login with email:", email); // Add log
     try {
-      const response = await axios.post(`${process.env.API_URL}/auth/login`, {
+      const response = await axios.post(`http://192.168.1.17:3000/auth/login`, {
         email,
         password,
       });
       if (response.status === 200) {
         console.log("Login successful", response.data);
         Alert.alert("Success", "Login successful");
-      
-        setSignUpData(prevData => ({
+
+        setSignUpData((prevData) => ({
           ...prevData,
-          _id: response.data._id, 
+          _id: response.data._id,
           accessToken: response.data.accessToken,
           refreshToken: response.data.refreshToken,
         }));
         console.log("Current SignUpData:", JSON.stringify(signUpData, null, 2));
-        
-        
+
         navigation.navigate("Dashboard"); // Navigate to the Dashboard or any other screen
       } else {
         console.log("Unexpected response", response.data);
