@@ -64,7 +64,7 @@ export default function RecipeDetail({ route }) {
   useEffect(() => {
     requestMediaPermissions();
     // Log the recipe object to see what it contains
-    console.log('Recipe:', recipe);
+    console.log('Recipe url:', recipe.url);
   }, []);
 
   const showImagePickerOptions = () => {
@@ -111,21 +111,21 @@ export default function RecipeDetail({ route }) {
           {recipe.totalNutrients ? (
             <>
               <Text style={styles.recipeText}>
-                Total Calories: {recipe.calories ? recipe.calories.toFixed(2) : 'N/A'}
+                Calories: {recipe.calories ? ((recipe.calories / recipe.yield).toFixed(2))  : 'N/A'}
               </Text>
               {recipe.totalNutrients.CHOCDF && (
                 <Text style={styles.recipeText}>
-                  Carbohydrates: {recipe.totalNutrients.CHOCDF.quantity.toFixed(2)} {recipe.totalNutrients.CHOCDF.unit}
+                  Carbohydrates: {(recipe.totalNutrients.CHOCDF.quantity / recipe.yield).toFixed(2)} {recipe.totalNutrients.CHOCDF.unit}
                 </Text>
               )}
               {recipe.totalNutrients.PROCNT && (
                 <Text style={styles.recipeText}>
-                  Protein: {recipe.totalNutrients.PROCNT.quantity.toFixed(2)} {recipe.totalNutrients.PROCNT.unit}
+                  Protein: {(recipe.totalNutrients.PROCNT.quantity / recipe.yield).toFixed(2)} {recipe.totalNutrients.PROCNT.unit}
                 </Text>
               )}
               {recipe.totalNutrients.FAT && (
                 <Text style={styles.recipeText}>
-                  Fat: {recipe.totalNutrients.FAT.quantity.toFixed(2)} {recipe.totalNutrients.FAT.unit}
+                  Fat: {(recipe.totalNutrients.FAT.quantity / recipe.yield).toFixed(2)} {recipe.totalNutrients.FAT.unit}
                 </Text>
               )}
             </>

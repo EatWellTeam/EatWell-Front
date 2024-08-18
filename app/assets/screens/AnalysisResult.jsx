@@ -4,6 +4,8 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import { API_URL } from '@env';
 import{useSignUpContext} from '../context/SignUpContext';
 
+import{useSignUpContext} from '../context/SignUpContext';
+
 
 export default function AnalysisResult({ navigation, route }) {
     const [isEditing, setIsEditing] = useState(false);
@@ -14,6 +16,11 @@ export default function AnalysisResult({ navigation, route }) {
     const [caloriesLeft, setCaloriesLeft] = useState(route.params.caloriesLeft || 0); // Use caloriesLeft from params
     const initialCaloriesLeft = route.params.initialCaloriesLeft; // Use initialCaloriesLeft from params
     const imageUri = route.params.image;
+    const { signUpData, setSignUpData } = useSignUpContext();
+     
+
+
+    
     const { signUpData, setSignUpData } = useSignUpContext();
      
 
@@ -88,14 +95,22 @@ export default function AnalysisResult({ navigation, route }) {
             });
             const data = await response.json();
     
+    
             if (response.ok) {
+                
                 
                 setResults({
                     ...results,
                     ingredients: editIngredients.split('\n').map(ingredient => ingredient.trim()), // Update ingredients with new ones
                     nutritionData: data.nutritionData, // Update nutrition data
+                    ingredients: editIngredients.split('\n').map(ingredient => ingredient.trim()), // Update ingredients with new ones
+                    nutritionData: data.nutritionData, // Update nutrition data
                 });
                 Alert.alert('Recalculated!', 'Nutrition data has been updated.');
+                
+                
+                setIsEditing(false);
+                setShowRecalculate(false);
                 
                 
                 setIsEditing(false);
@@ -120,9 +135,23 @@ export default function AnalysisResult({ navigation, route }) {
         setEditIngredients(''); 
     };
 
+    const handleCancelMeal = () => {
+        // Navigate back to the Dashboard or previous screen without saving
+        navigation.navigate('Dashboard')
+    };
+
+    const handleCancelEdit = () => {
+        
+        setIsEditing(false);
+        setShowRecalculate(false);
+        setEditIngredients(''); 
+    };
+
     const handleXButtonPress = () => {
         const caloriesFromMeal = results.nutritionData.calories; // Calories from the analyzed meal
+        const caloriesFromMeal = results.nutritionData.calories; // Calories from the analyzed meal
     
+        console.log("Calories from meal:", caloriesFromMeal);
         console.log("Calories from meal:", caloriesFromMeal);
         console.log("Initial caloriesConsumed:", caloriesConsumed);
         console.log("Initial caloriesLeft:", caloriesLeft);
@@ -130,8 +159,11 @@ export default function AnalysisResult({ navigation, route }) {
         navigation.navigate('Dashboard', {
             updatedCaloriesConsumed: caloriesConsumed,
             updatedCaloriesLeft: caloriesLeft,
+            updatedCaloriesConsumed: caloriesConsumed,
+            updatedCaloriesLeft: caloriesLeft,
             initialCaloriesLeft: initialCaloriesLeft,
         });
+    
     
     };
 
@@ -187,6 +219,28 @@ export default function AnalysisResult({ navigation, route }) {
                     </>
                 )}
             </ScrollView>
+           
+            {!isEditing ? (
+                <>
+                    <TouchableOpacity style={styles.button} onPress={handleSaveMeal}>
+                        <Text style={styles.buttonText}>Save Meal</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.button} onPress={handleCancelMeal}>
+                        <Text style={styles.buttonText}>Cancel Meal</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.button} onPress={handleEdit}>
+                        <Text style={styles.buttonText}>Edit Analysis</Text>
+                    </TouchableOpacity>
+                </>
+            ) : (
+                <>
+                    <TouchableOpacity style={styles.button} onPress={handleRecalculate}>
+                        <Text style={styles.buttonText}>Recalculate</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.button} onPress={handleCancelEdit}>
+                        <Text style={styles.buttonText}>Cancel Changes</Text>
+                    </TouchableOpacity>
+                </>
            
             {!isEditing ? (
                 <>
@@ -275,5 +329,6 @@ const styles = StyleSheet.create({
         color: '#fff',
         fontSize: 16,
         fontWeight: 'bold',
+    },
     },
 });

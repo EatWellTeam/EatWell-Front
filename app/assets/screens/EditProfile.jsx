@@ -10,12 +10,14 @@ const EditProfile = () => {
   const { signUpData, setSignUpData } = useSignUpContext();
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(false);
+  
   const [profile, setProfile] = useState({
     fullName: '',
     email: '',
     dateOfBirth: '',
     weight: '',
     height: '',
+    weightGoal: '',
     weightGoal: '',
     gender: '',
     activityLevel: '',
@@ -58,6 +60,7 @@ const EditProfile = () => {
   }, []);
 
 
+
   const handleEdit = () => {
     setIsEditing(true);
   };
@@ -91,9 +94,6 @@ const EditProfile = () => {
     setProfile({ ...profile, [name]: value });
   };
 
-  const handleContinue = () => {
-    navigation.navigate('Dashboard');
-  };
 
   const handleSignOut = () => {
     console.log("Signing out...");
@@ -135,6 +135,7 @@ const EditProfile = () => {
                 value={profile.weight}
                 onChangeText={(value) => handleChange('weight', value)}
               />
+              <Text style={styles.label}>Height (cm)</Text>
               <TextInput
                 style={styles.input}
                 value={profile.height}
@@ -169,6 +170,9 @@ const EditProfile = () => {
               <Text style={styles.profileText}>Name: {profile.fullName}</Text>
               <Text style={styles.profileText}>Email: {profile.email}</Text>
               <Text style={styles.profileText}>Date of Birth: {profile.dateOfBirth}</Text>
+              <Text style={styles.profileText}>Weight (kg) : {profile.weight}</Text>
+              <Text style={styles.profileText}>Height (cm): {profile.height}</Text>
+              <Text style={styles.profileText}>Weight Goal (kg): {profile.weightGoal}</Text>
               <Text style={styles.profileText}>Weight (kg) : {profile.weight}</Text>
               <Text style={styles.profileText}>Height (cm): {profile.height}</Text>
               <Text style={styles.profileText}>Weight Goal (kg): {profile.weightGoal}</Text>
@@ -250,14 +254,23 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   profileContainer: {
-    alignItems: 'flex-start',
+   alignItems: 'center',
     width: '100%',
     marginBottom: 20,
+    borderRadius: 10,
+    padding: 20,
   },
   profileText: {
     color: '#fff',
     fontSize: 16,
-    marginBottom: 10,
+    marginBottom: 15, // Increased margin for better spacing
+    textAlign: 'center',
+    width: '100%',
+    backgroundColor: '#2E2E2E', // Background color for each row
+    paddingVertical: 10, // Padding for each row
+    borderRadius: 5,
+    borderWidth: 1,
+    borderColor: '#444', // Border color for each row
   },
   input: {
     backgroundColor: '#fff',
