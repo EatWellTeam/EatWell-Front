@@ -15,30 +15,71 @@ export default function AnalysisResult({ navigation, route }) {
     const initialCaloriesLeft = route.params.initialCaloriesLeft; // Use initialCaloriesLeft from params
     const imageUri = route.params.image;
     const { signUpData, setSignUpData } = useSignUpContext();
+     
 
 
-
-
-    const showInitialButtons = !isEditing && !showRecalculate;
-    const showEditingButtons = isEditing;
-    const showRecalculateButtons = showRecalculate;
-
+    
     const handleEdit = () => {
         setIsEditing(true);
         setEditIngredients(results.ingredients.join('\n')); // Join ingredients with a newline for editing
         setShowRecalculate(false);
     };
 
-    const handleSave = () => {
-        setIsEditing(false);
-        results.ingredients = editIngredients.split('\n').map(ingredient => ingredient.trim()); // Split by newline and trim each ingredient
-        Alert.alert('Saved!', 'Your changes have been saved.');
-        setShowRecalculate(true);
+    const handleSaveMeal = async () => {
+        
+        try {
+            const caloriesFromMeal = results.nutritionData.calories;
+            
+
+            const mealData = {
+                name: results.ingredients[0],  // Use the first ingredient as the meal name
+                calories: caloriesFromMeal,
+                nutritionValues: {
+                    calories: results.nutritionData.calories,
+                    protein: results.nutritionData.totalNutrients?.PROCNT?.quantity || 0,
+                    carbs: results.nutritionData.totalNutrients?.CHOCDF?.quantity || 0,
+                    fat: results.nutritionData.totalNutrients?.FAT?.quantity || 0,
+                },
+                userId: signUpData._id,  
+                imageUrl: imageUri || '', 
+            };
+
+            const response = await fetch(`http://10.0.0.6:3000/food/save-meal`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(mealData),
+            });
+    
+            if (response.ok) {
+                Alert.alert('Success', 'Meal saved successfully!');
+                const updatedCaloriesConsumed = caloriesConsumed + caloriesFromMeal; //  update calories consumed
+                const updatedCaloriesLeft = caloriesLeft - caloriesFromMeal; // update calories left
+
+                setCaloriesConsumed(updatedCaloriesConsumed);
+                setCaloriesLeft(updatedCaloriesLeft);
+                
+                navigation.navigate('Dashboard', {
+                    updatedCaloriesConsumed,
+                    updatedCaloriesLeft,
+                    initialCaloriesLeft,
+                }); 
+            } else {
+                const errorData = await response.json();
+                Alert.alert('Error', errorData.message || 'Failed to save meal');
+            }
+        } catch (error) {
+            console.error('Error saving meal:', error);
+            Alert.alert('Error', 'An error occurred while saving the meal.');
+        }
+    
+    
     };
 
     const handleRecalculate = async () => {
         try {
-            const response = await fetch("http://10.0.0.6:3000/nutrition/get-nutrition", {
+            const response = await fetch(`${process.env.API_URL}/nutrition/get-nutrition`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -46,14 +87,18 @@ export default function AnalysisResult({ navigation, route }) {
                 body: JSON.stringify({ ingredients: editIngredients.split('\n').map(ingredient => ingredient.trim()) }),
             });
             const data = await response.json();
-
+    
             if (response.ok) {
-
+                
                 setResults({
+                    ...results,
                     ingredients: editIngredients.split('\n').map(ingredient => ingredient.trim()), // Update ingredients with new ones
                     nutritionData: data.nutritionData, // Update nutrition data
                 });
                 Alert.alert('Recalculated!', 'Nutrition data has been updated.');
+                
+                
+                setIsEditing(false);
                 setShowRecalculate(false);
             } else {
                 throw new Error(data.error || 'Failed to recalculate');
@@ -69,80 +114,26 @@ export default function AnalysisResult({ navigation, route }) {
     };
 
     const handleCancelEdit = () => {
-
+        
         setIsEditing(false);
         setShowRecalculate(false);
         setEditIngredients(''); 
     };
 
-
     const handleXButtonPress = () => {
-            const caloriesFromMeal = results.nutritionData.calories; // Calories from the analyzed meal
-
-            console.log("Calories from meal:", caloriesFromMeal);
-            console.log("Initial caloriesConsumed:", caloriesConsumed);
-            console.log("Initial caloriesLeft:", caloriesLeft);
-            navigation.navigate('Dashboard', {
-                updatedCaloriesConsumed: updatedCaloriesConsumed, 
-                updatedCaloriesLeft: updatedCaloriesLeft,
-                updatedCaloriesConsumed: caloriesConsumed,
-                updatedCaloriesLeft: caloriesLeft,
-                initialCaloriesLeft: initialCaloriesLeft,
-            });
+        const caloriesFromMeal = results.nutritionData.calories; // Calories from the analyzed meal
     
-        };
-
-    const handleSaveFinal = async () => {
-
-            try {
-                const caloriesFromMeal = results.nutritionData.calories;
+        console.log("Calories from meal:", caloriesFromMeal);
+        console.log("Initial caloriesConsumed:", caloriesConsumed);
+        console.log("Initial caloriesLeft:", caloriesLeft);
     
+        navigation.navigate('Dashboard', {
+            updatedCaloriesConsumed: caloriesConsumed,
+            updatedCaloriesLeft: caloriesLeft,
+            initialCaloriesLeft: initialCaloriesLeft,
+        });
     
-                const mealData = {
-                    name: results.ingredients[0],  // Use the first ingredient as the meal name
-                    calories: caloriesFromMeal,
-                    nutritionValues: {
-                        calories: results.nutritionData.calories,
-                        protein: results.nutritionData.totalNutrients?.PROCNT?.quantity || 0,
-                        carbs: results.nutritionData.totalNutrients?.CHOCDF?.quantity || 0,
-                        fat: results.nutritionData.totalNutrients?.FAT?.quantity || 0,
-                    },
-                    userId: signUpData._id,  
-                    imageUrl: imageUri || '', 
-                };
-    
-                const response = await fetch(`${process.env.API_URL}/food/save-meal`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(mealData),
-                });
-    
-                if (response.ok) {
-                    Alert.alert('Success', 'Meal saved successfully!');
-                    const updatedCaloriesConsumed = caloriesConsumed + caloriesFromMeal; //  update calories consumed
-                    const updatedCaloriesLeft = caloriesLeft - caloriesFromMeal; // update calories left
-    
-                    setCaloriesConsumed(updatedCaloriesConsumed);
-                    setCaloriesLeft(updatedCaloriesLeft);
-    
-                    navigation.navigate('Dashboard', {
-                        updatedCaloriesConsumed,
-                        updatedCaloriesLeft,
-                        initialCaloriesLeft,
-                    }); 
-                } else {
-                    const errorData = await response.json();
-                    Alert.alert('Error', errorData.message || 'Failed to save meal');
-                }
-            } catch (error) {
-                console.error('Error saving meal:', error);
-                Alert.alert('Error', 'An error occurred while saving the meal.');
-            }
-    
-    
-        };
+    };
 
     return (
         <View style={styles.container}>
@@ -196,37 +187,32 @@ export default function AnalysisResult({ navigation, route }) {
                     </>
                 )}
             </ScrollView>
-            {showInitialButtons && (
+           
+            {!isEditing ? (
                 <>
-                    <TouchableOpacity style={styles.button} onPress={handleSaveFinal}>
-                        <Text style={styles.buttonText}>Save</Text>
+                    <TouchableOpacity style={styles.button} onPress={handleSaveMeal}>
+                        <Text style={styles.buttonText}>Save Meal</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.button} onPress={handleCancelMeal}>
+                        <Text style={styles.buttonText}>Cancel Meal</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.button} onPress={handleEdit}>
                         <Text style={styles.buttonText}>Edit Analysis</Text>
                     </TouchableOpacity>
                 </>
-            )}
-            {showEditingButtons && (
-                <>
-                    <TouchableOpacity style={styles.button} onPress={handleSave}>
-                        <Text style={styles.buttonText}>Save</Text>
-                    </TouchableOpacity>
-                </>
-            )}
-            {showRecalculateButtons && (
+            ) : (
                 <>
                     <TouchableOpacity style={styles.button} onPress={handleRecalculate}>
                         <Text style={styles.buttonText}>Recalculate</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.button} onPress={handleEdit}>
-                        <Text style={styles.buttonText}>Edit Analysis</Text>
+                    <TouchableOpacity style={styles.button} onPress={handleCancelEdit}>
+                        <Text style={styles.buttonText}>Cancel Changes</Text>
                     </TouchableOpacity>
                 </>
             )}
         </View>
     );
 }
-
 
 const styles = StyleSheet.create({
     container: {
@@ -289,5 +275,5 @@ const styles = StyleSheet.create({
         color: '#fff',
         fontSize: 16,
         fontWeight: 'bold',
-    },
+    },
 });

@@ -10,17 +10,22 @@ const MyLastMeals = () => {
   const { userId } = useSignUpContext(); 
   const navigation = useNavigation();
 
-
   const fetchMeals = async () => {
-    if (!userId) return; 
+    if (!userId) {
+      console.log("no userid");
+      return; 
+    }
 
     try {
-      const response = await fetch(`http://10.0.0.6:3000/${userId}`); 
+      console.log(`Fetching meals for userId: ${userId}`);
+      const response = await fetch(`http://10.0.0.6:3000/food/${userId}`);
+      console.log(`Response status: ${response.status}`);
       if (!response.ok) {
         throw new Error(`Network response was not ok. Status: ${response.status}`);
       }
       const data = await response.json();
-      setMeals(data.meals);
+      console.log('Fetched data:', data);
+      setMeals(data);
     } catch (error) {
       console.error('Error fetching meals:', error);
     }
@@ -50,9 +55,13 @@ const MyLastMeals = () => {
           meals.map((meal, index) => (
             <View key={index} style={styles.mealContainer}>
               <Image source={{ uri: meal.imageUrl }} style={styles.mealImage} />
-              <Text style={styles.mealName}>{meal.name}</Text>
-              <Text style={styles.mealCalories}>{meal.calories} calories</Text>
-              <Text style={styles.mealDate}>{new Date(meal.createdAt).toDateString()}</Text>
+              <View style={styles.mealDetails}>
+                <Text style={styles.mealName}>{meal.name}</Text>
+                <Text style={styles.mealCalories}>{meal.calories.toFixed(0)} calories</Text>
+                <Text style={styles.mealNutrients}>
+                  {`Carbs: ${meal.nutritionValues.carbs.toFixed(2)}g | Fat: ${meal.nutritionValues.fat.toFixed(2)}g | Protein: ${meal.nutritionValues.protein.toFixed(2)}g`}
+                </Text>
+              </View>
             </View>
           ))
         )}
@@ -99,18 +108,25 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   mealContainer: {
+    flexDirection: 'row',
     marginVertical: 10,
     paddingHorizontal: 10,
     alignItems: 'center',
+    borderBottomColor: '#fff',
+    borderBottomWidth: 1,
+    paddingBottom: 10,
   },
   mealImage: {
-    width: 150,
-    height: 150,
+    width: 100,
+    height: 100,
     borderRadius: 10,
+  },
+  mealDetails: {
+    marginLeft: 10,
+    flex: 1,
   },
   mealName: {
     color: '#fff',
-    marginTop: 5,
     fontSize: 18,
     fontWeight: 'bold',
   },
@@ -119,7 +135,7 @@ const styles = StyleSheet.create({
     marginTop: 5,
     fontSize: 16,
   },
-  mealDate: {
+  mealNutrients: {
     color: '#fff',
     marginTop: 5,
     fontSize: 14,

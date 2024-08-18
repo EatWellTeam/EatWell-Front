@@ -1,4 +1,3 @@
-// app/assets/screens/Login.js
 import React, { useState } from "react";
 import {
   View,
@@ -22,41 +21,46 @@ export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false); // State to toggle password visibility
-  const { signUpData, setSignUpData } = useSignUpContext();
+  const { setSignUpData, setUserId } = useSignUpContext(); // Destructure setUserId
 
   const handleContinue = async () => {
-    console.log("Attempting login with email:", email); // Add log
-    const lowerCaseEmail = email.toLowerCase(); // Convert email to lowercase
+    console.log("Attempting login with email:", email);
+    const lowerCaseEmail = email.toLowerCase();
     try {
       const response = await axios.post("http://10.0.0.6:3000/auth/login", {
-        lowerCaseEmail,
+        email: lowerCaseEmail,
         password,
       });
+  
       if (response.status === 200) {
         console.log("Login successful", response.data);
         Alert.alert("Success", "Login successful");
-        setUserId(data.userId); // Set the userId in context
-      
+  
+        const { _id, accessToken, refreshToken } = response.data;
+  
+        // Update context with user data
         setSignUpData(prevData => ({
           ...prevData,
-          _id: response.data._id, 
-          accessToken: response.data.accessToken,
-          refreshToken: response.data.refreshToken,
+          _id,
+          accessToken,
+          refreshToken,
         }));
-        console.log("Current SignUpData:", JSON.stringify(signUpData, null, 2));
-        
-        
-        navigation.navigate("Dashboard"); // Navigate to the Dashboard or any other screen
+        setUserId(_id); // Update the userId in context
+
+        console.log("Updated user ID should be:", userId);
+  
+        // Navigate to the Dashboard screen
+        navigation.navigate("Dashboard");
       } else {
         console.log("Unexpected response", response.data);
         Alert.alert("Error", "Unexpected response from the server");
       }
     } catch (error) {
-      console.log("Login error", error); // Log the full error object
+      console.log("Login error", error);
       Alert.alert("Error", error.message);
     }
   };
-
+  
   const handleSignUp = () => {
     navigation.navigate("SignUp");
   };

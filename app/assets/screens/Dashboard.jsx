@@ -3,8 +3,8 @@ import { View, Text, SafeAreaView, StyleSheet, StatusBar, TouchableOpacity, Imag
 import Svg, { Circle } from 'react-native-svg';
 import { LineChart } from 'react-native-chart-kit';
 import { useRoute, useNavigation } from '@react-navigation/native';
-import NavBar from '../../../components/navBar'; // Adjust the import path as necessary
-import Ionicons from 'react-native-vector-icons/Ionicons'; // Import Ionicons
+import NavBar from '../../../components/navBar';
+import Ionicons from 'react-native-vector-icons/Ionicons'; 
 
 export default function DashboardScreen() {
   const route = useRoute();
