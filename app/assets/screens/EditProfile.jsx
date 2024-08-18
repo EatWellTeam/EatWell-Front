@@ -1,15 +1,18 @@
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useContext, useState } from 'react';
 import { View, Text, SafeAreaView, StyleSheet, TouchableOpacity, ScrollView, Image, TextInput, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import axios from 'axios';
+import * as ImagePicker from 'expo-image-picker';
 import { useSignUpContext } from "../context/SignUpContext";
+import axios from 'axios';
+import { useEffect } from 'react';
 
 const EditProfile = () => {
   const navigation = useNavigation();
   const { signUpData, setSignUpData } = useSignUpContext();
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(false);
+  
   const [profile, setProfile] = useState({
     fullName: '',
     email: '',
@@ -20,7 +23,6 @@ const EditProfile = () => {
     gender: '',
     activityLevel: '',
     goal: '',
-    recommendedCalories: 0,  // Adding recommendedCalories
     profilePic: 'https://i.postimg.cc/VsKZqCKb/cropped-image-2.png', // Default profile picture
   });
 
@@ -28,20 +30,19 @@ const EditProfile = () => {
     const fetchUserData = async () => {
       try {
         setLoading(true);
-        const response = await axios.get(`http://10.0.0.6:3000/user/${signUpData._id}`);
+        const response = await axios.get(`${process.env.API_URL}/user/${signUpData._id}`);
         if (response.status === 200) {
           setProfile({
             ...response.data,
             fullName: response.data.fullName,
             email: response.data.email,
-            dateOfBirth: response.data.dateOfBirth,
-            weight: response.data.weight.toString(),  // Convert to string for TextInput
-            height: response.data.height.toString(),  // Convert to string for TextInput
-            weightGoal: response.data.weightGoal?.toString(),  // Convert to string for TextInput
-            gender: response.data.gender,
+            dateOfBirth: response.data.dateOfBirth.substring(0, 10),  
+            weight: response.data.weight.toString(),  
+            height: response.data.height.toString(),  
+            weightGoal: response.data.weightGoal.toString(),  
+            gender: response.data.gender|| '',
             activityLevel: response.data.activityLevel,
             goal: response.data.goal,
-            recommendedCalories: response.data.recommendedCalories,  // Set recommendedCalories
           });
         } else {
           Alert.alert("Error", "Failed to fetch user data");
@@ -71,7 +72,7 @@ const EditProfile = () => {
         height: parseFloat(profile.height), 
       };
       
-      const response = await axios.put(`http://10.0.0.6:3000/user/${signUpData._id}`, updatedProfile);
+      const response = await axios.put(`${process.env.API_URL}/user/${signUpData._id}`, updatedProfile);
       if (response.status === 200) {
         setSignUpData(updatedProfile);  
         setIsEditing(false);
@@ -91,9 +92,6 @@ const EditProfile = () => {
     setProfile({ ...profile, [name]: value });
   };
 
-  const handleContinue = () => {
-    navigation.navigate('Dashboard');
-  };
 
   const handleSignOut = () => {
     console.log("Signing out...");
@@ -103,17 +101,12 @@ const EditProfile = () => {
   return (
     <SafeAreaView style={styles.safeArea}>
       <ScrollView contentContainerStyle={styles.container}>
-        <View style={styles.logoContainer}>
+      <View style={styles.logoContainer}>
           <Image 
             source={{ uri: 'https://i.postimg.cc/HxgKzxMj/cropped-image-11.png' }} 
             style={styles.logo} 
           />
         </View>
-
-        {/* New Welcome and Recommended Calories Section */}
-        <Text style={styles.welcomeText}>Welcome Back, {profile.fullName}!</Text>
-        <Text style={styles.caloriesText}>Your recommended calories are: {profile.recommendedCalories}</Text>
-
         <View style={styles.headerRow}>
           <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
             <Ionicons name="arrow-back" size={24} color="#fff" />
@@ -130,43 +123,175 @@ const EditProfile = () => {
         <View style={styles.profileContainer}>
           {isEditing ? (
             <>
+            <Text style={styles.label}>Weight (kg)</Text>
               <TextInput
                 style={styles.input}
                 value={profile.weight}
                 onChangeText={(value) => handleChange('weight', value)}
               />
+              <Text style={styles.label}>Height (cm)</Text>
               <TextInput
                 style={styles.input}
                 value={profile.height}
                 onChangeText={(value) => handleChange('height', value)}
               />
+              <Text style={styles.label}>Weight Goal</Text>
               <TextInput
                 style={styles.input}
                 value={profile.weightGoal}
                 onChangeText={(value) => handleChange('weightGoal', value)}
               />
-              <TextInput
-                style={styles.input}
-                value={profile.gender}
-                onChangeText={(value) => handleChange('gender', value)}
-              />
-              <TextInput
-                style={styles.input}
-                value={profile.activityLevel}
-                onChangeText={(value) => handleChange('activityLevel', value)}
-              />
-              <TextInput
-                style={styles.input}
-                value={profile.goal}
-                onChangeText={(value) => handleChange('goal', value)}
-              />
+
+              <Text style={styles.label}>Gender</Text>
+              <View style={styles.genderContainer}>
+                <TouchableOpacity
+                  style={[
+                    styles.genderButton,
+                    profile.gender === 'male' ? styles.genderButtonSelected : null,
+                  ]}
+                  onPress={() => handleChange('gender', 'male')}
+                >
+                  <Text
+                    style={[
+                      styles.genderButtonText,
+                      profile.gender === 'male' ? styles.genderButtonTextSelected : null,
+                    ]}
+                  >
+                    Male
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[
+                    styles.genderButton,
+                    profile.gender === 'female' ? styles.genderButtonSelected : null,
+                  ]}
+                  onPress={() => handleChange('gender', 'female')}
+                >
+                  <Text
+                    style={[
+                      styles.genderButtonText,
+                      profile.gender === 'female' ? styles.genderButtonTextSelected : null,
+                    ]}
+                  >
+                    Female
+                  </Text>
+                </TouchableOpacity>
+              </View>
+               <Text style={styles.label}>Activity Level</Text>
+               <View style={styles.activityContainer}>
+                <TouchableOpacity
+                  style={[
+                    styles.activityButton,
+                    profile.activityLevel === 'High' ? styles.activityButtonSelected : null,
+                  ]}
+                  onPress={() => handleChange('activityLevel', 'High')}
+                >
+                  <Text
+                    style={[
+                      styles.activityButtonText,
+                      profile.activityLevel === 'High' ? styles.activityButtonTextSelected : null,
+                    ]}
+                  >
+                    High
+                  </Text>
+                  <Text style={styles.activitySubText}>(20+ hours a week)</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[
+                    styles.activityButton,
+                    profile.activityLevel === 'Medium' ? styles.activityButtonSelected : null,
+                  ]}
+                  onPress={() => handleChange('activityLevel', 'Medium')}
+                >
+                  <Text
+                    style={[
+                      styles.activityButtonText,
+                      profile.activityLevel === 'Medium' ? styles.activityButtonTextSelected : null,
+                    ]}
+                  >
+                    Medium
+                  </Text>
+                  <Text style={styles.activitySubText}>(10-20 hours a week)</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[
+                    styles.activityButton,
+                    profile.activityLevel === 'Low' ? styles.activityButtonSelected : null,
+                  ]}
+                  onPress={() => handleChange('activityLevel', 'Low')}
+                >
+                  <Text
+                    style={[
+                      styles.activityButtonText,
+                      profile.activityLevel === 'Low' ? styles.activityButtonTextSelected : null,
+                    ]}
+                  >
+                    Low
+                  </Text>
+                  <Text style={styles.activitySubText}>(Less than 10 hours a week)</Text>
+                </TouchableOpacity>
+              </View>
+               <Text style={styles.label}>Goal</Text>
+               <View style={styles.activityContainer}>
+                <TouchableOpacity
+                  style={[
+                    styles.activityButton,
+                    profile.goal === 'lose' ? styles.activityButtonSelected : null,
+                  ]}
+                  onPress={() => handleChange('goal', 'lose')}
+                >
+                  <Text
+                    style={[
+                      styles.activityButtonText,
+                      profile.goal === 'lose' ? styles.activityButtonTextSelected : null,
+                    ]}
+                  >
+                    Losing Weight
+                  </Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={[
+                    styles.activityButton,
+                    profile.goal === 'maintain' ? styles.activityButtonSelected : null,
+                  ]}
+                  onPress={() => handleChange('goal', 'maintain')}
+                >
+                  <Text
+                    style={[
+                      styles.activityButtonText,
+                      profile.goal === 'maintain' ? styles.activityButtonTextSelected : null,
+                    ]}
+                  >
+                    Maintaining Weight
+                  </Text>
+                
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[
+                    styles.activityButton,
+                    profile.goal === 'gain' ? styles.activityButtonSelected : null,
+                  ]}
+                  onPress={() => handleChange('goal', 'gain')}
+                >
+                  <Text
+                    style={[
+                      styles.activityButtonText,
+                      profile.goal === 'gain' ? styles.activityButtonTextSelected : null,
+                    ]}
+                  >
+                    Gaining Weight
+                  </Text>
+                  
+                </TouchableOpacity>
+              </View>
               <TouchableOpacity style={styles.button} onPress={handleSave}>
                 <Text style={styles.buttonText}>Save</Text>
               </TouchableOpacity>
             </>
           ) : (
             <>
-              <Text style={styles.profileText}>Name: {profile.fullName}</Text>
+            <Text style={styles.profileText}>Name: {profile.fullName}</Text>
               <Text style={styles.profileText}>Email: {profile.email}</Text>
               <Text style={styles.profileText}>Date of Birth: {profile.dateOfBirth}</Text>
               <Text style={styles.profileText}>Weight (kg) : {profile.weight}</Text>
@@ -175,9 +300,7 @@ const EditProfile = () => {
               <Text style={styles.profileText}>Gender: {profile.gender}</Text>
               <Text style={styles.profileText}>Activity Level: {profile.activityLevel}</Text>
               <Text style={styles.profileText}>Goals: {profile.goal}</Text>
-              <TouchableOpacity style={styles.button} onPress={handleContinue}>
-                <Text style={styles.buttonText}>Continue</Text>
-              </TouchableOpacity>
+              
             </>
           )}
         </View>
@@ -195,27 +318,6 @@ const styles = StyleSheet.create({
     padding: 20,
     alignItems: 'center',
   },
-  logoContainer: {
-    alignItems: 'center',
-    marginTop: 20,
-  },
-  logo: {
-    width: 100,
-    height: 100,
-    resizeMode: 'contain',
-  },
-  welcomeText: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    color: '#fff',
-    marginTop: 20,
-  },
-  caloriesText: {
-    fontSize: 18,
-    color: '#fff',
-    marginBottom: 20,
-    textAlign: 'center',
-  },
   headerRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -227,10 +329,22 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 5,
   },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#fff',
+    textAlign: 'center',
+  },
   editButton: {
     padding: 10,
     borderRadius: 5,
   },
+  profileSection: {
+    alignItems: 'center',
+    marginTop: 20,
+    marginBottom: 20,
+  },
+
   signOutButton: {
     padding: 10,
     borderRadius: 25,
@@ -250,14 +364,23 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   profileContainer: {
-    alignItems: 'flex-start',
+   alignItems: 'center',
     width: '100%',
     marginBottom: 20,
+    borderRadius: 10,
+    padding: 20,
   },
   profileText: {
     color: '#fff',
     fontSize: 16,
-    marginBottom: 10,
+    marginBottom: 15, // Increased margin for better spacing
+    textAlign: 'center',
+    width: '100%',
+    backgroundColor: '#2E2E2E', // Background color for each row
+    paddingVertical: 10, // Padding for each row
+    borderRadius: 5,
+    borderWidth: 1,
+    borderColor: '#444', // Border color for each row
   },
   input: {
     backgroundColor: '#fff',
@@ -279,6 +402,73 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
   },
+  logoContainer: {
+    alignItems: 'center',
+    marginTop: 20,
+  },
+  logo: {
+    width: 100,
+    height: 100,
+    resizeMode: 'contain',
+  },
+  label: {
+    color: '#fff',
+    fontSize: 16,
+    marginBottom: 5,
+  },
+ genderContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginVertical: 10,
+  },
+  genderButton: {
+    flex: 1,
+    padding: 10,
+    borderRadius: 5,
+    backgroundColor: '#ccc',
+    alignItems: 'center',
+    marginHorizontal: 5,
+  },
+  genderButtonSelected: {
+  backgroundColor: '#1E9947',
+    borderWidth: 2,
+    borderColor: '#fff',
+  },
+  genderButtonText: {
+    color: '#fff',
+    
+  },
+  genderButtonTextSelected: {
+    fontWeight: 'bold',
+  },
+
+  activityContainer: {
+    flexDirection: 'column',
+    marginVertical: 10,
+  },
+  activityButton: {
+    padding: 15,
+    borderRadius: 5,
+    marginVertical: 5,
+    backgroundColor: '#ccc',
+  },
+  activityButtonText: {
+    color: '#fff',
+  },
+  activitySubText: {
+    color: '#fff',
+    fontSize: 12,
+  },
+  activityButtonSelected: {
+    backgroundColor: '#1E9947',
+    borderWidth: 2,
+    borderColor: '#fff',
+  },
+  activityButtonTextSelected: {
+    fontWeight: 'bold',
+    
+  },
+
 });
 
-export default EditProfile;
+export default EditProfile;
