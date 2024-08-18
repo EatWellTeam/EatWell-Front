@@ -1,11 +1,9 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { View, Text, SafeAreaView, StyleSheet, TouchableOpacity, ScrollView, Image, TextInput, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import * as ImagePicker from 'expo-image-picker';
-import { useSignUpContext } from "../context/SignUpContext";
 import axios from 'axios';
-import { useEffect } from 'react';
+import { useSignUpContext } from "../context/SignUpContext";
 
 const EditProfile = () => {
   const navigation = useNavigation();
@@ -22,6 +20,7 @@ const EditProfile = () => {
     gender: '',
     activityLevel: '',
     goal: '',
+    recommendedCalories: 0,  // Adding recommendedCalories
     profilePic: 'https://i.postimg.cc/VsKZqCKb/cropped-image-2.png', // Default profile picture
   });
 
@@ -29,7 +28,7 @@ const EditProfile = () => {
     const fetchUserData = async () => {
       try {
         setLoading(true);
-        const response = await axios.get(`${process.env.API_URL}/user/${signUpData._id}`);
+        const response = await axios.get(`http://10.0.0.6:3000/user/${signUpData._id}`);
         if (response.status === 200) {
           setProfile({
             ...response.data,
@@ -38,10 +37,11 @@ const EditProfile = () => {
             dateOfBirth: response.data.dateOfBirth,
             weight: response.data.weight.toString(),  // Convert to string for TextInput
             height: response.data.height.toString(),  // Convert to string for TextInput
-            weightGoal: response.data.weightGoal.toString(),  // Convert to string for TextInput
+            weightGoal: response.data.weightGoal?.toString(),  // Convert to string for TextInput
             gender: response.data.gender,
             activityLevel: response.data.activityLevel,
             goal: response.data.goal,
+            recommendedCalories: response.data.recommendedCalories,  // Set recommendedCalories
           });
         } else {
           Alert.alert("Error", "Failed to fetch user data");
@@ -103,12 +103,17 @@ const EditProfile = () => {
   return (
     <SafeAreaView style={styles.safeArea}>
       <ScrollView contentContainerStyle={styles.container}>
-      <View style={styles.logoContainer}>
+        <View style={styles.logoContainer}>
           <Image 
             source={{ uri: 'https://i.postimg.cc/HxgKzxMj/cropped-image-11.png' }} 
             style={styles.logo} 
           />
         </View>
+
+        {/* New Welcome and Recommended Calories Section */}
+        <Text style={styles.welcomeText}>Welcome Back, {profile.fullName}!</Text>
+        <Text style={styles.caloriesText}>Your recommended calories are: {profile.recommendedCalories}</Text>
+
         <View style={styles.headerRow}>
           <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
             <Ionicons name="arrow-back" size={24} color="#fff" />
@@ -135,7 +140,7 @@ const EditProfile = () => {
                 value={profile.height}
                 onChangeText={(value) => handleChange('height', value)}
               />
-                            <TextInput
+              <TextInput
                 style={styles.input}
                 value={profile.weightGoal}
                 onChangeText={(value) => handleChange('weightGoal', value)}
@@ -161,7 +166,7 @@ const EditProfile = () => {
             </>
           ) : (
             <>
-            <Text style={styles.profileText}>Name: {profile.fullName}</Text>
+              <Text style={styles.profileText}>Name: {profile.fullName}</Text>
               <Text style={styles.profileText}>Email: {profile.email}</Text>
               <Text style={styles.profileText}>Date of Birth: {profile.dateOfBirth}</Text>
               <Text style={styles.profileText}>Weight (kg) : {profile.weight}</Text>
@@ -190,6 +195,27 @@ const styles = StyleSheet.create({
     padding: 20,
     alignItems: 'center',
   },
+  logoContainer: {
+    alignItems: 'center',
+    marginTop: 20,
+  },
+  logo: {
+    width: 100,
+    height: 100,
+    resizeMode: 'contain',
+  },
+  welcomeText: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    color: '#fff',
+    marginTop: 20,
+  },
+  caloriesText: {
+    fontSize: 18,
+    color: '#fff',
+    marginBottom: 20,
+    textAlign: 'center',
+  },
   headerRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -201,41 +227,9 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 5,
   },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#fff',
-    textAlign: 'center',
-  },
   editButton: {
     padding: 10,
     borderRadius: 5,
-  },
-  profileSection: {
-    alignItems: 'center',
-    marginTop: 20,
-    marginBottom: 20,
-  },
-  profilePic: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    marginBottom: 10,
-  },
-  editPicButton: {
-    padding: 10,
-    borderRadius: 5,
-    marginBottom: 10,
-  },
-  takePhotoButton: {
-    padding: 10,
-    borderRadius: 5,
-    marginTop: 10,
-  },
-  editPicIcon: {
-    width: 150,
-    height: 150,
-    borderRadius: 75,
   },
   signOutButton: {
     padding: 10,
@@ -284,15 +278,6 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 16,
     fontWeight: 'bold',
-  },
-  logoContainer: {
-    alignItems: 'center',
-    marginTop: 20,
-  },
-  logo: {
-    width: 100,
-    height: 100,
-    resizeMode: 'contain',
   },
 });
 
