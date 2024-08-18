@@ -5,6 +5,7 @@ import { useNavigation } from '@react-navigation/native';
 import { API_URL } from '@env'; 
 import NavBar from '../../../components/navBar'; 
 
+
 const Recipes = () => {
   const [breakfastRecipes, setBreakfastRecipes] = useState([]);
   const [lunchRecipes, setLunchRecipes] = useState([]);
@@ -39,9 +40,9 @@ const Recipes = () => {
   };
 
   useEffect(() => {
-    fetchRecipesForMealType('breakfast', setBreakfastRecipes);
-    fetchRecipesForMealType('lunch', setLunchRecipes);
-    fetchRecipesForMealType('dinner', setDinnerRecipes);
+    fetchRecipesForMealType('healthy breakfast', setBreakfastRecipes);
+    fetchRecipesForMealType('healthy lunch', setLunchRecipes);
+    fetchRecipesForMealType('healthy dinner', setDinnerRecipes);
   }, []);
 
   return (

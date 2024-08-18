@@ -168,3 +168,27 @@ const styles = StyleSheet.create({
 });
 
 export default NavBar;
+
+// async function getRecentMeals(req: Request, res: Response) {
+//     try {
+//       const today = new Date();
+//       const threeDaysAgo = new Date();
+//       threeDaysAgo.setDate(today.getDate() - 3);
+  
+//       // Fetch meals created in the last 3 days
+//       const meals = await FoodModel.find({
+//         createdAt: { $gte: threeDaysAgo, $lte: today }
+//       }).sort({ createdAt: -1 }); // Sort by date descending
+  
+//       res.status(200).json({ meals });
+//     } catch (error) {
+//       console.error('Error fetching recent meals:', error);
+//       res.status(500).json({ message: 'Internal server error' });
+//     }
+//   }
+  
+//   export { getRecentMeals };
+
+
+// import { getRecentMeals } from '../controllers/meals_controller';
+// router.get('/get-recent-meals', getRecentMeals);

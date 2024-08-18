@@ -31,6 +31,7 @@
     "react-native-charts-wrapper": "^0.6.0",
     "react-native-circular-progress": "^1.4.0",
     "react-native-dotenv": "^3.4.11",
+    "react-native-htmlview": "^0.17.0",
     "react-native-image-picker": "^7.1.2",
     "react-native-modal": "^13.0.1",
     "react-native-progress": "^5.0.1",

@@ -1,4 +1,3 @@
-// app/assets/context/SignUpContext.js
 import React, { createContext, useContext, useState } from 'react';
 
 const SignUpContext = createContext();
@@ -18,8 +17,10 @@ export const SignUpProvider = ({ children }) => {
     goal: ''
   });
 
+  const [userId, setUserId] = useState(''); // Add userId state
+
   return (
-    <SignUpContext.Provider value={{ signUpData, setSignUpData }}>
+    <SignUpContext.Provider value={{ signUpData, setSignUpData, userId, setUserId }}>
       {children}
     </SignUpContext.Provider>
   );

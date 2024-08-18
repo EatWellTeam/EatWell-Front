@@ -26,14 +26,16 @@ export default function LoginScreen({ navigation }) {
 
   const handleContinue = async () => {
     console.log("Attempting login with email:", email); // Add log
+    const lowerCaseEmail = email.toLowerCase(); // Convert email to lowercase
     try {
       const response = await axios.post("http://10.0.0.6:3000/auth/login", {
-        email,
+        lowerCaseEmail,
         password,
       });
       if (response.status === 200) {
         console.log("Login successful", response.data);
         Alert.alert("Success", "Login successful");
+        setUserId(data.userId); // Set the userId in context
       
         setSignUpData(prevData => ({
           ...prevData,

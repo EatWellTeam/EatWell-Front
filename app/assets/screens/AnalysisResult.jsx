@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity, TextInput, Alert } from "react-native";
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { API_URL } from '@env';
+import{useSignUpContext} from '../context/SignUpContext';
+
 
 export default function AnalysisResult({ navigation, route }) {
     const [isEditing, setIsEditing] = useState(false);
@@ -12,8 +14,11 @@ export default function AnalysisResult({ navigation, route }) {
     const [caloriesLeft, setCaloriesLeft] = useState(route.params.caloriesLeft || 0); // Use caloriesLeft from params
     const initialCaloriesLeft = route.params.initialCaloriesLeft; // Use initialCaloriesLeft from params
     const imageUri = route.params.image;
+    const { signUpData, setSignUpData } = useSignUpContext();
 
-    // Determine which buttons to show
+
+
+
     const showInitialButtons = !isEditing && !showRecalculate;
     const showEditingButtons = isEditing;
     const showRecalculateButtons = showRecalculate;
@@ -43,10 +48,10 @@ export default function AnalysisResult({ navigation, route }) {
             const data = await response.json();
 
             if (response.ok) {
-                // Update the results with new nutrition data
+
                 setResults({
-                    ...results,
-                    nutritionData: data.nutritionData,
+                    ingredients: editIngredients.split('\n').map(ingredient => ingredient.trim()), // Update ingredients with new ones
+                    nutritionData: data.nutritionData, // Update nutrition data
                 });
                 Alert.alert('Recalculated!', 'Nutrition data has been updated.');
                 setShowRecalculate(false);
@@ -58,28 +63,86 @@ export default function AnalysisResult({ navigation, route }) {
         }
     };
 
+    const handleCancelMeal = () => {
+        // Navigate back to the Dashboard or previous screen without saving
+        navigation.navigate('Dashboard')
+    };
+
+    const handleCancelEdit = () => {
+
+        setIsEditing(false);
+        setShowRecalculate(false);
+        setEditIngredients(''); 
+    };
+
+
     const handleXButtonPress = () => {
-        // Navigate back to the dashboard without saving changes
-        navigation.navigate('Dashboard', {
-            updatedCaloriesConsumed: caloriesConsumed,
-            updatedCaloriesLeft: caloriesLeft,
-            initialCaloriesLeft: initialCaloriesLeft,
-        });
-    };
+            const caloriesFromMeal = results.nutritionData.calories; // Calories from the analyzed meal
 
-    const handleSaveFinal = () => {
-        const caloriesFromPhoto = results.nutritionData.calories; // Calories from the analyzed photo
+            console.log("Calories from meal:", caloriesFromMeal);
+            console.log("Initial caloriesConsumed:", caloriesConsumed);
+            console.log("Initial caloriesLeft:", caloriesLeft);
+            navigation.navigate('Dashboard', {
+                updatedCaloriesConsumed: updatedCaloriesConsumed, 
+                updatedCaloriesLeft: updatedCaloriesLeft,
+                updatedCaloriesConsumed: caloriesConsumed,
+                updatedCaloriesLeft: caloriesLeft,
+                initialCaloriesLeft: initialCaloriesLeft,
+            });
+    
+        };
 
-        const updatedCaloriesConsumed = caloriesConsumed + caloriesFromPhoto; // Correctly update calories consumed
-        const updatedCaloriesLeft = caloriesLeft - caloriesFromPhoto; // Correctly update calories left
+    const handleSaveFinal = async () => {
 
-        // Save changes and navigate back
-        navigation.navigate('Dashboard', {
-            updatedCaloriesConsumed: updatedCaloriesConsumed,
-            updatedCaloriesLeft: updatedCaloriesLeft,
-            initialCaloriesLeft: initialCaloriesLeft,
-        });
-    };
+            try {
+                const caloriesFromMeal = results.nutritionData.calories;
+    
+    
+                const mealData = {
+                    name: results.ingredients[0],  // Use the first ingredient as the meal name
+                    calories: caloriesFromMeal,
+                    nutritionValues: {
+                        calories: results.nutritionData.calories,
+                        protein: results.nutritionData.totalNutrients?.PROCNT?.quantity || 0,
+                        carbs: results.nutritionData.totalNutrients?.CHOCDF?.quantity || 0,
+                        fat: results.nutritionData.totalNutrients?.FAT?.quantity || 0,
+                    },
+                    userId: signUpData._id,  
+                    imageUrl: imageUri || '', 
+                };
+    
+                const response = await fetch(`${process.env.API_URL}/food/save-meal`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(mealData),
+                });
+    
+                if (response.ok) {
+                    Alert.alert('Success', 'Meal saved successfully!');
+                    const updatedCaloriesConsumed = caloriesConsumed + caloriesFromMeal; //  update calories consumed
+                    const updatedCaloriesLeft = caloriesLeft - caloriesFromMeal; // update calories left
+    
+                    setCaloriesConsumed(updatedCaloriesConsumed);
+                    setCaloriesLeft(updatedCaloriesLeft);
+    
+                    navigation.navigate('Dashboard', {
+                        updatedCaloriesConsumed,
+                        updatedCaloriesLeft,
+                        initialCaloriesLeft,
+                    }); 
+                } else {
+                    const errorData = await response.json();
+                    Alert.alert('Error', errorData.message || 'Failed to save meal');
+                }
+            } catch (error) {
+                console.error('Error saving meal:', error);
+                Alert.alert('Error', 'An error occurred while saving the meal.');
+            }
+    
+    
+        };
 
     return (
         <View style={styles.container}>
@@ -163,6 +226,7 @@ export default function AnalysisResult({ navigation, route }) {
         </View>
     );
 }
+
 
 const styles = StyleSheet.create({
     container: {

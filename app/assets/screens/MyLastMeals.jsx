@@ -2,17 +2,20 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity, SafeAreaView } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useNavigation } from '@react-navigation/native';
-import { API_URL } from '@env'; 
+import { useSignUpContext } from '../../assets/context/SignUpContext'; 
 import NavBar from '../../../components/navBar'; 
 
 const MyLastMeals = () => {
   const [meals, setMeals] = useState([]);
+  const { userId } = useSignUpContext(); 
   const navigation = useNavigation();
 
-  // Function to fetch meals from the server
+
   const fetchMeals = async () => {
+    if (!userId) return; 
+
     try {
-      const response = await fetch("http://10.0.0.6:3000/food/get-recent-meals");
+      const response = await fetch(`http://10.0.0.6:3000/${userId}`); 
       if (!response.ok) {
         throw new Error(`Network response was not ok. Status: ${response.status}`);
       }
@@ -25,7 +28,7 @@ const MyLastMeals = () => {
 
   useEffect(() => {
     fetchMeals();
-  }, []);
+  }, [userId]); 
 
   return (
     <SafeAreaView style={styles.container}>
