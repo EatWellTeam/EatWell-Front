@@ -19,7 +19,7 @@ import TrackCalories from './app/assets/screens/TrackCalories';
 import ForgotPassword from './app/assets/screens/ForgotPassword';
 import EmailSent from './app/assets/screens/EmailSent';
 import Dashboard from './app/assets/screens/Dashboard';
-import { SignUpProvider } from './app/assets/context/SignUpContext'; // Import the SignUpProvider
+import { SignUpProvider } from './app/assets/context/SignUpContext';
 import MyLastMeals from './app/assets/screens/MyLastMeals';
 import PictureMeal from './app/assets/screens/PictureMeal';
 

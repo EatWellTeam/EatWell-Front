@@ -1,4 +1,3 @@
-// app/assets/screens/Login.js
 import React, { useState } from "react";
 import {
   View,
@@ -13,7 +12,7 @@ import {
   ScrollView,
   Alert,
 } from "react-native";
-import Ionicons from "react-native-vector-icons/Ionicons"; // Import Ionicons for the "eye" icon
+import Ionicons from "react-native-vector-icons/Ionicons";
 import axios from "axios";
 import { API_URL } from "@env";
 import { useSignUpContext } from "../context/SignUpContext";
@@ -21,53 +20,46 @@ import { useSignUpContext } from "../context/SignUpContext";
 export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false); // State to toggle password visibility
-  const { signUpData, setSignUpData } = useSignUpContext();
+  const [showPassword, setShowPassword] = useState(false);
+  const { signUpData, setSignUpData, setUserId } = useSignUpContext(); // Include setUserId
 
   const handleContinue = async () => {
-    console.log("Attempting login with email:", email); // Add log
-    //const lowerCaseEmail = email.toLowerCase(); // Convert email to lowercase
+    console.log("Attempting login with email:", email);
+
     try {
-      const response = await axios.post(`${process.env.API_URL}/auth/login`, {
-        //lowerCaseEmail,
+      const response = await axios.post(`http://10.0.0.6:3000/auth/login`, {
         email,
         password,
       });
       if (response.status === 200) {
         console.log("Login successful", response.data);
         Alert.alert("Success", "Login successful");
-      
+
+        const { _id, accessToken, refreshToken } = response.data;
+
         setSignUpData(prevData => ({
           ...prevData,
-          _id: response.data._id, 
-          accessToken: response.data.accessToken,
-          refreshToken: response.data.refreshToken,
+          _id,
+          accessToken,
+          refreshToken,
         }));
-        console.log("Current SignUpData:", JSON.stringify(signUpData, null, 2));
-        
-        
-        navigation.navigate("Dashboard"); // Navigate to the Dashboard or any other screen
+
+        setUserId(_id); // Set userId in the context
+        console.log("User ID saved in context:", _id);
+
+        navigation.navigate("Dashboard");
       } else {
         console.log("Unexpected response", response.data);
         Alert.alert("Error", "Unexpected response from the server");
       }
     } catch (error) {
-      console.log("Login error", error); // Log the full error object
+      console.log("Login error", error);
       Alert.alert("Error", error.message);
     }
   };
 
-  const handleSignUp = () => {
-    navigation.navigate("SignUp");
-  };
-
-  const handleForgotPassword = () => {
-    navigation.navigate("ForgotPassword"); // Navigate to the ForgotPassword page
-  };
-
   return (
     <SafeAreaView style={styles.container}>
-      {/* Custom Back Button */}
       <TouchableOpacity
         style={styles.backButton}
         onPress={() => navigation.goBack()}
@@ -86,9 +78,7 @@ export default function LoginScreen({ navigation }) {
         </View>
         <View style={styles.formContainer}>
           <Text style={styles.welcomeText}>Welcome Back!</Text>
-          <Text style={styles.loginPrompt}>
-            Log in to continue your journey
-          </Text>
+          <Text style={styles.loginPrompt}>Log in to continue your journey</Text>
           <TextInput
             value={email}
             onChangeText={(text) => setEmail(text)}
@@ -114,7 +104,7 @@ export default function LoginScreen({ navigation }) {
               />
             </TouchableOpacity>
           </View>
-          <Text style={styles.forgotPassword} onPress={handleForgotPassword}>
+          <Text style={styles.forgotPassword} onPress={() => navigation.navigate("ForgotPassword")}>
             Forgot password?
           </Text>
           <TouchableOpacity style={styles.button} onPress={handleContinue}>
@@ -122,7 +112,7 @@ export default function LoginScreen({ navigation }) {
           </TouchableOpacity>
           <Text style={styles.signupPrompt}>
             Don't have an account?{" "}
-            <Text style={styles.signupText} onPress={handleSignUp}>
+            <Text style={styles.signupText} onPress={() => navigation.navigate("SignUp")}>
               Sign Up
             </Text>
           </Text>
@@ -147,7 +137,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: 40,
     left: 20,
-    zIndex: 1, // Ensure the back button is on top
+    zIndex: 1,
     padding: 10,
     borderRadius: 5,
   },
@@ -173,7 +163,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "#fff",
     marginBottom: 5,
-    marginTop: 20, // Add space between logo and welcome text
+    marginTop: 20,
   },
   loginPrompt: {
     fontSize: 16,
