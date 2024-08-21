@@ -7,8 +7,10 @@ import NavBar from '../../../components/navBar';
 
 const MyLastMeals = () => {
   const [meals, setMeals] = useState([]);
-  const { userId } = useSignUpContext(); 
+  const { signUpData } = useSignUpContext();
   const navigation = useNavigation();
+  const userId = signUpData._id;
+
 
   const fetchMeals = async () => {
     if (!userId) {
@@ -18,14 +20,14 @@ const MyLastMeals = () => {
 
     try {
       console.log(`Fetching meals for userId: ${userId}`);
-      const response = await fetch(`http://10.0.0.6:3000/food/${userId}`);
+      const response = await fetch(`${process.env.API_URL}/food/${userId}`);
       console.log(`Response status: ${response.status}`);
       if (!response.ok) {
         throw new Error(`Network response was not ok. Status: ${response.status}`);
       }
       const data = await response.json();
       console.log('Fetched data:', data);
-      setMeals(data);
+      setMeals(data.reverse());
     } catch (error) {
       console.error('Error fetching meals:', error);
     }
@@ -34,6 +36,11 @@ const MyLastMeals = () => {
   useEffect(() => {
     fetchMeals();
   }, [userId]); 
+
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return `${date.toLocaleDateString()} ${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -54,13 +61,18 @@ const MyLastMeals = () => {
         ) : (
           meals.map((meal, index) => (
             <View key={index} style={styles.mealContainer}>
-              <Image source={{ uri: meal.imageUrl }} style={styles.mealImage} />
-              <View style={styles.mealDetails}>
-                <Text style={styles.mealName}>{meal.name}</Text>
-                <Text style={styles.mealCalories}>{meal.calories.toFixed(0)} calories</Text>
-                <Text style={styles.mealNutrients}>
-                  {`Carbs: ${meal.nutritionValues.carbs.toFixed(2)}g | Fat: ${meal.nutritionValues.fat.toFixed(2)}g | Protein: ${meal.nutritionValues.protein.toFixed(2)}g`}
-                </Text>
+              <View style={styles.mealHeader}>
+                <Text style={styles.mealName} numberOfLines={1} ellipsizeMode="tail">{meal.name}</Text>
+                <Text style={styles.mealDate}>{formatDate(meal.createdAt)}</Text>
+              </View>
+              <View style={styles.mealContent}>
+                <Image source={{ uri: meal.imageUrl }} style={styles.mealImage} />
+                <View style={styles.mealDetails}>
+                  <Text style={styles.mealCalories}>{meal.calories.toFixed(0)} calories</Text>
+                  <Text style={styles.mealNutrients}>
+                    {`Carbs: ${meal.nutritionValues.carbs.toFixed(2)}g | Fat: ${meal.nutritionValues.fat.toFixed(2)}g | Protein: ${meal.nutritionValues.protein.toFixed(2)}g`}
+                  </Text>
+                </View>
               </View>
             </View>
           ))
@@ -108,13 +120,34 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   mealContainer: {
-    flexDirection: 'row',
     marginVertical: 10,
     paddingHorizontal: 10,
-    alignItems: 'center',
     borderBottomColor: '#fff',
     borderBottomWidth: 1,
     paddingBottom: 10,
+  },
+  mealHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  mealDateContainer: {
+    position: 'absolute',
+    top: 0,
+    right: 10,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    padding: 5,
+    borderRadius: 5,
+    zIndex: 1,
+  },
+ mealDate: {
+    color: '#fff',
+    fontSize: 12,
+  },
+  mealContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   mealImage: {
     width: 100,
@@ -129,10 +162,11 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 18,
     fontWeight: 'bold',
+    flex: 1,
+    marginRight: 10,
   },
   mealCalories: {
     color: '#fff',
-    marginTop: 5,
     fontSize: 16,
   },
   mealNutrients: {

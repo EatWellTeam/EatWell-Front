@@ -6,7 +6,7 @@ export default function ForgotPassword({ navigation }) {
     const [email, setEmail] = useState("");
 
     const handleSendEmail = () => {
-        // Add any validation or API calls here
+        
         navigation.navigate('EmailSent');
     };
 

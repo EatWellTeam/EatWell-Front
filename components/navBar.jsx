@@ -3,9 +3,12 @@ import { View, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import * as ImagePicker from 'expo-image-picker';
 import { useNavigation } from '@react-navigation/native';
+import axios from 'axios';
+import { useState } from 'react';
 
 const NavBar = () => {
   const navigation = useNavigation();
+
 
   async function openCamera() {
     const permissions = await ImagePicker.getCameraPermissionsAsync();
@@ -23,7 +26,8 @@ const NavBar = () => {
     if (!result.canceled) {
       const uri = result.assets[0].uri;
       console.log('Image selected from camera:', uri);
-      setImage(uri);
+      navigateToPictureMeal(uri);
+      
     }
   }
 
@@ -79,7 +83,7 @@ const NavBar = () => {
         role: 'user',
       };
 
-      const { data } = await axios.post(`${API_URL}/middleware/process`, [payload], {
+      const { data } = await axios.post(`${process.env.API_URL}/middleware/process`, [payload], {
         headers: {
           'Content-Type': 'application/json',
         },

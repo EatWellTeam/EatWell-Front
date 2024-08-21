@@ -19,7 +19,7 @@ import { useSignUpContext } from "../context/SignUpContext";
 import { API_URL } from "@env";
 
 export default function Register5Screen() {
-  const { signUpData, setSignUpData } = useSignUpContext();
+  const { signUpData, setSignUpData,setUserId } = useSignUpContext();
   const [activityLevel, setActivityLevel] = useState("");
   const [loading, setLoading] = useState(false);
   const navigation = useNavigation();
@@ -33,14 +33,12 @@ export default function Register5Screen() {
       console.log("fetchCalories");
       setLoading(true);
       const response = await axios.post(
-        "http://10.0.0.6:3000/auth/register",
+        `${process.env.API_URL}/auth/register`,
         { ...signUpData, activityLevel }
       );
       if (response.status === 201) {
         console.log("Registration successful", response.data);
   
-        // Update SignUpContext with the userId
-        const { setUserId } = useSignUpContext();
         setUserId(response.data._id);
   
         setSignUpData(prevData => ({

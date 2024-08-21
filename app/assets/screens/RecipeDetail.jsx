@@ -63,7 +63,6 @@ export default function RecipeDetail({ route }) {
 
   useEffect(() => {
     requestMediaPermissions();
-    // Log the recipe object to see what it contains
     console.log('Recipe url:', recipe.url);
   }, []);
 
@@ -167,13 +166,13 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingBottom: 80, // Add padding to avoid overlap with the navbar
+    paddingBottom: 80, 
   },
   backButton: {
     position: 'absolute',
     top: 40,
     left: 20,
-    zIndex: 1, // Ensure the back button is on top
+    zIndex: 1, 
     padding: 10,
     borderRadius: 5,
   },
@@ -231,14 +230,14 @@ const styles = StyleSheet.create({
     width: '100%',
     position: 'absolute',
     bottom: 0,
-    backgroundColor: '#161E21', // Add background color
+    backgroundColor: '#161E21', 
     paddingVertical: 10,
   },
   navButtonContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    width: '90%', // Adjust this value to control the spacing and centering
-    paddingHorizontal: 10, // Add padding to create space between buttons
+    width: '90%', 
+    paddingHorizontal: 10,
   },
   navButton: {
     alignItems: 'center',

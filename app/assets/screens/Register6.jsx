@@ -15,17 +15,17 @@ export default function Register6Screen({ route }) {
     useEffect(() => {
         if (!registerData) return;
 
-        // Animation for the circle
+        
         Animated.timing(animatedValue, {
             toValue: registerData.recommendedCalories,
             duration: 5000,
             useNativeDriver: false,
         }).start();
 
-        // Fast counting animation
+       
         const totalCalories = registerData.recommendedCalories;
-        const duration = 1000; // Duration for the counting animation in milliseconds
-        const interval = 50; // Update interval in milliseconds
+        const duration = 1000; 
+        const interval = 50; 
         const step = Math.ceil(totalCalories / (duration / interval));
 
         let count = 0;
@@ -90,7 +90,6 @@ export default function Register6Screen({ route }) {
             </View>
             <TouchableOpacity style={styles.continueButton} onPress={() => {
                 Alert.alert('Registration successful', "Registration successful");
-                // Pass both initialCaloriesLeft and fromRegister6
                 navigation.navigate('Dashboard', { initialCaloriesLeft: registerData.recommendedCalories, fromRegister6: true });
             }}>
                 <Text style={styles.continueButtonText}>Continue</Text>

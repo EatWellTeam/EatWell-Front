@@ -1,75 +1,64 @@
-import { useState, useEffect } from 'react';
-import { StatusBar } from 'expo-status-bar';
-import { View, Text, SafeAreaView, TouchableOpacity, Image, Platform, StyleSheet, Dimensions } from 'react-native';
+import React, { useEffect, useRef } from 'react';
+import { View, Image, Text, StyleSheet, Animated } from 'react-native';
 
-export default function HomeScreen({ navigation }) {
-    const [dimensions, setDimensions] = useState(Dimensions.get("window"));
+export default function SplashScreen({ navigation }) {
+    const logoScale = useRef(new Animated.Value(0)).current;
+    const textOpacity = useRef(new Animated.Value(0)).current;
 
     useEffect(() => {
-        const subscription = Dimensions.addEventListener("change", ({ window }) => {
-            setDimensions(window);
-        });
-        return () => {
-            subscription?.remove();
-        };
-    }, []);
+        
+        Animated.sequence([
+            Animated.timing(logoScale, {
+                toValue: 1,
+                duration: 1500,
+                useNativeDriver: true,
+            }),
+            
+            Animated.timing(textOpacity, {
+                toValue: 1,
+                duration: 1000,
+                useNativeDriver: true,
+            }),
+        ]).start();
+
+        
+        const timeout = setTimeout(() => {
+            navigation.navigate('Login');
+        }, 6000);
+
+        return () => clearTimeout(timeout);
+    }, [logoScale, textOpacity, navigation]);
 
     return (
-        <SafeAreaView style={[styles.container, { width: dimensions.width, height: dimensions.height }]}>
-            <View style={styles.content}>
-                <Text style={styles.title}></Text>
-                <TouchableOpacity onPress={() => console.log('Logo pressed')}>
-                    <Image
-                        source={{ uri: "https://i.postimg.cc/HxgKzxMj/cropped-image-11.png" }}
-                        style={styles.image}
-                    />
-                </TouchableOpacity>
-                <View style={{ marginTop: 50 }}></View>
-                <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Login')}>
-                    <Text style={styles.buttonText}>Login</Text>
-                </TouchableOpacity>
-                <View style={{ marginTop: 20 }}></View>
-                <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('SignUp')}>
-                    <Text style={styles.buttonText}>Sign Up</Text>
-                </TouchableOpacity>
-                <View style={{ marginTop: 50 }}></View>
-            </View>
-        </SafeAreaView>
+        <View style={styles.container}>
+            <Animated.Image
+                source={{ uri: "https://i.postimg.cc/HxgKzxMj/cropped-image-11.png" }}
+                style={[styles.logo, { transform: [{ scale: logoScale }] }]}
+            />
+            <Animated.Text style={[styles.text, { opacity: textOpacity }]}>
+                "Fuel Your Body, Nourish Your Life"
+            </Animated.Text>
+        </View>
     );
 }
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
+        justifyContent: 'center',
+        alignItems: 'center',
         backgroundColor: '#161E21',
     },
-    content: {
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    title: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        color: '#fff',
-        marginBottom: 20,
-    },
-    image: {
+    logo: {
         width: 300,
         height: 300,
         borderRadius: 150,
     },
-    button: {
-        width: 200,
-        height: 50,
-        backgroundColor: '#1E9947',
-        justifyContent: 'center',
-        alignItems: 'center',
-        borderRadius: 25, // Make the button round
-    },
-    buttonText: {
+    text: {
+        marginTop: 20,
+        fontSize: 20,
         color: '#fff',
-        fontSize: 25,
+        fontStyle: 'italic',
+        textAlign: 'center',
     },
 });

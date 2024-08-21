@@ -3,36 +3,30 @@ import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity, TextInput,
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { API_URL } from '@env';
 import{useSignUpContext} from '../context/SignUpContext';
-
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function AnalysisResult({ navigation, route }) {
     const [isEditing, setIsEditing] = useState(false);
     const [editIngredients, setEditIngredients] = useState('');
     const [showRecalculate, setShowRecalculate] = useState(false);
-    const [results, setResults] = useState(route.params.results); // Initialize results with props
-    const [caloriesConsumed, setCaloriesConsumed] = useState(route.params.caloriesConsumed || 0); // Use caloriesConsumed from params
-    const [caloriesLeft, setCaloriesLeft] = useState(route.params.caloriesLeft || 0); // Use caloriesLeft from params
-    const initialCaloriesLeft = route.params.initialCaloriesLeft; // Use initialCaloriesLeft from params
+    const [results, setResults] = useState(route.params.results);
+    const [caloriesConsumed, setCaloriesConsumed] = useState(route.params.caloriesConsumed || 0);
+    const [caloriesLeft, setCaloriesLeft] = useState(route.params.caloriesLeft || 0);
+    const initialCaloriesLeft = route.params.initialCaloriesLeft;
     const imageUri = route.params.image;
     const { signUpData, setSignUpData } = useSignUpContext();
-     
 
-
-    
     const handleEdit = () => {
         setIsEditing(true);
-        setEditIngredients(results.ingredients.join('\n')); // Join ingredients with a newline for editing
+        setEditIngredients(results.ingredients.join('\n')); 
         setShowRecalculate(false);
     };
 
     const handleSaveMeal = async () => {
-        
         try {
             const caloriesFromMeal = results.nutritionData.calories;
-            
-
             const mealData = {
-                name: results.ingredients[0],  // Use the first ingredient as the meal name
+                name: results.ingredients[0], 
                 calories: caloriesFromMeal,
                 nutritionValues: {
                     calories: results.nutritionData.calories,
@@ -41,10 +35,10 @@ export default function AnalysisResult({ navigation, route }) {
                     fat: results.nutritionData.totalNutrients?.FAT?.quantity || 0,
                 },
                 userId: signUpData._id,  
-                imageUrl: imageUri || '', 
+                imageUrl: imageUri || 'https://i.postimg.cc/HxgKzxMj/cropped-image-11.png',
             };
 
-            const response = await fetch(`http://10.0.0.6:3000/food/save-meal`, {
+            const response = await fetch(`${process.env.API_URL}/food/save-meal`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -53,9 +47,8 @@ export default function AnalysisResult({ navigation, route }) {
             });
     
             if (response.ok) {
-                Alert.alert('Success', 'Meal saved successfully!');
-                const updatedCaloriesConsumed = caloriesConsumed + caloriesFromMeal; //  update calories consumed
-                const updatedCaloriesLeft = caloriesLeft - caloriesFromMeal; // update calories left
+                const updatedCaloriesConsumed = caloriesConsumed + caloriesFromMeal; 
+                const updatedCaloriesLeft = caloriesLeft - caloriesFromMeal; 
 
                 setCaloriesConsumed(updatedCaloriesConsumed);
                 setCaloriesLeft(updatedCaloriesLeft);
@@ -64,7 +57,7 @@ export default function AnalysisResult({ navigation, route }) {
                     updatedCaloriesConsumed,
                     updatedCaloriesLeft,
                     initialCaloriesLeft,
-                }); 
+                });
             } else {
                 const errorData = await response.json();
                 Alert.alert('Error', errorData.message || 'Failed to save meal');
@@ -73,8 +66,6 @@ export default function AnalysisResult({ navigation, route }) {
             console.error('Error saving meal:', error);
             Alert.alert('Error', 'An error occurred while saving the meal.');
         }
-    
-    
     };
 
     const handleRecalculate = async () => {
@@ -89,15 +80,11 @@ export default function AnalysisResult({ navigation, route }) {
             const data = await response.json();
     
             if (response.ok) {
-                
                 setResults({
                     ...results,
-                    ingredients: editIngredients.split('\n').map(ingredient => ingredient.trim()), // Update ingredients with new ones
-                    nutritionData: data.nutritionData, // Update nutrition data
+                    ingredients: editIngredients.split('\n').map(ingredient => ingredient.trim()), 
+                    nutritionData: data.nutritionData, 
                 });
-                Alert.alert('Recalculated!', 'Nutrition data has been updated.');
-                
-                
                 setIsEditing(false);
                 setShowRecalculate(false);
             } else {
@@ -109,42 +96,22 @@ export default function AnalysisResult({ navigation, route }) {
     };
 
     const handleCancelMeal = () => {
-        // Navigate back to the Dashboard or previous screen without saving
-        navigation.navigate('Dashboard')
+        navigation.navigate('Dashboard');
     };
 
     const handleCancelEdit = () => {
-        
         setIsEditing(false);
         setShowRecalculate(false);
-        setEditIngredients(''); 
-    };
-
-    const handleXButtonPress = () => {
-        const caloriesFromMeal = results.nutritionData.calories; // Calories from the analyzed meal
-    
-        console.log("Calories from meal:", caloriesFromMeal);
-        console.log("Initial caloriesConsumed:", caloriesConsumed);
-        console.log("Initial caloriesLeft:", caloriesLeft);
-    
-        navigation.navigate('Dashboard', {
-            updatedCaloriesConsumed: caloriesConsumed,
-            updatedCaloriesLeft: caloriesLeft,
-            initialCaloriesLeft: initialCaloriesLeft,
-        });
-    
+        setEditIngredients('');
     };
 
     return (
-        <View style={styles.container}>
-            <TouchableOpacity style={styles.backButton} onPress={handleXButtonPress}>
-                <Ionicons name="close-outline" size={30} color="#fff" />
-            </TouchableOpacity>
-            <Image source={{ uri: 'https://i.postimg.cc/HxgKzxMj/cropped-image-11.png' }} style={styles.logo} />
-            <ScrollView style={styles.contentContainer} contentContainerStyle={styles.scrollViewContentContainer}>
-                {imageUri ? (
-                    <>
-                        <Image source={{ uri: imageUri }} style={styles.image} />
+        <SafeAreaView style={styles.safeArea}>
+            <View style={styles.container}>
+                <Image source={{ uri: 'https://i.postimg.cc/HxgKzxMj/cropped-image-11.png' }} style={styles.logo} />
+                <View style={styles.contentWrapper}>
+                    <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollViewContent}>
+                        {imageUri && <Image source={{ uri: imageUri }} style={styles.image} />}
                         <Text style={styles.sectionTitle}>Ingredients</Text>
                         {isEditing ? (
                             <TextInput
@@ -158,87 +125,75 @@ export default function AnalysisResult({ navigation, route }) {
                                 <Text key={index} style={styles.text}>{ingredient}</Text>
                             ))
                         )}
-                        <Text style={styles.sectionTitle}>Nutrition</Text>
-                        <Text style={styles.text}>Calories: {results.nutritionData.calories}</Text>
-                        <Text style={styles.text}>Protein: {results.nutritionData.totalNutrients?.PROCNT?.quantity?.toFixed(2) || 0}g</Text>
-                        <Text style={styles.text}>Carbs: {results.nutritionData.totalNutrients?.CHOCDF?.quantity?.toFixed(2) || 0}g</Text>
-                        <Text style={styles.text}>Fat: {results.nutritionData.totalNutrients?.FAT?.quantity?.toFixed(2) || 0}g</Text>
-                    </>
-                ) : (
-                    <>
-                        <Text style={styles.sectionTitle}>Ingredients</Text>
-                        {isEditing ? (
-                            <TextInput
-                                style={styles.input}
-                                value={editIngredients}
-                                onChangeText={setEditIngredients}
-                                multiline
-                            />
-                        ) : (
-                            results.ingredients.map((ingredient, index) => (
-                                <Text key={index} style={styles.text}>{ingredient}</Text>
-                            ))
-                        )}
-                        <Text style={styles.sectionTitle}>Nutrition</Text>
-                        <Text style={styles.text}>Calories: {results.nutritionData.calories}</Text>
-                        <Text style={styles.text}>Protein: {results.nutritionData.totalNutrients?.PROCNT?.quantity?.toFixed(2) || 0}g</Text>
-                        <Text style={styles.text}>Carbs: {results.nutritionData.totalNutrients?.CHOCDF?.quantity?.toFixed(2) || 0}g</Text>
-                        <Text style={styles.text}>Fat: {results.nutritionData.totalNutrients?.FAT?.quantity?.toFixed(2) || 0}g</Text>
-                    </>
-                )}
-            </ScrollView>
-           
-            {!isEditing ? (
-                <>
-                    <TouchableOpacity style={styles.button} onPress={handleSaveMeal}>
-                        <Text style={styles.buttonText}>Save Meal</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.button} onPress={handleCancelMeal}>
-                        <Text style={styles.buttonText}>Cancel Meal</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.button} onPress={handleEdit}>
-                        <Text style={styles.buttonText}>Edit Analysis</Text>
-                    </TouchableOpacity>
-                </>
-            ) : (
-                <>
-                    <TouchableOpacity style={styles.button} onPress={handleRecalculate}>
-                        <Text style={styles.buttonText}>Recalculate</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.button} onPress={handleCancelEdit}>
-                        <Text style={styles.buttonText}>Cancel Changes</Text>
-                    </TouchableOpacity>
-                </>
-            )}
-        </View>
+                        <View style={styles.resultContainer}>
+                            <Text style={styles.sectionTitle}>Nutrition</Text>
+                            <Text style={styles.text}>Calories: {results.nutritionData.calories}</Text>
+                            <Text style={styles.text}>Protein: {results.nutritionData.totalNutrients?.PROCNT?.quantity?.toFixed(2) || 0}g</Text>
+                            <Text style={styles.text}>Carbs: {results.nutritionData.totalNutrients?.CHOCDF?.quantity?.toFixed(2) || 0}g</Text>
+                            <Text style={styles.text}>Fat: {results.nutritionData.totalNutrients?.FAT?.quantity?.toFixed(2) || 0}g</Text>
+                        </View>
+                    </ScrollView>
+                </View>
+                <View style={styles.buttonContainer}>
+                    {!isEditing ? (
+                        <>
+                            <TouchableOpacity style={styles.button} onPress={handleSaveMeal}>
+                                <Text style={styles.buttonText}>Save Meal</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={styles.button} onPress={handleCancelMeal}>
+                                <Text style={styles.buttonText}>Cancel</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={styles.button} onPress={handleEdit}>
+                                <Text style={styles.buttonText}>Edit</Text>
+                            </TouchableOpacity>
+                        </>
+                    ) : (
+                        <>
+                            <TouchableOpacity style={styles.button} onPress={handleRecalculate}>
+                                <Text style={styles.buttonText}>Recalculate</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={styles.button} onPress={handleCancelEdit}>
+                                <Text style={styles.buttonText}>Cancel</Text>
+                            </TouchableOpacity>
+                        </>
+                    )}
+                </View>
+            </View>
+        </SafeAreaView>
     );
 }
 
 const styles = StyleSheet.create({
+    safeArea: {
+        flex: 1,
+        backgroundColor: '#161E21',
+    },
     container: {
         flex: 1,
         paddingTop: 20,
-        backgroundColor: '#161E21',
         alignItems: 'center',
-    },
-    backButton: {
-        position: 'absolute',
-        top: 40,
-        left: 20,
-        padding: 10,
-        borderRadius: 5,
+        paddingHorizontal: 20,
     },
     logo: {
-        width: 150,
-        height: 150,
+        width: 100,
+        height: 100,
+        marginBottom: 20,
     },
-    contentContainer: {
+    contentWrapper: {
         flex: 1,
         width: '100%',
+        borderWidth: 2,
+        borderColor: '#fff',
+        borderRadius: 8,
+        overflow: 'hidden',
+        marginBottom: 20,
     },
-    scrollViewContentContainer: {
+    scrollView: {
+        flex: 1,
+        backgroundColor: '#161E21',
+    },
+    scrollViewContent: {
         padding: 20,
-        paddingBottom: 100,
     },
     image: {
         width: '100%',
@@ -262,18 +217,30 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         padding: 10,
         marginBottom: 10,
+        borderRadius: 5,
+    },
+    resultContainer: {
+        backgroundColor: '#1D1D1D',
+        padding: 10,
+        borderRadius: 5,
+        marginTop: 10,
+    },
+    buttonContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        width: '100%',
+        paddingVertical: 10,
     },
     button: {
-        backgroundColor: '#1E9947',
-        padding: 15,
+        backgroundColor: '#4CAF50',
+        padding: 10,
         borderRadius: 5,
-        margin: 10,
-        width: '90%',
+        minWidth: '30%',
         alignItems: 'center',
     },
     buttonText: {
         color: '#fff',
         fontSize: 16,
         fontWeight: 'bold',
-    },
+    },
 });

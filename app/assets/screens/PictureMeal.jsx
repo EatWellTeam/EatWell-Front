@@ -5,6 +5,7 @@ import axios from 'axios';
 import imageUpload from '../../../services/imageUpload'; 
 import { API_URL } from '@env';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import LoadingAnimation from './LoadingAnimation';
 
 export default function PictureMeal() {
   const navigation = useNavigation();
@@ -13,13 +14,14 @@ export default function PictureMeal() {
   const [caloriesConsumed, setCaloriesConsumed] = useState(route.params?.caloriesConsumed || 0);
   const [caloriesLeft, setCaloriesLeft] = useState(route.params?.caloriesLeft || 0);
   const [initialCaloriesLeft, setInitialCaloriesLeft] = useState(route.params?.initialCaloriesLeft || 0);
+  const [isLoading, setIsLoading] = useState(false);
 
   const analyze = async () => {
     if (!image) {
       Alert.alert('No image selected', 'Please select an image first.');
       return;
     }
-
+    setIsLoading(true);
     try {
       const url = await imageUpload(image);
       console.log('Image uploaded, URL:', url);
@@ -36,7 +38,7 @@ export default function PictureMeal() {
         role: 'user',
       };
 
-      const { data } = await axios.post("http://10.0.0.6:3000/middleware/process", [payload], {
+      const { data } = await axios.post(`${process.env.API_URL}/middleware/process`, [payload], {
         headers: {
           'Content-Type': 'application/json',
         },
@@ -63,7 +65,14 @@ export default function PictureMeal() {
         Alert.alert('Error', e.message);
       }
     }
+    finally {
+      setIsLoading(false);
+    }
   };
+
+  if (isLoading) {
+    return <LoadingAnimation />;
+  }
 
   return (
     <SafeAreaView style={styles.container}>

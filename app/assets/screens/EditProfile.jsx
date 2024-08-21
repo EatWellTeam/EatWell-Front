@@ -23,7 +23,7 @@ const EditProfile = () => {
     gender: '',
     activityLevel: '',
     goal: '',
-    profilePic: 'https://i.postimg.cc/VsKZqCKb/cropped-image-2.png', // Default profile picture
+    profilePic: 'https://i.postimg.cc/VsKZqCKb/cropped-image-2.png', 
   });
 
   useEffect(() => {
@@ -76,7 +76,7 @@ const EditProfile = () => {
       if (response.status === 200) {
         setSignUpData(updatedProfile);  
         setIsEditing(false);
-        Alert.alert("Success", "Profile updated successfully");
+      
       } else {
         Alert.alert("Error", "Failed to update profile");
       }
@@ -116,8 +116,8 @@ const EditProfile = () => {
           </TouchableOpacity>
         </View>
         {!isEditing && (
-          <TouchableOpacity style={styles.signOutButton} onPress={handleSignOut}>
-            <Text style={styles.signOutButtonText}>Sign Out</Text>
+          <TouchableOpacity>
+            
           </TouchableOpacity>
         )}
         <View style={styles.profileContainer}>
@@ -344,20 +344,6 @@ const styles = StyleSheet.create({
     marginTop: 20,
     marginBottom: 20,
   },
-
-  signOutButton: {
-    padding: 10,
-    borderRadius: 25,
-    marginBottom: 20,
-    backgroundColor: 'transparent',
-    borderWidth: 1,
-    borderColor: '#fff',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.8,
-    shadowRadius: 2,
-    elevation: 5,
-  },
   signOutButtonText: {
     color: '#fff',
     fontSize: 16,
@@ -373,14 +359,14 @@ const styles = StyleSheet.create({
   profileText: {
     color: '#fff',
     fontSize: 16,
-    marginBottom: 15, // Increased margin for better spacing
+    marginBottom: 15, 
     textAlign: 'center',
     width: '100%',
-    backgroundColor: '#2E2E2E', // Background color for each row
-    paddingVertical: 10, // Padding for each row
+    backgroundColor: '#2E2E2E', 
+    paddingVertical: 10, 
     borderRadius: 5,
     borderWidth: 1,
-    borderColor: '#444', // Border color for each row
+    borderColor: '#444', 
   },
   input: {
     backgroundColor: '#fff',

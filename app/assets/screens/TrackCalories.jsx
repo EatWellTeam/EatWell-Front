@@ -17,7 +17,7 @@ const TrackCalories = () => {
 
   const handleCalculate = async () => {
     try {
-      const response = await axios.post("http://10.0.0.6:3000/nutrition/get-nutrition", {
+      const response = await axios.post(`${process.env.API_URL}/nutrition/get-nutrition`, {
         ingredients: mealDescription.split('\n'),
       });
       
@@ -44,7 +44,7 @@ const TrackCalories = () => {
           />
         </View>
         <View style={styles.content}>
-          <Text style={styles.instructions}>Manually type in your last meal, to calculate the caloric worth</Text>
+          <Text style={styles.instructions}>Manually type in your meal, to calculate the nutritions worth</Text>
           <TextInput
             value={mealDescription}
             onChangeText={setMealDescription}
@@ -52,7 +52,7 @@ const TrackCalories = () => {
             style={styles.input}
             multiline
             returnKeyType="done"
-            onSubmitEditing={Keyboard.dismiss} // Dismiss the keyboard when the "Done" button is pressed
+            onSubmitEditing={Keyboard.dismiss} 
           />
           <TouchableOpacity style={styles.button} onPress={handleCalculate}>
             <Text style={styles.buttonText}>Calculate</Text>
@@ -105,7 +105,7 @@ const styles = StyleSheet.create({
   content: {
     width: '80%',
     alignItems: 'center',
-    marginTop: 150, // Adjusted to account for the header
+    marginTop: 150, 
   },
   instructions: {
     fontSize: 25,

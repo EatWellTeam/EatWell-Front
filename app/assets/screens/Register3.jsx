@@ -94,7 +94,7 @@ export default function Register3Screen() {
                 <TextInput
                     value={weightGoal}
                     onChangeText={(text) => setWeightGoal(text)}
-                    placeholder="Weight Goal (Kg)"  // New input field for weight goal
+                    placeholder="Weight Goal (Kg)" 
                     style={styles.input}
                     keyboardType="numeric"
                 />

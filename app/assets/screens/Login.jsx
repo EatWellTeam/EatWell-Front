@@ -13,7 +13,7 @@ import {
   ScrollView,
   Alert,
 } from "react-native";
-import Ionicons from "react-native-vector-icons/Ionicons"; // Import Ionicons for the "eye" icon
+import Ionicons from "react-native-vector-icons/Ionicons"; 
 import axios from "axios";
 import { API_URL } from "@env";
 import { useSignUpContext } from "../context/SignUpContext";
@@ -21,38 +21,34 @@ import { useSignUpContext } from "../context/SignUpContext";
 export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false); // State to toggle password visibility
+  const [showPassword, setShowPassword] = useState(false); 
   const { signUpData, setSignUpData } = useSignUpContext();
 
   const handleContinue = async () => {
-    console.log("Attempting login with email:", email); // Add log
-    //const lowerCaseEmail = email.toLowerCase(); // Convert email to lowercase
+    console.log("Attempting login with email:", email); 
     try {
       const response = await axios.post(`${process.env.API_URL}/auth/login`, {
-        //lowerCaseEmail,
         email,
         password,
       });
       if (response.status === 200) {
-        console.log("Login successful", response.data);
-        Alert.alert("Success", "Login successful");
-      
+        console.log("Login successful");
+        
         setSignUpData(prevData => ({
           ...prevData,
           _id: response.data._id, 
           accessToken: response.data.accessToken,
           refreshToken: response.data.refreshToken,
         }));
-        console.log("Current SignUpData:", JSON.stringify(signUpData, null, 2));
-        
-        
-        navigation.navigate("Dashboard"); // Navigate to the Dashboard or any other screen
+        console.log("refresh token is:", signUpData.refreshToken);
+        console.log("access token is:", signUpData.accessToken);
+        navigation.navigate("Dashboard"); 
       } else {
         console.log("Unexpected response", response.data);
         Alert.alert("Error", "Unexpected response from the server");
       }
     } catch (error) {
-      console.log("Login error", error); // Log the full error object
+      console.log("Login error", error); 
       Alert.alert("Error", error.message);
     }
   };
@@ -62,19 +58,11 @@ export default function LoginScreen({ navigation }) {
   };
 
   const handleForgotPassword = () => {
-    navigation.navigate("ForgotPassword"); // Navigate to the ForgotPassword page
+    navigation.navigate("ForgotPassword"); 
   };
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Custom Back Button */}
-      <TouchableOpacity
-        style={styles.backButton}
-        onPress={() => navigation.goBack()}
-      >
-        <Ionicons name="arrow-back" size={24} color="#fff" />
-      </TouchableOpacity>
-
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <View style={styles.header}>
           <Image
@@ -114,12 +102,13 @@ export default function LoginScreen({ navigation }) {
               />
             </TouchableOpacity>
           </View>
-          <Text style={styles.forgotPassword} onPress={handleForgotPassword}>
-            Forgot password?
-          </Text>
+          
           <TouchableOpacity style={styles.button} onPress={handleContinue}>
             <Text style={styles.buttonText}>Login</Text>
           </TouchableOpacity>
+          <Text style={styles.forgotPassword} onPress={handleForgotPassword}>
+            Forgot password?
+          </Text>
           <Text style={styles.signupPrompt}>
             Don't have an account?{" "}
             <Text style={styles.signupText} onPress={handleSignUp}>
@@ -147,7 +136,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: 40,
     left: 20,
-    zIndex: 1, // Ensure the back button is on top
+    zIndex: 1, 
     padding: 10,
     borderRadius: 5,
   },
@@ -173,7 +162,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "#fff",
     marginBottom: 5,
-    marginTop: 20, // Add space between logo and welcome text
+    marginTop: 20, 
   },
   loginPrompt: {
     fontSize: 16,
@@ -207,9 +196,7 @@ const styles = StyleSheet.create({
   },
   forgotPassword: {
     color: "#fff",
-    marginBottom: 20,
-    alignSelf: "flex-end",
-    marginRight: 40,
+    marginTop: 20,
   },
   button: {
     width: 300,

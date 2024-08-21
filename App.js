@@ -22,11 +22,13 @@ import Dashboard from './app/assets/screens/Dashboard';
 import { SignUpProvider } from './app/assets/context/SignUpContext'; // Import the SignUpProvider
 import MyLastMeals from './app/assets/screens/MyLastMeals';
 import PictureMeal from './app/assets/screens/PictureMeal';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 const Stack = createNativeStackNavigator();
 
 function App() {
   return (
+    <GestureHandlerRootView style={{ flex: 1 }}>
     <SignUpProvider>
       <NavigationContainer>
         <Stack.Navigator initialRouteName='Welcome'>
@@ -52,6 +54,8 @@ function App() {
         </Stack.Navigator>
       </NavigationContainer>
     </SignUpProvider>
+    </GestureHandlerRootView>
+
   );
 }
 
