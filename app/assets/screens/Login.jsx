@@ -25,23 +25,26 @@ export default function LoginScreen({ navigation }) {
   const { signUpData, setSignUpData } = useSignUpContext();
 
   const handleContinue = async () => {
-    console.log("Attempting login with email:", email); 
+    console.log("Attempting login with email:", email); // Add log
+    
     try {
       const response = await axios.post(`${process.env.API_URL}/auth/login`, {
         email,
         password,
       });
       if (response.status === 200) {
-        console.log("Login successful");
-        
+        console.log("Login successful", response.data);
+      
+      
         setSignUpData(prevData => ({
           ...prevData,
           _id: response.data._id, 
           accessToken: response.data.accessToken,
           refreshToken: response.data.refreshToken,
         }));
-        console.log("refresh token is:", signUpData.refreshToken);
-        console.log("access token is:", signUpData.accessToken);
+        console.log("Current SignUpData:", JSON.stringify(signUpData, null, 2));
+        
+        
         navigation.navigate("Dashboard"); 
       } else {
         console.log("Unexpected response", response.data);
@@ -63,6 +66,8 @@ export default function LoginScreen({ navigation }) {
 
   return (
     <SafeAreaView style={styles.container}>
+     
+
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <View style={styles.header}>
           <Image
