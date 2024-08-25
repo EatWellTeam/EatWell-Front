@@ -106,10 +106,10 @@ export default function Home({ navigation }) {
         console.error('Error during analysis:', e.message);
         if (e.response) {
             console.error('Server responded with:', e.response.data);
-            Alert.alert('Server Error', JSON.stringify(e.response.data));
+            Alert.alert('No Food Detected in Image', 'Please try again with a different image.');
         } else if (e.request) {
-            console.error('Request made but no response received:', e.request);
-            Alert.alert('Network Error', 'Request was made but no response received.');
+            console.error('No Food Detected in Image', 'Please try again with a different image.', e.request);
+            Alert.alert('No Food Detected in Image', 'Please try again with a different image.');
         } else {
             console.error('Error setting up request:', e.message);
             Alert.alert('Error', e.message);
