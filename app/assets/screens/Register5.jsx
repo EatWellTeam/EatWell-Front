@@ -39,8 +39,8 @@ export default function Register5Screen() {
       if (response.status === 201) {
         console.log("Registration successful", response.data);
   
-        // Update SignUpContext with the userId
-        const { setUserId } = useSignUpContext();
+
+        
         setUserId(response.data._id);
 
         setSignUpData(prevData => ({
